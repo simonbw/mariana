@@ -10,6 +10,7 @@ import {
 } from "../../core/util/Random";
 import { V } from "../../core/Vector";
 import { WORLD_SIZE_TILES } from "../constants";
+import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
 
 const JAGGEDNESS = 0.01;
 
@@ -17,15 +18,35 @@ const MIN_X = Math.floor(-WORLD_SIZE_TILES[0] / 2);
 const MAX_X = Math.floor(WORLD_SIZE_TILES[0] / 2);
 const MAX_Y = 1000;
 
-export function generateSolidMap(): Grid<boolean> {
+// Terrain heights should be between these values
+const MIN_TERRAIN_Y = 5;
+const MAX_TERRAIN_Y = 40;
+
+// If rock strength is below this, rock will be automatically a cave
+const ROCK_STRENGTH_CAVE_THRESHOLD = -0.5;
+
+const heightTurbulence = makeTurbulence1D({
+  octaves: 8,
+  amplitude: 1,
+  wavelength: 50,
+  peristence: 0.5,
+  lacunarity: 0.5
+});
+
+const caveTurbulence = makeTurbulence2D({
+  octaves: 8,
+  amplitude: 1,
+  wavelength: 30,
+  peristence: 0.5,
+  lacunarity: 0.5
+});
+
+export function generateSolidMap(): Grid<boolean> { 
   console.time("worldGen");
   const solidMap: Grid<boolean> = new Grid();
 
   generateSurface(solidMap);
-
-  doTunnel(solidMap);
-  doTunnel(solidMap);
-  doTunnel(solidMap);
+  generateCaves(solidMap);
 
   console.timeEnd("worldGen");
 
@@ -33,18 +54,43 @@ export function generateSolidMap(): Grid<boolean> {
 }
 
 function generateSurface(solidMap: Grid<boolean>): void {
-  const noise = makeNoise2D();
-
-  // TODO: mountain?
+  const heightMap : number[] = [];
+  let minGenHeight = 0;
+  let maxGenHeight = 0;
+  for (let x = MIN_X; x < MAX_X; x++) {
+    heightMap[x] = heightTurbulence(x);
+    if (heightMap[x] < minGenHeight) {
+      minGenHeight = heightMap[x];
+    }
+    if (heightMap[x] > maxGenHeight) { 
+      maxGenHeight = heightMap[x];
+    }
+  }
 
   for (let x = MIN_X; x < MAX_X; x++) {
-    const n = (noise(x * JAGGEDNESS, 0) + 1) / 2;
-    const n2 = (noise(5 + x * JAGGEDNESS * 20, 10) + 1) / 2;
-    let minY = Math.floor(lerp(10, 40, n) + lerp(-3, 3, n2));
+    const minY = Math.floor((heightMap[x] - minGenHeight) * ((MAX_TERRAIN_Y - MIN_TERRAIN_Y) / (maxGenHeight - minGenHeight)) + MIN_TERRAIN_Y);
     for (let y = minY; y < MAX_Y; y++) {
       solidMap.set([x, y], true);
     }
   }
+}
+
+function generateCaves(solidMap: Grid<boolean>):void {
+  const strengthGrid: Grid<number> = new Grid();
+
+  for (let x = MIN_X; x < MAX_X; x++) {
+    for (let y = MIN_TERRAIN_Y; y < MAX_Y; y++) {
+      const t = caveTurbulence(x, y);
+      strengthGrid.set([x, y], t);
+      if (t < ROCK_STRENGTH_CAVE_THRESHOLD) {
+        solidMap.set([x, y], false);
+      }
+    }
+  }
+
+  doTunnel(solidMap);
+  doTunnel(solidMap);
+  doTunnel(solidMap);
 }
 
 function doTunnel(
