@@ -2,19 +2,17 @@ import { BLEND_MODES, Graphics, Sprite } from "pixi.js";
 import img_daylight from "../../../resources/images/lights/daylight.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { colorLerp } from "../../core/util/ColorUtils";
 import { lerp } from "../../core/util/MathUtil";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
 import { Light } from "../lighting/Light";
-import { getTimeOfDay, SUNRISE, SUNSET } from "./Sky";
-
-const DAY_ALPHA = 1.0;
-const NIGHT_ALPHA = 1.0;
+import { SUNRISE, SUNSET } from "./Sky";
 
 export class Daylight extends BaseEntity implements Entity {
   lightSprite: Sprite;
   sky: Graphics;
 
-  constructor() {
+  constructor(private getTimeOfDay: () => number) {
     super();
 
     this.sky = new Graphics();
@@ -32,7 +30,7 @@ export class Daylight extends BaseEntity implements Entity {
   }
 
   onRender() {
-    const hour = getTimeOfDay(this.game!);
+    const hour = this.getTimeOfDay();
 
     const color = getSkyColor(hour);
     this.lightSprite.tint = color;
@@ -46,8 +44,12 @@ export class Daylight extends BaseEntity implements Entity {
 export function getSkyColor(hour: number): number {
   if (hour < SUNRISE) {
     return 0xaaaaff;
+  } else if (hour < SUNRISE + 1) {
+    return colorLerp(0xaaaaff, 0xffffff, hour - SUNRISE);
   } else if (hour < SUNSET) {
     return 0xffffff;
+  } else if (hour < SUNSET + 1) {
+    return colorLerp(0xffffff, 0xaaaaff, hour - SUNSET);
   } else {
     return 0xaaaaff;
   }

@@ -6,9 +6,10 @@ import { rBool, rUniform } from "../../core/util/Random";
 import { V } from "../../core/Vector";
 import { WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE } from "../constants";
 import { Cloud } from "./Cloud";
+import { Daylight } from "./Daylight";
 import { Sun } from "./Sun";
 
-const SECONDS_PER_HOUR = 0.3;
+const SECONDS_PER_HOUR = 1;
 const NUM_CLOUDS = 100;
 
 export const SUNRISE = 6;
@@ -21,7 +22,8 @@ export class Sky extends BaseEntity implements Entity {
   constructor() {
     super();
 
-    this.addChild(new Sun());
+    this.addChild(new Sun(() => this.hour));
+    this.addChild(new Daylight(() => this.hour));
 
     for (let i = 0; i < NUM_CLOUDS; i++) {
       const x = rUniform(WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE);
@@ -37,8 +39,9 @@ export class Sky extends BaseEntity implements Entity {
   }
 }
 
-export function getTimeOfDay(game: Game): number {
-  return (game.entities.getById("sky") as Sky).hour;
+export function isNight(game: Game): boolean {
+  const hour = (game.entities.getById("sky") as Sky).hour;
+  return hour < SUNRISE || hour > SUNSET;
 }
 
 export function getWind(game: Game): number {

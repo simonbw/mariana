@@ -1,5 +1,6 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { isNight } from "../environment/Sky";
 import { DirectionalLight } from "../lighting/DirectionalLight";
 import { Diver } from "./Diver";
 
@@ -12,12 +13,12 @@ export class Flashlight extends BaseEntity implements Entity {
     super();
 
     this.light = this.addChild(
-      new DirectionalLight({ length: 15, width: 10, intensity: 0.7 })
+      new DirectionalLight({ length: 20, width: 15, intensity: 0.7 })
     );
   }
 
   onTick() {
-    if (this.diver.getDepth() > ACTIVATION_DEPTH) {
+    if (this.diver.getDepth() > ACTIVATION_DEPTH || isNight(this.game!)) {
       this.light.intensity = 1;
     } else {
       this.light.intensity = 0;

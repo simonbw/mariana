@@ -7,12 +7,14 @@ import { polarToVec } from "../../core/util/MathUtil";
 import { rNormal, rRound, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
+import { getDiver } from "../diver/Diver";
 import { SplashParticle } from "./SurfaceSplash";
 import { getWaves } from "./Waves";
 
 const FRICTION = 1.5;
 const RISE_SPEED = 16; // meters / sec ^ 2
 
+const MINIMUM_BREATHING_SIZE = 1;
 export class Bubble extends BaseEntity implements Entity {
   sprite: Sprite & GameSprite;
 
@@ -65,6 +67,16 @@ export class Bubble extends BaseEntity implements Entity {
       }
 
       this.destroy();
+    }
+
+    if (this.size > MINIMUM_BREATHING_SIZE) {
+      const diver = getDiver(this.game);
+      if (diver) {
+        const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
+        if (dist < this.size + 0.5) {
+          diver.air.giveOxygen(dt);
+        }
+      }
     }
   }
 }

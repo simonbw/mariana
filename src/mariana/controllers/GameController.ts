@@ -34,7 +34,6 @@ export class GameController extends BaseEntity implements Entity {
       const game = this.game!;
       game.addEntity(new PauseMenu());
       game.addEntity(new LightingManager());
-      game.addEntity(new Daylight());
       game.addEntity(new Water());
       game.addEntity(new Sky());
       game.addEntity(new Boat());

@@ -1,6 +1,9 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { stepToward } from "../../core/util/MathUtil";
+import { rBool, rNormal, rUniform } from "../../core/util/Random";
+import { V } from "../../core/Vector";
+import { Bubble } from "../effects/Bubble";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { Diver } from "./Diver";
 
@@ -75,6 +78,17 @@ export class OxygenManager extends BaseEntity implements Entity {
   onTick(dt: number) {
     if (this.game?.io.keyIsDown("KeyB")) {
       this.useOxygen(0.2);
+      if (rBool(0.2) && this.currentOxygen > 0) {
+        this.game.addEntity(
+          new Bubble(
+            this.diver
+              .getPosition()
+              .iadd([rUniform(-0.5, 0.5), rUniform(-0.5, -0.9)]),
+            V(this.diver.body.velocity).iadd([rNormal(0, 3), rNormal(0, 3)]),
+            rUniform(0.2, 0.5)
+          )
+        );
+      }
     }
     if (this.diver.isSurfaced()) {
       this.giveOxygen(dt * this.getFillRate());
