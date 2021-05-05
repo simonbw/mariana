@@ -1,16 +1,21 @@
+import { vec2 } from "p2";
 import { Sprite } from "pixi.js";
 import img_bubble from "../../../resources/images/particles/bubble.png";
 import BaseEntity from "../../core/entity/BaseEntity";
-import Entity from "../../core/entity/Entity";
-import { rNormal } from "../../core/util/Random";
+import Entity, { GameSprite } from "../../core/entity/Entity";
+import { polarToVec } from "../../core/util/MathUtil";
+import { rNormal, rRound, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
+import { SplashParticle } from "./SurfaceSplash";
 import { getWaves } from "./Waves";
 
 const FRICTION = 1.5;
 const RISE_SPEED = 16; // meters / sec ^ 2
 
 export class Bubble extends BaseEntity implements Entity {
+  sprite: Sprite & GameSprite;
+
   constructor(
     position: V2d,
     private velocity: V2d = V(0, 0),
@@ -44,6 +49,21 @@ export class Bubble extends BaseEntity implements Entity {
     const x = sprite.x;
     const surfaceY = waves.getSurfaceHeight(x);
     if (sprite.y <= surfaceY) {
+      const speed = vec2.len(this.velocity);
+      const nParticles = Math.ceil(this.size * 3);
+      for (let i = 0; i < nParticles; i++) {
+        const x = rUniform(-0.3, 0.3) + sprite.x;
+        const y = waves.getSurfaceHeight(x);
+        const theta = waves.getSurfaceAngle(x);
+        const velocity = polarToVec(
+          rUniform(-Math.PI, Math.PI) + theta,
+          rUniform(0.5, 1) * speed * 0.6
+        );
+        this.game!.addEntity(
+          new SplashParticle(V(x, y), velocity, rUniform(0.05, 0.15))
+        );
+      }
+
       this.destroy();
     }
   }

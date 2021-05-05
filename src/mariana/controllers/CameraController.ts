@@ -43,7 +43,7 @@ export default class CameraController extends BaseEntity implements Entity {
     }
 
     if (this.game?.io.keyIsDown("Minus")) {
-      this.camera.z += dt;
+      this.camera.z -= 3 * dt;
     } else {
       this.camera.z = stepToward(this.camera.z, 30, dt);
     }

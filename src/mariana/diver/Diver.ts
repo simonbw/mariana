@@ -30,13 +30,13 @@ import { Submersion } from "./Submersion";
 
 const HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
-const BASE_SPEED = 25.0; // Newtons?
-const SPEED_PER_UPGRADE = 3.0; // Newtons?
-const DIVER_DAMPING = 0.1; // Water friction
+const BASE_SPEED = 12.0; // Newtons?
+const SPEED_PER_UPGRADE = 4.0; // Newtons?
+const WATER_FRICTION = 2.2; // Water friction
 const SURFACE_GRAVITY = 9.8; // meters / second^2
 const SUBMERGED_GRAVITY = 0; //5.0; // meters / second^2
 const HEAD_OFFSET = -0.35; // meters offset from center for head to be submerged
-const MAX_WAVE_FORCE = 5; // multiplier of wave velocity
+const MAX_WAVE_FORCE = 3; // multiplier of wave velocity
 const WAVE_DEPTH_FACTOR = 0.95; // multiplier of wave velocity
 
 const HURT_SOUNDS = new ShuffleRing([
@@ -158,7 +158,7 @@ export class Diver extends BaseEntity implements Entity {
         if (!this.isDead) {
           this.body.applyForce(this.moveDirection.mul(this.getMaxSpeed()));
         }
-        this.body.applyDamping(DIVER_DAMPING);
+        this.body.applyForce(V(this.body.velocity).imul(-WATER_FRICTION));
 
         // Wave forces
         const waves = getWaves(this.game!);

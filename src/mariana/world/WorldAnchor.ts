@@ -1,7 +1,7 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { V, V2d } from "../../core/Vector";
-import { WorldMap } from "./WorldMap";
+import { TilePos, WorldMap } from "./WorldMap";
 
 /** Keeps certain tiles loaded */
 export class WorldAnchor extends BaseEntity implements Entity {
@@ -13,12 +13,13 @@ export class WorldAnchor extends BaseEntity implements Entity {
     super();
   }
 
-  getTilesToLoad(map: WorldMap): V2d[] {
-    const tiles: V2d[] = [];
+  /** Returns a list of tiles that should stay loaded right now */
+  getTilesToLoad(map: WorldMap): TilePos[] {
+    const tiles: TilePos[] = [];
     const [x, y] = map.worldToTile(this.getCenter());
     for (let i = -this.width; i <= this.width; i++) {
       for (let j = -this.height; j <= this.height; j++) {
-        tiles.push(V(x + i, y + j));
+        tiles.push([x + i, y + j]);
       }
     }
     return tiles;

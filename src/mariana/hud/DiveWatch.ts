@@ -1,13 +1,14 @@
-import { Sprite } from "pixi.js";
+import { Sprite, Text } from "pixi.js";
 import img_diveWatchBack from "../../../resources/images/ui/dive-watch-back.png";
 import img_diveWatchNeedle from "../../../resources/images/ui/dive-watch-needle.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
-import { clamp, degToRad, lerp } from "../../core/util/MathUtil";
+import { clamp, clampUp, degToRad, lerp } from "../../core/util/MathUtil";
 import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { WORLD_BOTTOM } from "../constants";
 import { Diver } from "../diver/Diver";
+import { FONT_ALTERNATE, FONT_BODY } from "../fonts";
 
 const MIN_AIR_ANGLE = degToRad(-135);
 const MAX_AIR_ANGLE = degToRad(135);
@@ -25,6 +26,7 @@ export class DiveWatch extends BaseEntity implements Entity {
   airNeedleSprite: Sprite;
   depthNeedleSprite: Sprite;
   faceSprite: Sprite;
+  depthText: Text;
 
   constructor(private diver: Diver) {
     super();
@@ -46,7 +48,12 @@ export class DiveWatch extends BaseEntity implements Entity {
     this.depthNeedleSprite.rotation = MIN_DEPTH_ANGLE;
     this.airNeedleSprite.rotation = MIN_AIR_ANGLE;
 
+    this.depthText = new Text("", { fontFamily: FONT_ALTERNATE, fontSize: 32 });
+    this.depthText.anchor.set(0.5, 0.5);
+    this.depthText.position.set(256, 310);
+
     sprite.addChild(this.faceSprite);
+    sprite.addChild(this.depthText);
     sprite.addChild(this.depthNeedleSprite);
     sprite.addChild(this.airNeedleSprite);
 
@@ -59,10 +66,13 @@ export class DiveWatch extends BaseEntity implements Entity {
   }
 
   onRender(dt: number) {
-    const depthPercent = this.diver.getDepth() / WORLD_BOTTOM;
+    const depth = this.diver.getDepth();
+    const depthPercent = depth / WORLD_BOTTOM;
     const airPercent = this.diver.air.getOxygenPercent();
 
     const airTargetAngle = lerp(MIN_AIR_ANGLE, MAX_AIR_ANGLE, airPercent);
+
+    this.depthText.text = String(Math.round(clampUp(depth)));
 
     const depthTargetAngle = lerp(
       MIN_DEPTH_ANGLE,

@@ -3,20 +3,20 @@ import img_waterSplash from "../../../resources/images/particles/water-splash.pn
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { colorLerp } from "../../core/util/ColorUtils";
-import { lerp } from "../../core/util/MathUtil";
+import { clamp } from "../../core/util/MathUtil";
 import { rDirection, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
-import { getWaves } from "./Waves";
+import { getWaves, WATER_COLOR } from "./Waves";
 
 const FRICTION = 0.8;
-const GRAVITY = 1.5;
+const GRAVITY = 9.8;
 
 export class SplashParticle extends BaseEntity implements Entity {
   constructor(
     position: V2d,
     private velocity: V2d = V(0, 0),
-    private size: number = rUniform(0.1, 0.25)
+    private size: number = rUniform(0.06, 0.18)
   ) {
     super();
 
@@ -26,7 +26,7 @@ export class SplashParticle extends BaseEntity implements Entity {
     sprite.rotation = rDirection();
     sprite.alpha = 1.0;
     sprite.anchor.set(0.5);
-    sprite.tint = 0xffffff;
+    sprite.tint = WATER_COLOR;
 
     this.sprite.layerName = Layer.WORLD_FRONT;
   }
@@ -49,7 +49,7 @@ export class SplashParticle extends BaseEntity implements Entity {
     sprite.y += dt * this.velocity[1];
 
     sprite.scale.set(this.size / sprite.texture.width);
-    sprite.tint = colorLerp(sprite.tint, 0x00eeff, dt);
+    sprite.tint = colorLerp(sprite.tint, 0xffffff, clamp(dt * 4));
 
     if (sprite.y >= waves.getSurfaceHeight(sprite.x)) {
       this.destroy();

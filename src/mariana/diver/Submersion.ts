@@ -30,7 +30,7 @@ export class Submersion extends BaseEntity implements Entity {
         const diverPosition = diver.getPosition();
         const speed = Math.abs(diver.body.velocity[1]);
         const waves = getWaves(this.game!);
-        for (let i = 0; i < 15 * Math.sqrt(speed); i++) {
+        for (let i = 0; i < 25 * speed ** 0.7; i++) {
           const x = rUniform(-0.3, 0.3) + diverPosition[0];
           const y = waves.getSurfaceHeight(x);
           const theta = waves.getSurfaceAngle(x);

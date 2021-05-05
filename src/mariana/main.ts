@@ -29,14 +29,14 @@ export async function main() {
   const game = new Game({
     // how many times tick is called per render.
     // higher improves physics fidelity at the possible cost of performance
-    tickIterations: 4,
+    tickIterations: 12,
 
     // Parameters for the physics engine
     world: new CustomWorld({
       // no gravity, we can add it ourselves if we want it
       gravity: [0, 0],
       // Use our homegrown broadphase implementation. It's generally _much_ faster
-      broadphase: new SpatialHashingBroadphase(3, 30, 100),
+      broadphase: new SpatialHashingBroadphase(2, 100, 100),
     }),
   });
 

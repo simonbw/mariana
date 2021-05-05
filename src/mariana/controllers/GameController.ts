@@ -8,6 +8,7 @@ import { Boat } from "../Boat";
 import { Diver, getDiver } from "../diver/Diver";
 import { Water } from "../environment/Background";
 import { Daylight } from "../environment/Daylight";
+import { Sky } from "../environment/Sky";
 import { isFish } from "../fish/BaseFish";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
@@ -35,6 +36,7 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new LightingManager());
       game.addEntity(new Daylight());
       game.addEntity(new Water());
+      game.addEntity(new Sky());
       game.addEntity(new Boat());
       game.addEntity(new OceanAmbience());
       game.addEntity(new UpgradeManager());

@@ -24,6 +24,10 @@ type EntityWithOnTick = Entity & { onTick: Function };
 export const hasOnTick = (e: Entity): e is EntityWithOnTick =>
   Boolean(e.onTick);
 
+type EntityWithOnSlowTick = Entity & { onSlowTick: Function };
+export const hasOnSlowTick = (e: Entity): e is EntityWithOnSlowTick =>
+  Boolean(e.onSlowTick);
+
 type EntityWithOnPause = Entity & { onPause: Function };
 export const hasOnPause = (e: Entity): e is EntityWithOnPause =>
   Boolean(e.onPause);

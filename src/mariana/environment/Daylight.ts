@@ -5,10 +5,10 @@ import Entity from "../../core/entity/Entity";
 import { lerp } from "../../core/util/MathUtil";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
 import { Light } from "../lighting/Light";
+import { getTimeOfDay } from "./Sky";
 
-export const SECONDS_PER_DAY = 60;
-const MAX_ALPHA = 1.0;
-const MIN_ALPHA = 0.9;
+const DAY_ALPHA = 1.0;
+const NIGHT_ALPHA = 1.0;
 
 export class Daylight extends BaseEntity implements Entity {
   lightSprite: Sprite;
@@ -25,7 +25,7 @@ export class Daylight extends BaseEntity implements Entity {
     this.lightSprite = Sprite.from(img_daylight);
     this.lightSprite.anchor.set(0.5, 0);
     this.lightSprite.width = WORLD_SIZE_METERS[0] * 2;
-    this.lightSprite.height = WORLD_BOTTOM + 20;
+    this.lightSprite.height = WORLD_BOTTOM * 0.3;
     this.lightSprite.blendMode = BLEND_MODES.ADD;
 
     this.lightSprite.addChild(sky);
@@ -34,9 +34,9 @@ export class Daylight extends BaseEntity implements Entity {
   }
 
   onRender() {
-    const day = this.game!.elapsedTime / SECONDS_PER_DAY;
-    const sunPercent = (Math.cos(Math.PI * 2 * day) + 1) / 2;
+    const day = getTimeOfDay(this.game!);
+    const lightPercent = (Math.cos(Math.PI * 2 * day) + 1) / 2;
 
-    this.lightSprite.alpha = lerp(MIN_ALPHA, MAX_ALPHA, sunPercent);
+    this.lightSprite.alpha = lerp(NIGHT_ALPHA, DAY_ALPHA, lightPercent);
   }
 }

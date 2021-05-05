@@ -21,6 +21,8 @@ export default interface GameEventHandler {
   onLateRender?(dt: number): void;
   /** Called during the update tick */
   onTick?(dt: number): void;
+  /** Called less frequently */
+  onSlowTick?(dt: number): void;
   /** Called when the game is paused */
   onPause?(): void;
   /** Called when the game is unpaused */

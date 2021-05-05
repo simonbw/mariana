@@ -13,7 +13,6 @@ import { lerp } from "./util/MathUtil";
 interface GameOptions {
   audio?: AudioContext;
   tickIterations?: number;
-  framerate?: number;
   world?: World | CustomWorld;
 }
 
@@ -78,12 +77,7 @@ export default class Game {
   /**
    * Create a new Game.
    */
-  constructor({
-    audio,
-    tickIterations = 5,
-    framerate = 60,
-    world,
-  }: GameOptions) {
+  constructor({ audio, tickIterations = 2, world }: GameOptions) {
     this.entities = new EntityList();
     this.entitiesToRemove = new Set();
 
@@ -276,20 +270,21 @@ export default class Game {
       );
     }
 
-    const renderDt = this.averageFrameDuration;
+    const renderDt = 1.0 / this.getScreenFps();
     this.elapsedTime += renderDt;
     if (!this.paused) {
       this.elapsedUnpausedTime += renderDt;
     }
+
+    this.slowTick(renderDt * this.slowMo);
 
     const tickDt = (renderDt / this.tickIterations) * this.slowMo;
     this.iterationsRemaining += this.tickIterations;
     for (; this.iterationsRemaining > 1.0; this.iterationsRemaining--) {
       this.tick(tickDt);
       if (!this.paused) {
-        this.world.step(tickDt / 2);
-        this.cleanupEntities();
-        this.world.step(tickDt / 2);
+        const stepDt = tickDt;
+        this.world.step(stepDt);
         this.cleanupEntities();
         this.contacts();
       }
@@ -297,6 +292,12 @@ export default class Game {
     this.afterPhysics();
 
     this.render(renderDt);
+  }
+
+  getScreenFps(): number {
+    const duration = this.averageFrameDuration;
+    const fps = Math.round(1.0 / duration);
+    return fps;
   }
 
   /** Actually remove all the entities slated for removal from the game. */
@@ -356,6 +357,15 @@ export default class Game {
     for (const entity of this.entities.withOnTick) {
       if (entity.game && !(this.paused && entity.pausable)) {
         entity.onTick(dt);
+      }
+    }
+  }
+
+  /** Called before normal ticks */
+  private slowTick(dt: number) {
+    for (const entity of this.entities.withOnSlowTick) {
+      if (entity.game && !(this.paused && entity.pausable)) {
+        entity.onSlowTick(dt);
       }
     }
   }

@@ -11,6 +11,7 @@ import {
   WORLD_RIGHT_EDGE,
   WORLD_SIZE_METERS,
 } from "../constants";
+import { getWind } from "../environment/Sky";
 import frag_waves from "./waves.frag";
 import vert_waves from "./waves.vert";
 
@@ -46,6 +47,7 @@ export class Waves extends BaseEntity implements Entity {
 
   onTick(dt: number) {
     this.t += dt;
+    this.w = getWind(this.game!);
   }
 
   getSurfaceHeight(x: number) {
@@ -73,11 +75,13 @@ export class Waves extends BaseEntity implements Entity {
   }
 
   getWaveStats() {
+    const w1 = this.w;
+    const w2 = 1.37 * this.w;
     return {
       t: this.t,
-      a: (1.039702 - 0.08155357 * this.w + 0.002481548 * this.w ** 2) / 2,
-      lambda: -738512.1 + 738525.2 * Math.exp(0.00001895026 * this.w),
-      T: 17.91851 - 15.52928 * Math.exp(-0.006572834 * this.w),
+      a: (1.039702 - 0.08155357 * w1 + 0.002481548 * w1 ** 2) / 2,
+      lambda: -738512.1 + 738525.2 * Math.exp(0.00001895026 * w1),
+      T: 17.91851 - 15.52928 * Math.exp(-0.006572834 * w1),
     };
   }
 

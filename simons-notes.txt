@@ -136,6 +136,7 @@
      - Something that grabs you with a tentacle and pulls you in
        - Maybe a small something like a Barnacle
        - Also could be a cool boss fight with a kraken
+     - School of fish that you kill many per harpoon shot
     
     Advanced World Generation — Biome
      - Choose region for biome based on depth
@@ -242,8 +243,9 @@
 
 
 # World generation Ideas
+ - Plant spawning
+   - find all the tiles hit by daylight
 
- [ ] Generate height of surface
- [ ] Maybe add in some mountains?
- [ ] Add in large caves
- [ ] Connect paths between caves?
+   thoughts on fish spawning
+
+  - How do we load in large objects?

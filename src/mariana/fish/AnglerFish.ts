@@ -5,7 +5,7 @@ import { rBool } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Diver } from "../diver/Diver";
 import { PointLight } from "../lighting/PointLight";
-import { GroundTile } from "../region/GroundTile";
+import { GroundTile } from "../world/GroundTile";
 import { BaseFish } from "./BaseFish";
 
 const SPEED = 5;

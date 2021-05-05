@@ -1,6 +1,4 @@
-import { V2d } from "../Vector";
-
-type Cell = [number, number];
+type Cell = readonly [number, number];
 // A 2 dimensional map.
 export default class Grid<T> {
   data: { [x: number]: { [y: number]: T } } = {};
