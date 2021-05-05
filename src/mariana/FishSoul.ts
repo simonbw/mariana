@@ -12,7 +12,7 @@ import img_pickup7 from "../../resources/images/particles/pickup-7.png";
 import BaseEntity from "../core/entity/BaseEntity";
 import Entity from "../core/entity/Entity";
 import { SoundInstance } from "../core/sound/SoundInstance";
-import { rBool, rInteger, rNormal } from "../core/util/Random";
+import { rBool, rInteger, rNormal, rRound } from "../core/util/Random";
 import { V, V2d } from "../core/Vector";
 import { CollisionGroups } from "./config/CollisionGroups";
 import { Diver, getDiver } from "./diver/Diver";
@@ -111,11 +111,9 @@ export class FishSoul extends BaseEntity implements Entity {
 }
 
 // Make a cluster of drops
-export function makeSoulDrops(
-  position: V2d,
-  valueRemaining: number = 1
-): FishSoul[] {
+export function makeSoulDrops(position: V2d, value: number = 1): FishSoul[] {
   const pickups: FishSoul[] = [];
+  let valueRemaining = rRound(value);
   while (valueRemaining > 1) {
     const value = rInteger(1, valueRemaining);
     valueRemaining -= value;

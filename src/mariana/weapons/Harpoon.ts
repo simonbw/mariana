@@ -12,6 +12,7 @@ import { isHarpoonable } from "./Harpoonable";
 import { DAMPING, SIZE } from "./HarpoonGun";
 
 const MIN_SPEED_FOR_DAMAGE = 5; // meters/second
+const FRICTION = 0.04;
 
 export class Harpoon extends BaseEntity implements Entity {
   body: Body;
@@ -52,7 +53,7 @@ export class Harpoon extends BaseEntity implements Entity {
   onTick() {
     this.body.applyForce([0, 9.8 * this.body.mass]);
     if (this.body.position[1] > 0) {
-      this.body.applyDamping(DAMPING);
+      this.body.applyForce(V(this.body.velocity).imul(-FRICTION));
     }
 
     this.minSpeed = Math.min(this.minSpeed, vec2.length(this.body.velocity));

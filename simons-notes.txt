@@ -222,15 +222,16 @@
  [√] Complete tileset
  [√] Revamp world generation
  [ ] Global audio mixer
- [ ] Nicer damage overlay filter
- [ ] Credits screen
+ [ ] Volume control
  [ ] Positional sounds
+ [ ] Fix WorldMap performance (chunks?)
+ [ ] Nicer damage overlay filter — bring back damage system
  [ ] Make squid thing
  [ ] Make harpoon retraction smoother - retract when collides with diver?
  [ ] Do some performance profiling
  [ ] Better death sound
  [ ] Upgrade shop thumbnails
- [ ] Volume control
+ [ ] Credits screen
 
 
 # Art to ask Rachel for

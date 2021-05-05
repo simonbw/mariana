@@ -1,15 +1,15 @@
 import snd_musicalNope from "../../../resources/audio/ui/musical_nope.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
-import { KeyCode } from "../../core/io/Keys";
 import { SoundInstance } from "../../core/sound/SoundInstance";
+import { V } from "../../core/Vector";
 import { OceanAmbience } from "../audio/OceanAmbience";
 import { Boat } from "../Boat";
 import { Diver, getDiver } from "../diver/Diver";
 import { Water } from "../environment/Background";
-import { Daylight } from "../environment/Daylight";
 import { Sky } from "../environment/Sky";
 import { isFish } from "../fish/BaseFish";
+import { ClownFish } from "../fish/ClownFish";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
@@ -50,6 +50,12 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
 
+      game.addEntities([new ClownFish(V(5, 3))]);
+      game.addEntities([new ClownFish(V(6, 4))]);
+      game.addEntities([new ClownFish(V(7, 3))]);
+      game.addEntities([new ClownFish(V(8, 4))]);
+      game.addEntities([new ClownFish(V(9, 3))]);
+
       game.dispatch({ type: "diveStart" });
     },
 
@@ -85,14 +91,4 @@ export class GameController extends BaseEntity implements Entity {
       this.game!.addEntity(new VictoryScreen());
     },
   };
-
-  onKeyDown(key: KeyCode) {
-    switch (key) {
-      case "KeyV":
-        if (process.env.NODE_ENV === "development") {
-          this.game?.dispatch({ type: "victory" });
-        }
-        break;
-    }
-  }
 }

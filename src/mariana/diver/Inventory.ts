@@ -21,14 +21,14 @@ export class Inventory extends BaseEntity implements Entity {
       this.fishSouls > 0 &&
       this.game!.ticknumber % 4 === 0
     ) {
-      this.transferSouls(Math.ceil(this.fishSouls / 10));
+      this.transferSouls(Math.ceil(this.fishSouls / 100));
     }
 
     if (
       process.env.NODE_ENV === "development" &&
       this.game!.io.keyIsDown("KeyF")
     ) {
-      this.fishSouls += 1;
+      this.fishSouls += this.game!.io.keyIsDown("ShiftLeft") ? 100 : 1;
     }
   }
 

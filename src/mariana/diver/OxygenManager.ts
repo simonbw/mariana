@@ -76,21 +76,29 @@ export class OxygenManager extends BaseEntity implements Entity {
   }
 
   onTick(dt: number) {
+    // Bleed oxygen for no apparent reason
     if (this.game?.io.keyIsDown("KeyB")) {
-      this.useOxygen(0.2);
-      if (rBool(0.2) && this.currentOxygen > 0) {
+      this.useOxygen(dt * 40);
+      if (rBool(0.5) && this.currentOxygen > 0) {
         this.game.addEntity(
           new Bubble(
             this.diver
               .getPosition()
               .iadd([rUniform(-0.5, 0.5), rUniform(-0.5, -0.9)]),
-            V(this.diver.body.velocity).iadd([rNormal(0, 3), rNormal(0, 3)]),
+            V(this.diver.body.velocity).iadd([rNormal(0, 5), rNormal(0, 5)]),
             rUniform(0.2, 0.5)
           )
         );
       }
     }
+
     if (this.diver.isSurfaced()) {
+      this.giveOxygen(dt * this.getFillRate());
+    }
+    if (
+      this.game?.io.keyIsDown("KeyV") &&
+      process.env.NODE_ENV === "development"
+    ) {
       this.giveOxygen(dt * this.getFillRate());
     }
 

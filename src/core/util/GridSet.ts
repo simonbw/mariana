@@ -1,4 +1,3 @@
-import { V, V2d } from "../Vector";
 import Grid from "./Grid";
 
 type Cell = readonly [number, number];

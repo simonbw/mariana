@@ -7,19 +7,23 @@ import { SoundInstance } from "../../core/sound/SoundInstance";
 import { V } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { Diver } from "../diver/Diver";
+import { Harpoon } from "./Harpoon";
 
 const TETHER_LENGTH = 13.0; // meters
 const NUM_SEGMENTS = 25; // segments in the rope
 const RETRACT_TIME = 1; // seconds
+const FRICTION = 0.001;
 
 const SEGMENT_LENGTH = TETHER_LENGTH / (NUM_SEGMENTS + 1);
+
+const HARPOON_TETHER_OFFSET = V(-0.45, 0);
 
 export class Tether extends BaseEntity implements Entity {
   sprite: Graphics;
   retracting = false;
   constraints: DistanceConstraint[];
 
-  constructor(public diver: Diver, public harpoon: BaseEntity) {
+  constructor(public diver: Diver, public harpoon: Harpoon) {
     super();
 
     this.sprite = new Graphics();
@@ -55,7 +59,7 @@ export class Tether extends BaseEntity implements Entity {
 
     this.constraints.push(
       new DistanceConstraint(harpoon.body!, this.bodies[NUM_SEGMENTS - 1], {
-        localAnchorA: V(-0.45, 0),
+        localAnchorA: HARPOON_TETHER_OFFSET,
       })
     );
 
@@ -82,22 +86,41 @@ export class Tether extends BaseEntity implements Entity {
 
     await this.waitUntil(
       () =>
-        this.harpoon.localToWorld(V(-0.45, 0)).isub(this.diver.getPosition())
-          .magnitude < 0.3
+        this.getHarpoonPosition().isub(this.getHoldPosition()).magnitude < 0.3,
+      (dt) => {
+        const force = this.getHoldPosition()
+          .isub(this.getHarpoonPosition())
+          .imul(5.0);
+        this.harpoon.body.applyForce(force);
+
+        // extra friction to slow down the spinny junk
+        const v = V(this.harpoon.body.velocity).isub(this.diver.body.velocity);
+        this.harpoon.body.applyForce(v.imul(-0.1));
+        this.harpoon.body.angularVelocity *= Math.exp(-dt);
+      }
     );
   }
 
-  onTick() {
+  onTick(dt: number) {
     for (const body of this.bodies!) {
-      body.applyDamping(0.01);
+      const f = -1 * FRICTION;
+      body.applyForce([body.velocity[0] * f, body.velocity[1] * f]);
       body.applyForce([0, body.mass * 9.8]);
     }
+  }
+
+  getHoldPosition() {
+    return this.diver.getPosition();
+  }
+
+  getHarpoonPosition() {
+    return this.harpoon.localToWorld(HARPOON_TETHER_OFFSET);
   }
 
   onRender() {
     this.sprite.clear();
     this.sprite.lineStyle(0.04, 0x000000, 0.95);
-    const [diverX, diverY] = this.diver.getPosition();
+    const [diverX, diverY] = this.getHoldPosition();
     const [harpoonX, harpoonY] = this.harpoon.localToWorld(V(-0.45, 0));
 
     this.sprite.moveTo(diverX, diverY);

@@ -1,4 +1,4 @@
-import { Body, Box } from "p2";
+import { Body, Box, Capsule } from "p2";
 import { Sprite } from "pixi.js";
 import snd_fleshHit1 from "../../../resources/audio/impacts/flesh-hit-1.flac";
 import snd_fleshHit2 from "../../../resources/audio/impacts/flesh-hit-2.flac";
@@ -36,7 +36,7 @@ export abstract class BaseFish
   extends BaseEntity
   implements Entity, Harpoonable {
   sprite!: Sprite & GameSprite;
-  body: Body;
+  body!: Body;
   facingRight = true;
 
   width: number;
@@ -59,8 +59,12 @@ export abstract class BaseFish
     this.dropValue = dropValue;
     this.hp = hp;
 
-    this.body = new Body({ mass: 1, fixedRotation: true });
-    this.body.addShape(
+    this.body = this.makeBody(position, width, height);
+  }
+
+  makeBody(position: V2d, width: number, height: number) {
+    const body = new Body({ mass: 1, fixedRotation: true, position });
+    body.addShape(
       new Box({
         width,
         height,
@@ -68,7 +72,7 @@ export abstract class BaseFish
         collisionMask: CollisionGroups.All,
       })
     );
-    this.body.position = position;
+    return body;
   }
 
   onTick(dt: number) {
