@@ -1,19 +1,14 @@
 import Grid from "../../core/util/Grid";
-import { degToRad, lerp, stepToward } from "../../core/util/MathUtil";
-import {
-  rBool,
-  rInteger,
-  rNormal,
-  rSign,
-  rUniform,
-} from "../../core/util/Random";
-import { V } from "../../core/Vector";
+import { lerp, polarToVec } from "../../core/util/MathUtil";
+import { rUniform } from "../../core/util/Random";
+import { V, V2d } from "../../core/Vector";
+import { TILE_SIZE_METERS, WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE, WORLD_SIZE_METERS } from "../constants";
 import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
 import { TilePos } from "./WorldMap";
 
 // Terrain heights should be between these values
-const MIN_SURFACE_Y = 5;
-const MAX_SURFACE_Y = 40;
+const MIN_SURFACE_Y_TILE_COORDS = 5;
+const MAX_SURFACE_Y_TILE_COORDS = 40;
 
 export default class GroundMap {
   private solidMap: Grid<boolean> = new Grid();
@@ -86,7 +81,7 @@ export default class GroundMap {
       const heightPercent =
         (heightMap[x] - minGenHeight) / (maxGenHeight - minGenHeight);
       const minY = Math.floor(
-        lerp(MIN_SURFACE_Y, MAX_SURFACE_Y, heightPercent)
+        lerp(MIN_SURFACE_Y_TILE_COORDS, MAX_SURFACE_Y_TILE_COORDS, heightPercent)
       );
       for (let y = minY; y < this.maxY; y++) {
         this.solidMap.set([x, y], true);
@@ -98,76 +93,124 @@ export default class GroundMap {
     const strengthGrid: Grid<number> = new Grid();
 
     for (let x = this.minX; x < this.maxX; x++) {
-      for (let y = MIN_SURFACE_Y; y < this.maxY; y++) {
-        const t = this.caveTurbulence(x, y);
-        strengthGrid.set([x, y], t);
-        if (t < this.getCaveThreshold(x, y)) {
+      for (let y = MIN_SURFACE_Y_TILE_COORDS; y < this.maxY; y++) {
+        const turbulence = this.caveTurbulence(x, y);
+        const layeredTurbulence = turbulence * Math.sin(y / 30);
+        const tilesFromEdge = Math.min(
+          x - this.minX,
+          this.maxX - x,
+          y / 10, // We want caves to appear 10x further from the top than the sides/bottom
+          this.maxY - y
+        );
+        const transitionWidthTiles = 10;
+        const strength = tilesFromEdge < transitionWidthTiles ? lerp(1, layeredTurbulence, tilesFromEdge / transitionWidthTiles) : layeredTurbulence;
+        strengthGrid.set([x, y], strength);
+        if (strength < -0.2) {
           this.solidMap.set([x, y], false);
         }
       }
     }
   }
 
-  private getCaveThreshold(x: number, y: number): number {
-    if (y < 50) {
-      return -1;
-    } else {
-      const t = (2 * Math.PI * (y - 50)) / 120;
-      return Math.sin(t) - 0.4;
-    }
-  }
-
   private generateTunnels() {
-    // one tunnel on the left
-    const x1 = rInteger(this.minX * 0.9, this.minX * 0.05);
-    const y1 = this.getHighestTile(x1);
-    const d1 = rNormal(degToRad(90), degToRad(30));
-    const r1 = 6;
-    this.generateTunnel(x1, y1, r1, d1);
+    type RecursionState = {
+      position: V2d, // Start of tunnel.
+      direction: number, // Radians.
+      length: number, // Length of tunnel segment in meters.
+      width: number, // Width of tunnel in meters.  Will get smaller as we fork.,
+      recursionDepth: number,
+    };
 
-    // one tunnel on the right
-    const x2 = rInteger(this.maxX * 0.9, this.maxX * 0.05);
-    const y2 = this.getHighestTile(x2);
-    const d2 = rNormal(degToRad(90), degToRad(30));
-    const r2 = 4;
-    this.generateTunnel(x2, y2, r2, d2);
-  }
+    // Start with threes line going from surface to bottom of the world.
+      // We will then recursively subdivide, jitter, and fork those lines
+    const stateStack : RecursionState[] = [{
+      position: V(0, 0),
+      direction: Math.PI / 2,
+      length: WORLD_SIZE_METERS[1],
+      width: 8,
+      recursionDepth: 0
+    },{
+      position: V(WORLD_LEFT_EDGE * 3 / 4, 0),
+      direction: 3 * Math.PI / 8,
+      length: WORLD_SIZE_METERS[1],
+      width: 8,
+      recursionDepth: 0
+    },{
+      position: V(WORLD_RIGHT_EDGE * 3 / 4, 0),
+      direction: 5 * Math.PI / 8,
+      length: WORLD_SIZE_METERS[1],
+      width: 8,
+      recursionDepth: 0
+    }];
 
-  private generateTunnel(
-    x = rInteger(this.minX, this.maxX),
-    y = 5,
-    r = rUniform(1.5, 4),
-    direction = rUniform(0, Math.PI),
-    branchChance = r * 0.001
-  ) {
-    while (r > 1 && y > 0 && y < this.maxY && x > this.minX && x < this.maxX) {
-      this.removeCircle(Math.round(x), Math.round(y), Math.round(r));
-      x += r * Math.cos(direction);
-      y += r * Math.sin(direction);
-      // bias them downwards
-      direction = stepToward(direction, Math.PI / 2, 0.01);
-      // but do go somewhere random
-      direction += rNormal(0, degToRad(30));
-      r += rNormal(0, 1);
+    let s;
+    while (s = stateStack.pop()) {
+      if (s.length < 5 || s.recursionDepth > 10) {
+        for (let i = 0; i < s.length; i++) {
+          let p = s.position.add(polarToVec(s.direction, i));
+          this.removeCircle(p, s.width / 2);
+        }
+  
+        continue;
+      }
 
-      if (rBool(branchChance)) {
-        this.generateTunnel(
-          x,
-          y,
-          r / 2,
-          direction + rSign() * rUniform(degToRad(10), degToRad(50)),
-          branchChance * 0.5
-        );
-        branchChance *= 0.8;
+      const segmentEndPoint = s.position.add(polarToVec(s.direction, s.length));
+
+      // Subdivide
+      const subdivisionPercentage = rUniform(1/2, 2/3);
+
+      // Jitter
+      const jitterAngleOffset = rUniform(-Math.PI/8, Math.PI/8);
+      const trunkLength = s.length * subdivisionPercentage / Math.cos(jitterAngleOffset);
+      const trunkDirection = s.direction + jitterAngleOffset;
+
+      // Fork
+      const forkPoint = s.position.add(polarToVec(trunkDirection, trunkLength));
+      const mainForkV = segmentEndPoint.sub(forkPoint);
+      const forkLength = mainForkV.magnitude;
+      const mainForkAngle = mainForkV.angle;
+      const mainForkAngleOffset = mainForkAngle - trunkDirection 
+      const tributaryForkAngleOffset = Math.sign(-mainForkAngleOffset) * rUniform(0, Math.PI/4);
+
+      // Trunk
+      stateStack.push({
+        position: s.position,
+        direction: trunkDirection,
+        length: trunkLength,
+        width: s.width,
+        recursionDepth: s.recursionDepth + 1
+      });
+      // Main fork
+      stateStack.push({
+        position: forkPoint,
+        direction: mainForkAngle,
+        length: forkLength,
+        width: s.width * 0.95,
+        recursionDepth: s.recursionDepth + 1
+      });
+      // Tributary fork
+      if (s.width > 5) {
+        stateStack.push({
+          position: forkPoint,
+          direction: trunkDirection + tributaryForkAngleOffset,
+          length: forkLength,
+          width: s.width * 0.6,
+          recursionDepth: s.recursionDepth + 1
+        });
       }
     }
   }
 
-  private removeCircle(cx: number, cy: number, r: number): void {
-    const rCeil = Math.ceil(r);
+  private removeCircle(p: V2d, r: number): void {
+    const cx = Math.round(p.x / TILE_SIZE_METERS);
+    const cy = Math.round(p.y / TILE_SIZE_METERS);
+    const rCeil = Math.ceil(r / TILE_SIZE_METERS);
     for (let i = cx - rCeil; i < cx + rCeil; i++) {
       for (let j = cy - rCeil; j < cy + rCeil; j++) {
-        if (V(cx, cy).isub([i, j]).magnitude < r) {
+        if (V(cx, cy).isub([i, j]).magnitude < r
+            && i > this.minX + 5
+            && i < this.maxX - 5
+            && j < this.maxY - 5) {
           this.solidMap.set([i, j], false);
         }
       }
