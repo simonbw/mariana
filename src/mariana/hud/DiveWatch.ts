@@ -1,4 +1,4 @@
-import { Sprite, Text } from "pixi.js";
+import { SCALE_MODES, Sprite, Text } from "pixi.js";
 import img_diveWatchBack from "../../../resources/images/ui/dive-watch-back.png";
 import img_diveWatchNeedle from "../../../resources/images/ui/dive-watch-needle.png";
 import BaseEntity from "../../core/entity/BaseEntity";
@@ -35,9 +35,15 @@ export class DiveWatch extends BaseEntity implements Entity {
     sprite.anchor.set(1);
     sprite.scale.set(SCALE);
 
-    this.faceSprite = Sprite.from(img_diveWatchBack);
-    this.airNeedleSprite = Sprite.from(img_diveWatchNeedle);
-    this.depthNeedleSprite = Sprite.from(img_diveWatchNeedle);
+    this.faceSprite = Sprite.from(img_diveWatchBack, {
+      scaleMode: SCALE_MODES.LINEAR,
+    });
+    this.airNeedleSprite = Sprite.from(img_diveWatchNeedle, {
+      scaleMode: SCALE_MODES.LINEAR,
+    });
+    this.depthNeedleSprite = Sprite.from(img_diveWatchNeedle, {
+      scaleMode: SCALE_MODES.LINEAR,
+    });
 
     this.airNeedleSprite.anchor.set(0.5, 1);
     this.depthNeedleSprite.anchor.set(0.5, 1);

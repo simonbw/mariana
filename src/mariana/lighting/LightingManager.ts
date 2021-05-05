@@ -8,7 +8,6 @@ import {
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { V } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { Persistence } from "../config/Persistence";
 

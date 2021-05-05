@@ -1,4 +1,4 @@
-import { Sprite, Text } from "pixi.js";
+import { SCALE_MODES, Sprite, Text } from "pixi.js";
 import img_boat from "../../resources/images/environment/boat.png";
 import BaseEntity from "../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../core/entity/Entity";
@@ -38,7 +38,7 @@ export class Boat extends BaseEntity implements Entity {
   constructor() {
     super();
 
-    this.sprite = Sprite.from(img_boat);
+    this.sprite = Sprite.from(img_boat, { scaleMode: SCALE_MODES.NEAREST });
     this.sprite.layerName = Layer.WORLD_BACK;
     this.sprite.x = 0;
     this.sprite.y = 0;
@@ -53,6 +53,7 @@ export class Boat extends BaseEntity implements Entity {
     this.tooltip.position.set(0, 10);
     this.tooltip.anchor.set(0.5, 0);
     this.tooltip.alpha = 0;
+    this.tooltip.texture.baseTexture.scaleMode = SCALE_MODES.LINEAR;
 
     this.sprite.addChild(this.tooltip);
 

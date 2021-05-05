@@ -1,5 +1,11 @@
-import * as Pixi from "pixi.js";
-import { SCALE_MODES, settings as PixiSettings } from "pixi.js";
+import {
+  Container,
+  Filter,
+  Renderer as PixiRenderer,
+  SCALE_MODES,
+  settings as PixiSettings,
+  utils as PixiUtils,
+} from "pixi.js";
 import { GameSprite } from "../entity/Entity";
 import { V, V2d } from "../Vector";
 import { Camera2d } from "./Camera2d";
@@ -12,24 +18,25 @@ export class GameRenderer2d {
   defaultLayer: string = "_default";
   spriteCount: number = 0;
 
-  pixiRenderer: Pixi.Renderer;
-  stage: Pixi.Container;
+  pixiRenderer: PixiRenderer;
+  stage: Container;
   camera: Camera2d;
 
   constructor(private onResize?: ([width, height]: [number, number]) => void) {
-    Pixi.settings.RESOLUTION = window.devicePixelRatio || 1;
-    Pixi.utils.skipHello();
-    this.pixiRenderer = new Pixi.Renderer({
+    PixiSettings.RESOLUTION = window.devicePixelRatio || 1;
+    PixiSettings.SPRITE_MAX_TEXTURES = 4;
+    PixiUtils.skipHello();
+    this.pixiRenderer = new PixiRenderer({
       width: window.innerWidth,
       height: window.innerHeight,
       antialias: false,
       autoDensity: true,
-      resolution: Pixi.settings.RESOLUTION,
+      resolution: PixiSettings.RESOLUTION,
     });
     document.body.appendChild(this.pixiRenderer.view);
     this.showCursor();
 
-    this.stage = new Pixi.Container();
+    this.stage = new Container();
     this.camera = new Camera2d(this);
 
     this.createLayer(this.defaultLayer, new LayerInfo());
@@ -63,18 +70,17 @@ export class GameRenderer2d {
   }
 
   setResolution(resolution: number) {
+    PixiSettings.RESOLUTION = resolution;
     const view = this.pixiRenderer.view;
     this.pixiRenderer.destroy();
-    this.pixiRenderer = new Pixi.Renderer({
+    this.pixiRenderer = new PixiRenderer({
       width: window.innerWidth,
       height: window.innerHeight,
       antialias: false,
       autoDensity: true,
-      resolution,
+      resolution: PixiSettings.RESOLUTION,
       view,
     });
-    PixiSettings.RESOLUTION = resolution;
-    PixiSettings.SCALE_MODE = SCALE_MODES.NEAREST;
 
     this.handleResize();
   }
@@ -119,17 +125,17 @@ export class GameRenderer2d {
     this.spriteCount -= 1;
   }
 
-  addLayerFilter(filter: Pixi.Filter, layerName: string): void {
+  addLayerFilter(filter: Filter, layerName: string): void {
     const layer = this.getLayerInfo(layerName).container;
     layer.filters = [...layer.filters!, filter];
   }
 
-  addStageFilter(filter: Pixi.Filter): void {
+  addStageFilter(filter: Filter): void {
     this.stage.filters ??= [];
     this.stage.filters.push(filter);
   }
 
-  removeStageFilter(filterToRemove: Pixi.Filter): void {
+  removeStageFilter(filterToRemove: Filter): void {
     this.stage.filters = (this.stage.filters ?? []).filter(
       (filter) => filter != filterToRemove
     );

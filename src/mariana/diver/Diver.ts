@@ -1,5 +1,5 @@
 import { Body, Capsule } from "p2";
-import { Sprite, Texture } from "pixi.js";
+import { SCALE_MODES, Sprite, Texture } from "pixi.js";
 import snd_dialogHelmetPain1 from "../../../resources/audio/dialog/dialog_helmet_pain1.flac";
 import snd_dialogHelmetPain2 from "../../../resources/audio/dialog/dialog_helmet_pain2.flac";
 import snd_dialogHelmetPain3 from "../../../resources/audio/dialog/dialog_helmet_pain3.flac";
@@ -60,9 +60,9 @@ export class Diver extends BaseEntity implements Entity {
   isDead = false;
 
   textures = {
-    forward: Texture.from(img_diver),
-    left: Texture.from(img_diverLeft),
-    right: Texture.from(img_diverRight),
+    forward: Texture.from(img_diver, { scaleMode: SCALE_MODES.NEAREST }),
+    left: Texture.from(img_diverLeft, { scaleMode: SCALE_MODES.NEAREST }),
+    right: Texture.from(img_diverRight, { scaleMode: SCALE_MODES.NEAREST }),
   };
 
   harpoonGun: HarpoonGun;

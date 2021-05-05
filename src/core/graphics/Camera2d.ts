@@ -121,52 +121,50 @@ export class Camera2d extends BaseEntity implements Entity {
   }
 
   // Convert screen coordinates to world coordinates
-  toWorld([x, y]: V2d, depth: number = 1.0): V2d {
+  toWorld([x, y]: V2d, parallax = V(1.0, 1.0)): V2d {
     let p = new Point(x, y);
-    p = this.getMatrix(depth).applyInverse(p, p);
+    p = this.getMatrix(parallax).applyInverse(p, p);
     return V(p.x, p.y);
   }
 
   // Convert world coordinates to screen coordinates
-  toScreen([x, y]: V2d, depth = 1.0): V2d {
+  toScreen([x, y]: V2d, parallax = V(1.0, 1.0)): V2d {
     let p = new Point(x, y);
-    p = this.getMatrix(depth).apply(p, p);
+    p = this.getMatrix(parallax).apply(p, p);
     return V(p.x, p.y);
   }
 
   // Creates a transformation matrix to go from screen world space to screen space.
-  getMatrix(depth: number = 1.0, [ax, ay]: V2d = V(0, 0)): Matrix {
+  getMatrix(
+    [px, py]: [number, number] = [1, 1],
+    [ax, ay]: V2d = V(0, 0)
+  ): Matrix {
     const [w, h] = this.getViewportSize();
     const { x: cx, y: cy, z, angle } = this;
-    const scale = z * depth;
 
     return (
       new Matrix()
         // align the anchor with the camera
-        .translate(ax * depth, ay * depth)
-        .translate(-cx * depth, -cy * depth)
+        .translate(ax * px, ay * py)
+        .translate(-cx * px, -cy * py)
         // do all the scaling and rotating
-        .scale(scale, scale)
+        .scale(z * px, z * py)
         .rotate(angle)
         // put it back
-        .translate(-ax * scale, -ay * scale)
+        .translate(-ax * z, -ay * z)
+        .scale(1 / px, 1 / py)
         // Put it on the center of the screen
         .translate(w / 2.0, h / 2.0)
     );
   }
 
-  paralaxToDepth(paralax: number): number {
-    return (paralax - 1.0) * this.paralaxScale * this.z + 1.0;
-  }
-
   // Update the properties of a renderer layer to match this camera
   updateLayer(layer: LayerInfo) {
     const container = layer.container;
-    if (layer.paralax !== 0) {
-      const depth = this.paralaxToDepth(layer.paralax);
-      if (depth !== 0) {
-        container.transform.setFromMatrix(this.getMatrix(depth, layer.anchor));
-      }
+    if (!layer.paralax.equals([0, 0])) {
+      container.transform.setFromMatrix(
+        this.getMatrix(layer.paralax, layer.anchor)
+      );
     }
   }
 }

@@ -19,7 +19,7 @@ export class Minimap extends BaseEntity implements Entity {
     const tileset = getDefaultTileset();
 
     const { minX, maxX, maxY } = worldMap;
-    for (let x = minX; x < maxX; x++) {
+    for (let x = minX - 5; x < maxX + 5; x++) {
       for (let y = 0; y < maxY; y++) {
         if (worldMap.tileIsSolid([x, y])) {
           tilemap.tile(tileset.getTexture(7), x * 64, y * 64);

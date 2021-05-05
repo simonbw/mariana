@@ -12,14 +12,18 @@ const UPSCALE = 8;
 export class Cloud extends BaseEntity implements Entity {
   sprite: Graphics & GameSprite;
 
-  constructor(position: V2d, front: boolean = true) {
+  constructor(
+    position: V2d,
+    front: boolean = true,
+    public windEffect = rUniform(0.1, 0.2)
+  ) {
     super();
 
     const graphics = new Graphics();
 
     for (let i = 0; i < 8; i++) {
-      graphics.beginFill(0xffffff, 0.8);
-      const r = rUniform(1.5, 4) * UPSCALE;
+      graphics.beginFill(0xffffff, 0.5);
+      const r = rUniform(0.75, 4) * UPSCALE;
       graphics.drawCircle(i * UPSCALE, -r, r);
       graphics.endFill();
     }
@@ -34,10 +38,10 @@ export class Cloud extends BaseEntity implements Entity {
 
   onRender(dt: number) {
     const wind = getWind(this.game!);
-    this.sprite.x += dt * wind * 0.1;
+    this.sprite.x += dt * wind * this.windEffect;
 
-    if (this.sprite.x > WORLD_RIGHT_EDGE + 50) {
-      this.sprite.x = WORLD_LEFT_EDGE - 50;
+    if (this.sprite.x > WORLD_RIGHT_EDGE + 20) {
+      this.sprite.x = WORLD_LEFT_EDGE - 20;
     }
   }
 }

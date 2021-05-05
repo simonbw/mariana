@@ -1,11 +1,13 @@
 import Game from "../../core/Game";
 import { GameRenderer2d } from "../../core/graphics/GameRenderer2d";
 import { LayerInfo } from "../../core/graphics/LayerInfo";
+import { V } from "../../core/Vector";
 
 // Layers for rendering stuff in front of other stuff
 export enum Layer {
   // The real background layer
   BACKGROUND = "background",
+  SUN = "sun",
   // The clouds, has paralax maybe?
   CLOUDS = "clouds",
   CLOUDS2 = "clouds2",
@@ -44,11 +46,12 @@ export function initLayers(game: Game) {
   }
 
   for (const layerName of PARALAX_FREE_LAYERS) {
-    game.renderer.layerInfos.get(layerName)!.paralax = 0;
+    game.renderer.layerInfos.get(layerName)!.paralax.set(0, 0);
   }
 
-  game.renderer.layerInfos.get(Layer.CLOUDS)!.paralax = 0.87;
-  game.renderer.layerInfos.get(Layer.CLOUDS2)!.paralax = 0.9;
+  game.renderer.layerInfos.get(Layer.SUN)!.paralax.set(0.1, 0.9);
+  game.renderer.layerInfos.get(Layer.CLOUDS)!.paralax.set(0.5, 1.0);
+  game.renderer.layerInfos.get(Layer.CLOUDS2)!.paralax.set(0.7, 1.0);
 
   // game.renderer.layerInfos.get(Layer.BACKGROUND)!.paralax = 0.9;
 
