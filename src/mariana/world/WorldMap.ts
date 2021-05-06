@@ -16,6 +16,9 @@ import { Minimap } from "./Minimap";
 import { isWorldAnchor } from "./WorldAnchor";
 
 export type TilePos = [number, number];
+export type ChunkPos = [number, number];
+
+export const CHUNK_SIZE = 4; // number of tiles
 
 /** Keeps track of all the tiles and stuff */
 export class WorldMap extends BaseEntity implements Entity {
@@ -102,7 +105,7 @@ export class WorldMap extends BaseEntity implements Entity {
   }
 
   /** Get the tile that a world position is in */
-  worldToTile(worldPos: V2d): V2d {
+  worldToTile(worldPos: V2d): TilePos {
     const tilePos = worldPos.mul(1 / TILE_SIZE_METERS);
     tilePos[0] = Math.floor(tilePos[0]);
     tilePos[1] = Math.floor(tilePos[1]);
@@ -112,6 +115,21 @@ export class WorldMap extends BaseEntity implements Entity {
   /** Get the center of a world tile */
   tileToWorld(tilePos: TilePos): V2d {
     return V(tilePos).iadd([0.5, 0.5]).imul(TILE_SIZE_METERS);
+  }
+
+  worldToChunk(worldPos: V2d): ChunkPos {
+    // TODO: Implement me
+    return [0, 0];
+  }
+
+  tileToChunk(tilePos: TilePos): ChunkPos {
+    // TODO: Implement me
+    return [0, 0];
+  }
+
+  chunkToTiles(chunkPos: ChunkPos): TilePos[] {
+    // TODO: Implement me
+    return [];
   }
 
   getAnchoredTiles(): TilePos[] {
@@ -133,7 +151,6 @@ export class WorldMap extends BaseEntity implements Entity {
     for (const tile of this.tilesLoaded) {
       tilesToUnload.add(tile);
     }
-    let tilesLoaded = 0;
 
     // for each tile of tilesToLoad
     for (const tile of tilesToLoad) {
@@ -142,7 +159,6 @@ export class WorldMap extends BaseEntity implements Entity {
       //   if tile isn't loaded: load it
       if (!this.tilesLoaded.has(tile)) {
         this.loadTile(tile);
-        tilesLoaded++;
       }
     }
 
