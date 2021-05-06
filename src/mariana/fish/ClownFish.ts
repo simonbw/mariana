@@ -140,6 +140,14 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
     this.wasSubmerged = isSubmerged;
   }
 
+  // store here to avoid allocating
+  private _heading = V(1, 0);
+  private _normal = V(0, 1);
+  private _thrust = V(0, 0);
+  private _drag = V(0, 0);
+  private _lift = V(0, 0);
+  private _force = V(0, 0);
+
   // TODO: Make this faster
   onTick(dt: number) {
     if (this.body.position[1] < 0) {
@@ -150,23 +158,26 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
       this.aimSpring.stiffness = AIM_STIFFNESS;
       this.aimSpring.restAngle = this.targetVelocity.angle;
 
-      const velocity = V(this.body.velocity);
+      const velocity = this.getVelocity();
 
-      const heading = polarToVec(this.body.angle, 1);
-      const normal = heading.rotate90ccw();
+      this._heading.angle = this.body.angle;
+      this._heading.inormalize();
+      this._normal.set(this._heading).irotate90ccw();
 
       // from the fish swimming
       const thrust = this.getThrust(
         velocity.magnitude,
         this.targetVelocity.magnitude
       );
-      const drag = velocity.dot(heading) * DRAG;
-      const lift = normal.dot(velocity) * LIFT;
+      const drag = velocity.dot(this._heading) * -DRAG;
+      const lift = this._normal.dot(velocity) * -LIFT;
 
-      this.body.angle = heading.angle;
-      this.body.applyForce(heading.mul(thrust));
-      this.body.applyForce(heading.mul(-drag));
-      this.body.applyForce(normal.mul(-lift));
+      this._thrust.set(this._heading).imul(thrust);
+      this._drag.set(this._heading).imul(drag);
+      this._lift.set(this._normal).imul(lift);
+
+      this._force.set(this._thrust).iadd(this._drag).iadd(this._lift);
+      this.body.applyForce(this._force);
     }
   }
 }

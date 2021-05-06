@@ -6,6 +6,7 @@ import Entity from "../../core/entity/Entity";
 /** Useful for rendering react to the screen when you want it */
 export class ReactEntity<Props> extends BaseEntity implements Entity {
   el!: HTMLDivElement;
+  autoRender = true;
 
   constructor(private getContent: () => React.ReactElement) {
     super();
@@ -16,7 +17,9 @@ export class ReactEntity<Props> extends BaseEntity implements Entity {
   }
 
   onRender() {
-    this.reactRender();
+    if (this.autoRender) {
+      this.reactRender();
+    }
   }
 
   onAdd() {

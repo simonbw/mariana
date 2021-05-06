@@ -39,7 +39,7 @@ export class SplashParticle extends BaseEntity implements Entity {
     this.destroy();
   }
 
-  onTick(dt: number) {
+  onSlowTick(dt: number) {
     const waves = getWaves(this.game!);
     const sprite = this.sprite! as Sprite;
 

@@ -5,7 +5,7 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { rBool } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Diver } from "../diver/Diver";
-import { GroundTile } from "../world/GroundTile";
+import { GroundTile } from "../region/GroundTile";
 import { BaseFish } from "./BaseFish";
 
 const SPEED = 5;

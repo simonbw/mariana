@@ -25,7 +25,17 @@ export default class PauseMenu extends BaseEntity implements Entity {
     );
   }
 
-  onUnpause() {}
+  onAdd(game: Game) {
+    this.reactEntity.autoRender = game.paused;
+  }
+
+  onPause() {
+    this.reactEntity.autoRender = true;
+  }
+
+  onUnpause() {
+    this.reactEntity.autoRender = false;
+  }
 
   onKeyDown(key: KeyCode) {
     switch (key) {
