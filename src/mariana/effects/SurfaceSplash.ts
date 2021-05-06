@@ -2,9 +2,10 @@ import { Sprite } from "pixi.js";
 import img_waterSplash from "../../../resources/images/particles/water-splash.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import Game from "../../core/Game";
 import { colorLerp } from "../../core/util/ColorUtils";
-import { clamp } from "../../core/util/MathUtil";
-import { rDirection, rUniform } from "../../core/util/Random";
+import { clamp, polarToVec } from "../../core/util/MathUtil";
+import { rDirection, rRound, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { getWaves, WATER_COLOR } from "./Waves";
@@ -54,5 +55,28 @@ export class SplashParticle extends BaseEntity implements Entity {
     if (sprite.y >= waves.getSurfaceHeight(sprite.x)) {
       this.destroy();
     }
+  }
+}
+
+export class SurfaceSplash extends BaseEntity implements Entity {
+  constructor(private x: number, private speed: number) {
+    super();
+  }
+
+  onAdd(game: Game) {
+    const waves = getWaves(game);
+    const n = rRound(25 * this.speed ** 0.7);
+    for (let i = 0; i < n; i++) {
+      const x = rUniform(-0.3, 0.3) + this.x;
+      const y = waves.getSurfaceHeight(x);
+      const theta = waves.getSurfaceAngle(x);
+      const velocity = polarToVec(
+        rUniform(-Math.PI, Math.PI) + theta,
+        rUniform(0.5, 1) * this.speed
+      );
+      this.game!.addEntity(new SplashParticle(V(x, y), velocity));
+    }
+
+    this.destroy();
   }
 }

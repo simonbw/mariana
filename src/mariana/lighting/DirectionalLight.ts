@@ -27,7 +27,7 @@ export class DirectionalLight extends BaseEntity implements Entity {
     super();
 
     this.lightSprite = Sprite.from(img_flashlightOverlay);
-    this.lightSprite.anchor.set(0, 0.5);
+    this.lightSprite.anchor.set(0.1, 0.5);
     this.lightSprite.blendMode = BLEND_MODES.ADD;
 
     this.setPosition(position);

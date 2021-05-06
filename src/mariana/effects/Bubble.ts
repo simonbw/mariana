@@ -4,7 +4,7 @@ import img_bubble from "../../../resources/images/particles/bubble.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import { polarToVec } from "../../core/util/MathUtil";
-import { rNormal, rRound, rUniform } from "../../core/util/Random";
+import { rNormal, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { getDiver } from "../diver/Diver";
@@ -34,7 +34,7 @@ export class Bubble extends BaseEntity implements Entity {
     this.sprite.layerName = Layer.WORLD_EXTRA_FRONT;
   }
 
-  onTick(dt: number) {
+  onSlowTick(dt: number) {
     const sprite = this.sprite! as Sprite;
     this.velocity[1] += dt * -RISE_SPEED;
 
@@ -47,9 +47,20 @@ export class Bubble extends BaseEntity implements Entity {
 
     sprite.scale.set(this.size / sprite.texture.width);
 
+    if (this.size > MINIMUM_BREATHING_SIZE) {
+      const diver = getDiver(this.game);
+      if (diver) {
+        const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
+        if (dist < this.size + 0.5) {
+          diver.air.giveOxygen(dt);
+        }
+      }
+    }
+
     const waves = getWaves(this.game!);
     const x = sprite.x;
     const surfaceY = waves.getSurfaceHeight(x);
+
     if (sprite.y <= surfaceY) {
       const speed = vec2.len(this.velocity);
       const nParticles = Math.ceil(this.size * 3);
@@ -67,16 +78,6 @@ export class Bubble extends BaseEntity implements Entity {
       }
 
       this.destroy();
-    }
-
-    if (this.size > MINIMUM_BREATHING_SIZE) {
-      const diver = getDiver(this.game);
-      if (diver) {
-        const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
-        if (dist < this.size + 0.5) {
-          diver.air.giveOxygen(dt);
-        }
-      }
     }
   }
 }

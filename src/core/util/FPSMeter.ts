@@ -19,6 +19,9 @@ export default class FPSMeter extends BaseEntity implements Entity {
       fontSize: 12,
       fill: "white",
       align: "left",
+      dropShadow: true,
+      dropShadowDistance: 0,
+      dropShadowBlur: 2,
     });
     this.sprite.layerName = layerName;
   }

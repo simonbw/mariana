@@ -10,6 +10,7 @@ import { Water } from "../environment/Background";
 import { Sky } from "../environment/Sky";
 import { isFish } from "../fish/BaseFish";
 import { ClownFish } from "../fish/ClownFish";
+import { School } from "../fish/School";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
@@ -50,11 +51,24 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
 
-      game.addEntities([new ClownFish(V(5, 3))]);
-      game.addEntities([new ClownFish(V(6, 4))]);
-      game.addEntities([new ClownFish(V(7, 3))]);
-      game.addEntities([new ClownFish(V(8, 4))]);
-      game.addEntities([new ClownFish(V(9, 3))]);
+      const feesh = game.addEntities([
+        new ClownFish(V(5, 3)),
+        new ClownFish(V(5, 4)),
+        new ClownFish(V(5, 5)),
+        new ClownFish(V(6, 5)),
+        new ClownFish(V(6, 6)),
+        new ClownFish(V(6, 7)),
+        new ClownFish(V(7, 5)),
+        new ClownFish(V(7, 6)),
+        new ClownFish(V(7, 7)),
+        new ClownFish(V(8, 5)),
+        new ClownFish(V(8, 6)),
+        new ClownFish(V(8, 7)),
+        new ClownFish(V(9, 5)),
+        new ClownFish(V(9, 6)),
+        new ClownFish(V(9, 7)),
+      ]);
+      game.addEntity(new School(feesh));
 
       game.dispatch({ type: "diveStart" });
     },

@@ -1,4 +1,4 @@
-import { Body, Box, Capsule } from "p2";
+import { Body, Box } from "p2";
 import { Sprite } from "pixi.js";
 import snd_fleshHit1 from "../../../resources/audio/impacts/flesh-hit-1.flac";
 import snd_fleshHit2 from "../../../resources/audio/impacts/flesh-hit-2.flac";
@@ -39,40 +39,23 @@ export abstract class BaseFish
   body!: Body;
   facingRight = true;
 
-  width: number;
-  height: number;
   speed: number;
   friction: number;
   dropValue: number;
   hp: number;
 
-  constructor(
-    position: V2d,
-    { width, height, speed = 3, friction = 2, dropValue = 1, hp = 10 }: Options
-  ) {
+  constructor({
+    speed = 3,
+    friction = 2,
+    dropValue = 1,
+    hp = 10,
+  }: Options = {}) {
     super();
 
-    this.width = width;
-    this.height = height;
     this.speed = speed;
     this.friction = friction;
     this.dropValue = dropValue;
     this.hp = hp;
-
-    this.body = this.makeBody(position, width, height);
-  }
-
-  makeBody(position: V2d, width: number, height: number) {
-    const body = new Body({ mass: 1, fixedRotation: true, position });
-    body.addShape(
-      new Box({
-        width,
-        height,
-        collisionGroup: CollisionGroups.Fish,
-        collisionMask: CollisionGroups.All,
-      })
-    );
-    return body;
   }
 
   onTick(dt: number) {
@@ -84,22 +67,10 @@ export abstract class BaseFish
     }
   }
 
-  onRender(dt: number) {
-    this.sprite.position.set(...this.body!.position);
-
-    const scale = this.width / this.sprite.texture.width;
-    if (this.facingRight) {
-      this.sprite.scale.set(-scale, scale);
-    } else {
-      this.sprite.scale.set(scale, scale);
+  onRender() {
+    if (this.sprite && this.body) {
+      this.sprite.position.set(...this.body.position);
     }
-  }
-
-  // Moves the fish
-  swim(direction: V2d, speed = this.speed) {
-    this.sprite.scale.set(this.width / this.sprite.texture.width);
-    this.facingRight = direction[0] > 0;
-    this.body.applyForce(direction.mul(speed));
   }
 
   // when we're hit

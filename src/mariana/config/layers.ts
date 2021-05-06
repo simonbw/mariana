@@ -8,7 +8,7 @@ export enum Layer {
   // The real background layer
   BACKGROUND = "background",
   SUN = "sun",
-  // The clouds, has paralax maybe?
+  // The clouds, for parallax
   CLOUDS = "clouds",
   CLOUDS2 = "clouds2",
   // Stuff that renders behind the normal stuff
@@ -23,6 +23,8 @@ export enum Layer {
   WORLD_EXTRA_FRONT = "world_extra_front",
   // Layer reserved for rendering lighting
   LIGHTING = "lighting",
+  // Stuff that's still in the world, but is on top of the lighting
+  GLOW = "glow",
   // Stuff not in the world, so it doesn't move when the camera moves
   HUD = "hud",
   // Stuff above even the HUD
