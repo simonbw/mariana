@@ -1,10 +1,10 @@
 import Grid from "../../core/util/Grid";
 import { lerp, polarToVec } from "../../core/util/MathUtil";
 import { rUniform } from "../../core/util/Random";
+import { TilePos } from "../../core/util/TilePos";
 import { V, V2d } from "../../core/Vector";
 import { TILE_SIZE_METERS, WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE, WORLD_SIZE_METERS } from "../constants";
 import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
-import { TilePos } from "./WorldMap";
 
 // Terrain heights should be between these values
 const MIN_SURFACE_Y_TILE_COORDS = 5;

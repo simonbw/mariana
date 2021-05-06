@@ -3,7 +3,6 @@ import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import Grid from "../../core/util/Grid";
-import GridSet from "../../core/util/GridSet";
 import { rInteger } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
@@ -13,19 +12,16 @@ import BiomeMap from "./BiomeMap";
 import GroundMap from "./GroundMap";
 import { GroundTile } from "./GroundTile";
 import { Minimap } from "./Minimap";
+import SubGridSet from "./SubGridSet";
+import { TilePos } from "./TilePos";
 import { isWorldAnchor } from "./WorldAnchor";
-
-export type TilePos = [number, number];
-export type ChunkPos = [number, number];
-
-export const CHUNK_SIZE = 4; // number of tiles
 
 /** Keeps track of all the tiles and stuff */
 export class WorldMap extends BaseEntity implements Entity {
   id = "worldMap";
   sprite!: CompositeTilemap & GameSprite;
 
-  tilesLoaded = new GridSet();
+  tilesLoaded : SubGridSet = new SubGridSet();
   tileEntities: Grid<Entity[]> = new Grid();
   groundMap: GroundMap;
   biomeMap: BiomeMap;
@@ -73,30 +69,23 @@ export class WorldMap extends BaseEntity implements Entity {
   }
 
   loadTile(tilePos: TilePos): void {
-    if (!this.tilesLoaded.has(tilePos)) {
-      this.tilesLoaded.add(tilePos);
+    const isSolid = this.tileIsSolid(tilePos);
 
-      const isSolid = this.tileIsSolid(tilePos);
+    if (isSolid) {
+      const worldPos = this.tileToWorld(tilePos);
+      const tileset = getDefaultTileset();
+      const tileType = this.getTileType(tilePos);
+      const groundTile = new GroundTile(worldPos);
+      this.addChild(groundTile);
+      this.tileEntities.set(tilePos, [groundTile]);
 
-      if (isSolid) {
-        const worldPos = this.tileToWorld(tilePos);
-        const tileset = getDefaultTileset();
-        const tileType = this.getTileType(tilePos);
-        const groundTile = new GroundTile(worldPos);
-        this.addChild(groundTile);
-        this.tileEntities.set(tilePos, [groundTile]);
-
-        const tx = tilePos[0] * 64;
-        const ty = tilePos[1] * 64;
-        this.sprite.tile(tileset.getTexture(tileType), tx, ty);
-      }
+      const tx = tilePos[0] * 64;
+      const ty = tilePos[1] * 64;
+      this.sprite.tile(tileset.getTexture(tileType), tx, ty);
     }
   }
 
   unloadTile(tilePos: TilePos): void {
-    // this.tileEntities.set;
-    this.tilesLoaded.delete(tilePos);
-
     for (const entity of this.tileEntities.get(tilePos) ?? []) {
       entity.destroy();
     }
@@ -117,55 +106,32 @@ export class WorldMap extends BaseEntity implements Entity {
     return V(tilePos).iadd([0.5, 0.5]).imul(TILE_SIZE_METERS);
   }
 
-  worldToChunk(worldPos: V2d): ChunkPos {
-    // TODO: Implement me
-    return [0, 0];
-  }
-
-  tileToChunk(tilePos: TilePos): ChunkPos {
-    // TODO: Implement me
-    return [0, 0];
-  }
-
-  chunkToTiles(chunkPos: ChunkPos): TilePos[] {
-    // TODO: Implement me
-    return [];
-  }
-
-  getAnchoredTiles(): TilePos[] {
-    const tilesToLoad: TilePos[] = [];
+  getAnchoredTiles(): SubGridSet {
+    const tilesToLoad = new SubGridSet();
     const anchors = this.game!.entities.getByFilter(isWorldAnchor);
     for (const anchor of anchors) {
-      tilesToLoad.push(...anchor.getTilesToLoad(this));
+      tilesToLoad.add(anchor.getTilesToLoad(this));
     }
     return tilesToLoad;
   }
 
   onSlowTick() {
-    // TODO: This is way too slow
-    // get tilesToLoad
-    const tilesToLoad = this.getAnchoredTiles();
+    const lastFramesTiles : SubGridSet = this.tilesLoaded;
+    const currentFramesTiles : SubGridSet = this.getAnchoredTiles();
 
-    // put tiles loaded into set tilesToUnload
-    const tilesToUnload = new GridSet();
-    for (const tile of this.tilesLoaded) {
-      tilesToUnload.add(tile);
-    }
-
-    // for each tile of tilesToLoad
-    for (const tile of tilesToLoad) {
-      //   remove tile from tilesToUnload
-      tilesToUnload.delete(tile);
-      //   if tile isn't loaded: load it
-      if (!this.tilesLoaded.has(tile)) {
-        this.loadTile(tile);
+    for (const tile of currentFramesTiles) {
+      if (!lastFramesTiles.has(tile)) {
+        this.loadTile(tile as TilePos);
       }
     }
 
-    // for each tile of tilesToUnload
-    for (const tile of tilesToUnload) {
-      this.unloadTile(V(tile));
+    for (const tile of lastFramesTiles) {
+      if (!currentFramesTiles.has(tile)) {
+        this.unloadTile(tile as TilePos);
+      }
     }
+
+    this.tilesLoaded = currentFramesTiles;
   }
 }
 
