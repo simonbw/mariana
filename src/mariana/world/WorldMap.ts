@@ -122,21 +122,21 @@ export class WorldMap extends BaseEntity implements Entity {
 
   onSlowTick() {
     const lastFramesTiles: SubGridSet = this.tilesLoaded;
-    const thisFramesTiles: SubGridSet = this.getAnchoredTiles();
+    const currentFramesTiles: SubGridSet = this.getAnchoredTiles();
 
-    for (const tile of thisFramesTiles) {
+    for (const tile of currentFramesTiles) {
       if (!lastFramesTiles.has(tile)) {
         this.loadTile(tile as TilePos);
       }
     }
 
     for (const tile of lastFramesTiles) {
-      if (!thisFramesTiles.has(tile)) {
+      if (!currentFramesTiles.has(tile)) {
         this.unloadTile(tile as TilePos);
       }
     }
 
-    this.tilesLoaded = thisFramesTiles;
+    this.tilesLoaded = currentFramesTiles;
   }
 }
 

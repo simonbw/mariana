@@ -8,6 +8,7 @@ import EntityList from "./EntityList";
 import { GameRenderer2d } from "./graphics/GameRenderer2d";
 import { IOManager } from "./io/IO";
 import CustomWorld from "./physics/CustomWorld";
+import { Counter } from "./util/Counter";
 import { lerp } from "./util/MathUtil";
 
 interface GameOptions {
@@ -468,4 +469,8 @@ export default class Game {
       }
     }
   };
+
+  public debugGetCommonEntities() {
+    const counts = new Counter<string>();
+  }
 }
