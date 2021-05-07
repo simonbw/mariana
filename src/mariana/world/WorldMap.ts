@@ -108,7 +108,7 @@ export class WorldMap extends BaseEntity implements Entity {
 
   /** Get the center of a world tile */
   tileToWorld(tilePos: TilePos): V2d {
-    return V(tilePos).imul(TILE_SIZE_METERS);
+    return V(tilePos).iadd([0.5, 0.5]).imul(TILE_SIZE_METERS);
   }
 
   getAnchoredTiles(): SubGridSet {
