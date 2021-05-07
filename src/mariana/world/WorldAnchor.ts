@@ -1,46 +1,38 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { SubGrid } from "../../core/util/SubGrid";
 import { V, V2d } from "../../core/Vector";
-import { ChunkPos, TilePos, WorldMap } from "./WorldMap";
+import { WorldMap } from "./WorldMap";
 
 /** Keeps certain tiles loaded */
 export class WorldAnchor extends BaseEntity implements Entity {
   constructor(
     public getCenter: () => V2d,
     /** Sizee in meters */
-    public width: number = 1,
+    public widthMeters: number = 1,
     /** Sizee in meters */
-    public height: number = 1
+    public heightMeters: number = 1
   ) {
     super();
   }
 
   /** Returns a list of tiles that should stay loaded right now */
-  getTilesToLoad(map: WorldMap): TilePos[] {
-    const tiles: TilePos[] = [];
-    const [x, y] = map.worldToTile(this.getCenter());
-    const [minX, minY] = map.worldToTile(V(x - this.width, y - this.height));
-    const [maxX, maxY] = map.worldToTile(V(x + this.width, y + this.height));
-    for (let i = minX; i <= maxX; i++) {
-      for (let j = minY; j <= maxY; j++) {
-        tiles.push([x + i, y + j]);
-      }
-    }
-    return tiles;
-  }
-
-  /** Returns a list of tiles that should stay loaded right now */
-  getChunksToLoad(map: WorldMap): ChunkPos[] {
-    const chunks: ChunkPos[] = [];
-    const [x, y] = map.worldToChunk(this.getCenter());
-    const [minX, minY] = map.worldToChunk(V(x - this.width, y - this.height));
-    const [maxX, maxY] = map.worldToChunk(V(x + this.width, y + this.height));
-    for (let i = minX; i <= maxX; i++) {
-      for (let j = minY; j <= maxY; j++) {
-        chunks.push([x + i, y + j]);
-      }
-    }
-    return chunks;
+  getTilesToLoad(map: WorldMap): SubGrid {
+    const positionWorld = this.getCenter();
+    const halfDimensionMeters = V(this.widthMeters / 2, this.heightMeters / 2);
+    const upperLeftCornerTile = V(
+      map.worldToTile(positionWorld.sub(halfDimensionMeters))
+    );
+    const lowerRightCornerTile = V(
+      map.worldToTile(positionWorld.add(halfDimensionMeters))
+    );
+    const dimensionsTile = lowerRightCornerTile.sub(upperLeftCornerTile);
+    return new SubGrid(
+      upperLeftCornerTile.x,
+      upperLeftCornerTile.y,
+      dimensionsTile.x,
+      dimensionsTile.y
+    );
   }
 }
 

@@ -35,6 +35,7 @@ export default class PauseMenu extends BaseEntity implements Entity {
 
   onUnpause() {
     this.reactEntity.autoRender = false;
+    this.reactEntity.reactRender();
   }
 
   onKeyDown(key: KeyCode) {

@@ -3,12 +3,11 @@ import { Sprite } from "pixi.js";
 import img_bubble from "../../../resources/images/particles/bubble.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
-import { polarToVec } from "../../core/util/MathUtil";
-import { rNormal, rUniform } from "../../core/util/Random";
+import { rNormal } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
-import { getDiver } from "../diver/Diver";
-import { SplashParticle } from "./SurfaceSplash";
+import { getWorldMap } from "../world/WorldMap";
+import { SurfaceSplash } from "./SurfaceSplash";
 import { getWaves } from "./Waves";
 
 const FRICTION = 1.5;
@@ -35,6 +34,16 @@ export class Bubble extends BaseEntity implements Entity {
   }
 
   onSlowTick(dt: number) {
+    if (
+      !getWorldMap(this.game!)!.worldPointIsLoaded([
+        this.sprite.x,
+        this.sprite.y,
+      ])
+    ) {
+      this.destroy();
+      return;
+    }
+
     const sprite = this.sprite! as Sprite;
     this.velocity[1] += dt * -RISE_SPEED;
 
@@ -47,15 +56,15 @@ export class Bubble extends BaseEntity implements Entity {
 
     sprite.scale.set(this.size / sprite.texture.width);
 
-    if (this.size > MINIMUM_BREATHING_SIZE) {
-      const diver = getDiver(this.game);
-      if (diver) {
-        const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
-        if (dist < this.size + 0.5) {
-          diver.air.giveOxygen(dt);
-        }
-      }
-    }
+    // if (this.size > MINIMUM_BREATHING_SIZE) {
+    //   const diver = getDiver(this.game);
+    //   if (diver) {
+    //     const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
+    //     if (dist < this.size + 0.5) {
+    //       diver.air.giveOxygen(dt);
+    //     }
+    //   }
+    // }
 
     const waves = getWaves(this.game!);
     const x = sprite.x;
@@ -63,20 +72,7 @@ export class Bubble extends BaseEntity implements Entity {
 
     if (sprite.y <= surfaceY) {
       const speed = vec2.len(this.velocity);
-      const nParticles = Math.ceil(this.size * 3);
-      for (let i = 0; i < nParticles; i++) {
-        const x = rUniform(-0.3, 0.3) + sprite.x;
-        const y = waves.getSurfaceHeight(x);
-        const theta = waves.getSurfaceAngle(x);
-        const velocity = polarToVec(
-          rUniform(-Math.PI, Math.PI) + theta,
-          rUniform(0.5, 1) * speed * 0.6
-        );
-        this.game!.addEntity(
-          new SplashParticle(V(x, y), velocity, rUniform(0.05, 0.15))
-        );
-      }
-
+      this.game!.addEntity(new SurfaceSplash(sprite.x, speed, this.size));
       this.destroy();
     }
   }

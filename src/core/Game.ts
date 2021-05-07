@@ -8,6 +8,7 @@ import EntityList from "./EntityList";
 import { GameRenderer2d } from "./graphics/GameRenderer2d";
 import { IOManager } from "./io/IO";
 import CustomWorld from "./physics/CustomWorld";
+import { Counter } from "./util/Counter";
 import { lerp } from "./util/MathUtil";
 
 interface GameOptions {
@@ -468,4 +469,24 @@ export default class Game {
       }
     }
   };
+
+  public debugEntityClasses() {
+    const counts = new Counter<any>();
+
+    for (const entity of this.entities) {
+      const c = (entity as any).constructor as Function;
+
+      counts.increment(c.name);
+    }
+
+    const result = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+
+    let total = 0;
+    for (const [e, c] of result) {
+      total += c;
+    }
+
+    console.log(total, this.entities.all.size);
+    console.table(result.slice(0, 10));
+  }
 }

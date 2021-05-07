@@ -24,7 +24,7 @@ export class Submersion extends BaseEntity implements Entity {
 
       const diverPosition = diver.getPosition();
       const speed = Math.abs(diver.body.velocity[1]);
-      this.game!.addEntity(new SurfaceSplash(diverPosition[0], speed));
+      this.game!.addEntity(new SurfaceSplash(diverPosition[0], speed, 30));
     }
 
     this.wasAboveWater = isAboveWater;
