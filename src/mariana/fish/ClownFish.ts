@@ -21,10 +21,11 @@ const AIM_STIFFNESS = 3;
 const MIN_THRUST = 2.0;
 const MAX_THRUST = 6.0;
 
-const ALIGNMENT = 0.7;
-const COHESION = 0.5;
+// const ATTRACTION = 0.2;
+const ALIGNMENT = 0.2;
+const COHESION = 0.7;
 const SEPARATION = 1.0;
-const MAX_SEPARATION = 1.5;
+const MAX_SEPARATION = 1.5; // the distance fish try to stay from each other in meters
 
 export class ClownFish extends BaseFish implements Entity, FlockingFish {
   aimSpring!: AimSpring;
@@ -95,26 +96,40 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
     }
   }
 
-  // TODO: Make this faster
+  // store these here to avoid allocating
+  private _cohesion = V(0, 0);
+  private _alignment = V(0, 0);
+  private _separation = V(0, 0);
+  private _awayFromNeighbor = V(0, 0);
+
   updateTargetVelocity() {
     if (this.school) {
-      const toCenter = this.school.center.sub(this.getPosition());
+      this._cohesion
+        .set(this.school.center)
+        .isub(this.getPosition())
+        .imul(COHESION);
 
-      const averageVel = this.school.velocity;
+      this._alignment.set(this.school.velocity).imul(ALIGNMENT);
 
-      const separating = V(0, 0);
-      const pos = this.getPosition();
-      for (const other of this.school.getNeighbors(pos, MAX_SEPARATION)) {
-        const away = pos.sub(other.getPosition());
-        away.magnitude = clampUp(MAX_SEPARATION - away.magnitude) ** 2;
-        separating.iadd(away);
+      this._separation.set(0, 0);
+      for (const other of this.school.getNeighbors(
+        this.getPosition(),
+        MAX_SEPARATION
+      )) {
+        this._awayFromNeighbor
+          .set(this.getPosition())
+          .isub(other.getPosition());
+        this._awayFromNeighbor.magnitude =
+          clampUp(MAX_SEPARATION - this._awayFromNeighbor.magnitude) ** 2;
+        this._separation.iadd(this._awayFromNeighbor);
       }
+      this._separation.imul(SEPARATION);
 
       this.targetVelocity
         .set(0, 0)
-        .iadd(toCenter.imul(COHESION))
-        .iadd(averageVel.imul(ALIGNMENT))
-        .iadd(separating.imul(SEPARATION));
+        .iadd(this._cohesion)
+        .iadd(this._alignment)
+        .iadd(this._separation);
     } else {
       const diver = getDiver(this.game!)!;
       const toDiver = diver.getPosition().isub(this.body.position);

@@ -1,4 +1,5 @@
 import { Graphics } from "@pixi/graphics";
+import { vec2 } from "p2";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { V, V2d } from "../../core/Vector";
@@ -56,10 +57,13 @@ export class School extends BaseEntity implements Entity {
     }
   }
 
+  // TODO: Don't allocate?
   getNeighbors(pos: V2d, distance = 1): FlockingFish[] {
     const neighbors = [];
     for (const fish of this.fish) {
-      neighbors.push(fish);
+      if (vec2.distance(pos, fish.getPosition()) < distance) {
+        neighbors.push(fish);
+      }
     }
     return neighbors;
   }
