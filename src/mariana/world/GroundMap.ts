@@ -7,7 +7,7 @@ import {
   TILE_SIZE_METERS,
   WORLD_LEFT_EDGE,
   WORLD_RIGHT_EDGE,
-  WORLD_SIZE_METERS,
+  WORLD_SIZE_METERS
 } from "../constants";
 import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
 
@@ -52,9 +52,9 @@ export default class GroundMap {
     const [x, y] = tilePos;
     if (x < this.minX) {
       return true;
-    } else if (x > this.maxX) {
+    } else if (x >= this.maxX) {
       return true;
-    } else if (y > this.maxY) {
+    } else if (y >= this.maxY) {
       return true;
     }
     return this.solidMap.get(tilePos) ?? false;
