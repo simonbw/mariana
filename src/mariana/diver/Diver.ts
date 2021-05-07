@@ -81,7 +81,7 @@ export class Diver extends BaseEntity implements Entity {
     this.addChild(new BreatheEffect(this));
     this.addChild(new Submersion(this));
     this.addChild(new Flashlight(this));
-    this.addChild(new WorldAnchor(() => this.getPosition(), 40, 40));
+    this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
 
     this.body = new Body({
       mass: 1,

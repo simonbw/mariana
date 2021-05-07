@@ -8,9 +8,9 @@ import { WorldMap } from "./WorldMap";
 export class WorldAnchor extends BaseEntity implements Entity {
   constructor(
     public getCenter: () => V2d,
-    /** Sizee in meters */
+    /** Size in meters */
     public width: number = 1,
-    /** Sizee in meters */
+    /** Size in meters */
     public height: number = 1
   ) {
     super();
@@ -19,8 +19,13 @@ export class WorldAnchor extends BaseEntity implements Entity {
   /** Returns a list of tiles that should stay loaded right now */
   getTilesToLoad(map: WorldMap): SubGrid {
     const [x, y] = map.worldToTile(this.getCenter());
-    const [minX, minY] = map.worldToTile(V(x - this.width, y - this.height));
-    return new SubGrid(minX, minY, this.width, this.height);
+    const w = this.width / 2;
+    const h = this.height / 2;
+    const [minX, minY] = map.worldToTile(V(x - w, y - h));
+    const [maxX, maxY] = map.worldToTile(V(x + w, y + h));
+    const width = maxX - minX;
+    const height = maxY - minY;
+    return new SubGrid(minX, minY, width, height);
   }
 }
 

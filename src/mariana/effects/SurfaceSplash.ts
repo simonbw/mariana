@@ -59,15 +59,19 @@ export class SplashParticle extends BaseEntity implements Entity {
 }
 
 export class SurfaceSplash extends BaseEntity implements Entity {
-  constructor(private x: number, private speed: number) {
+  constructor(
+    private x: number,
+    private speed: number,
+    private size: number = 1.0
+  ) {
     super();
   }
 
   onAdd(game: Game) {
     const waves = getWaves(game);
-    const n = rRound(25 * this.speed ** 0.7);
+    const n = rRound(25 * this.speed ** 0.7 * this.size);
     for (let i = 0; i < n; i++) {
-      const x = rUniform(-0.3, 0.3) + this.x;
+      const x = rUniform(-0.3, 0.3) * this.size + this.x;
       const y = waves.getSurfaceHeight(x);
       const theta = waves.getSurfaceAngle(x);
       const velocity = polarToVec(

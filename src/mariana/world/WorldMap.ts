@@ -21,7 +21,7 @@ export class WorldMap extends BaseEntity implements Entity {
   id = "worldMap";
   sprite!: CompositeTilemap & GameSprite;
 
-  tilesLoaded : SubGridSet = new SubGridSet();
+  tilesLoaded: SubGridSet = new SubGridSet();
   tileEntities: Grid<Entity[]> = new Grid();
   groundMap: GroundMap;
   biomeMap: BiomeMap;
@@ -93,17 +93,22 @@ export class WorldMap extends BaseEntity implements Entity {
     this.tileEntities.delete(tilePos);
   }
 
+  worldPointIsLoaded(worldPos: [number, number]): boolean {
+    return this.tileIsLoaded(this.worldToTile(worldPos));
+  }
+
+  tileIsLoaded(tilePos: TilePos): boolean {
+    return this.tilesLoaded.has(tilePos);
+  }
+
   /** Get the tile that a world position is in */
-  worldToTile(worldPos: V2d): TilePos {
-    const tilePos = worldPos.mul(1 / TILE_SIZE_METERS);
-    tilePos[0] = Math.floor(tilePos[0]);
-    tilePos[1] = Math.floor(tilePos[1]);
-    return tilePos;
+  worldToTile([x, y]: [number, number]): TilePos {
+    return [Math.floor(x / TILE_SIZE_METERS), Math.floor(y / TILE_SIZE_METERS)];
   }
 
   /** Get the center of a world tile */
   tileToWorld(tilePos: TilePos): V2d {
-    return V(tilePos).iadd([0.5, 0.5]).imul(TILE_SIZE_METERS);
+    return V(tilePos).imul(TILE_SIZE_METERS);
   }
 
   getAnchoredTiles(): SubGridSet {
@@ -116,8 +121,8 @@ export class WorldMap extends BaseEntity implements Entity {
   }
 
   onSlowTick() {
-    const lastFramesTiles : SubGridSet = this.tilesLoaded;
-    const thisFramesTiles : SubGridSet = this.getAnchoredTiles();
+    const lastFramesTiles: SubGridSet = this.tilesLoaded;
+    const thisFramesTiles: SubGridSet = this.getAnchoredTiles();
 
     for (const tile of thisFramesTiles) {
       if (!lastFramesTiles.has(tile)) {
