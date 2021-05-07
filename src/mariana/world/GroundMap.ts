@@ -3,7 +3,12 @@ import { lerp, polarToVec } from "../../core/util/MathUtil";
 import { rUniform } from "../../core/util/Random";
 import { TilePos } from "../../core/util/TilePos";
 import { V, V2d } from "../../core/Vector";
-import { TILE_SIZE_METERS, WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE, WORLD_SIZE_METERS } from "../constants";
+import {
+  TILE_SIZE_METERS,
+  WORLD_LEFT_EDGE,
+  WORLD_RIGHT_EDGE,
+  WORLD_SIZE_METERS,
+} from "../constants";
 import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
 
 // Terrain heights should be between these values
@@ -81,7 +86,11 @@ export default class GroundMap {
       const heightPercent =
         (heightMap[x] - minGenHeight) / (maxGenHeight - minGenHeight);
       const minY = Math.floor(
-        lerp(MIN_SURFACE_Y_TILE_COORDS, MAX_SURFACE_Y_TILE_COORDS, heightPercent)
+        lerp(
+          MIN_SURFACE_Y_TILE_COORDS,
+          MAX_SURFACE_Y_TILE_COORDS,
+          heightPercent
+        )
       );
       for (let y = minY; y < this.maxY; y++) {
         this.solidMap.set([x, y], true);
@@ -103,7 +112,10 @@ export default class GroundMap {
           this.maxY - y
         );
         const transitionWidthTiles = 10;
-        const strength = tilesFromEdge < transitionWidthTiles ? lerp(1, layeredTurbulence, tilesFromEdge / transitionWidthTiles) : layeredTurbulence;
+        const strength =
+          tilesFromEdge < transitionWidthTiles
+            ? lerp(1, layeredTurbulence, tilesFromEdge / transitionWidthTiles)
+            : layeredTurbulence;
         strengthGrid.set([x, y], strength);
         if (strength < -0.2) {
           this.solidMap.set([x, y], false);
@@ -114,54 +126,59 @@ export default class GroundMap {
 
   private generateTunnels() {
     type RecursionState = {
-      position: V2d, // Start of tunnel.
-      direction: number, // Radians.
-      length: number, // Length of tunnel segment in meters.
-      width: number, // Width of tunnel in meters.  Will get smaller as we fork.,
-      recursionDepth: number,
+      position: V2d; // Start of tunnel.
+      direction: number; // Radians.
+      length: number; // Length of tunnel segment in meters.
+      width: number; // Width of tunnel in meters.  Will get smaller as we fork.,
+      recursionDepth: number;
     };
 
     // Start with threes line going from surface to bottom of the world.
-      // We will then recursively subdivide, jitter, and fork those lines
-    const stateStack : RecursionState[] = [{
-      position: V(0, 0),
-      direction: Math.PI / 2,
-      length: WORLD_SIZE_METERS[1],
-      width: 8,
-      recursionDepth: 0
-    },{
-      position: V(WORLD_LEFT_EDGE * 3 / 4, 0),
-      direction: 3 * Math.PI / 8,
-      length: WORLD_SIZE_METERS[1],
-      width: 8,
-      recursionDepth: 0
-    },{
-      position: V(WORLD_RIGHT_EDGE * 3 / 4, 0),
-      direction: 5 * Math.PI / 8,
-      length: WORLD_SIZE_METERS[1],
-      width: 8,
-      recursionDepth: 0
-    }];
+    // We will then recursively subdivide, jitter, and fork those lines
+    const stateStack: RecursionState[] = [
+      {
+        position: V(0, 0),
+        direction: Math.PI / 2,
+        length: WORLD_SIZE_METERS[1],
+        width: 8,
+        recursionDepth: 0,
+      },
+      {
+        position: V((WORLD_LEFT_EDGE * 3) / 4, 0),
+        direction: (3 * Math.PI) / 8,
+        length: WORLD_SIZE_METERS[1],
+        width: 8,
+        recursionDepth: 0,
+      },
+      {
+        position: V((WORLD_RIGHT_EDGE * 3) / 4, 0),
+        direction: (5 * Math.PI) / 8,
+        length: WORLD_SIZE_METERS[1],
+        width: 8,
+        recursionDepth: 0,
+      },
+    ];
 
     let s;
-    while (s = stateStack.pop()) {
+    while ((s = stateStack.pop())) {
       if (s.length < 5 || s.recursionDepth > 10) {
         for (let i = 0; i < s.length; i++) {
           let p = s.position.add(polarToVec(s.direction, i));
           this.removeCircle(p, s.width / 2);
         }
-  
+
         continue;
       }
 
       const segmentEndPoint = s.position.add(polarToVec(s.direction, s.length));
 
       // Subdivide
-      const subdivisionPercentage = rUniform(1/2, 2/3);
+      const subdivisionPercentage = rUniform(1 / 2, 2 / 3);
 
       // Jitter
-      const jitterAngleOffset = rUniform(-Math.PI/8, Math.PI/8);
-      const trunkLength = s.length * subdivisionPercentage / Math.cos(jitterAngleOffset);
+      const jitterAngleOffset = rUniform(-Math.PI / 8, Math.PI / 8);
+      const trunkLength =
+        (s.length * subdivisionPercentage) / Math.cos(jitterAngleOffset);
       const trunkDirection = s.direction + jitterAngleOffset;
 
       // Fork
@@ -169,8 +186,9 @@ export default class GroundMap {
       const mainForkV = segmentEndPoint.sub(forkPoint);
       const forkLength = mainForkV.magnitude;
       const mainForkAngle = mainForkV.angle;
-      const mainForkAngleOffset = mainForkAngle - trunkDirection 
-      const tributaryForkAngleOffset = Math.sign(-mainForkAngleOffset) * rUniform(0, Math.PI/4);
+      const mainForkAngleOffset = mainForkAngle - trunkDirection;
+      const tributaryForkAngleOffset =
+        Math.sign(-mainForkAngleOffset) * rUniform(0, Math.PI / 4);
 
       // Trunk
       stateStack.push({
@@ -178,7 +196,7 @@ export default class GroundMap {
         direction: trunkDirection,
         length: trunkLength,
         width: s.width,
-        recursionDepth: s.recursionDepth + 1
+        recursionDepth: s.recursionDepth + 1,
       });
       // Main fork
       stateStack.push({
@@ -186,7 +204,7 @@ export default class GroundMap {
         direction: mainForkAngle,
         length: forkLength,
         width: s.width * 0.95,
-        recursionDepth: s.recursionDepth + 1
+        recursionDepth: s.recursionDepth + 1,
       });
       // Tributary fork
       if (s.width > 5) {
@@ -195,7 +213,7 @@ export default class GroundMap {
           direction: trunkDirection + tributaryForkAngleOffset,
           length: forkLength,
           width: s.width * 0.6,
-          recursionDepth: s.recursionDepth + 1
+          recursionDepth: s.recursionDepth + 1,
         });
       }
     }
@@ -207,10 +225,12 @@ export default class GroundMap {
     const rCeil = Math.ceil(r / TILE_SIZE_METERS);
     for (let i = cx - rCeil; i < cx + rCeil; i++) {
       for (let j = cy - rCeil; j < cy + rCeil; j++) {
-        if (V(cx, cy).isub([i, j]).magnitude < r
-            && i > this.minX + 5
-            && i < this.maxX - 5
-            && j < this.maxY - 5) {
+        if (
+          V(cx, cy).isub([i, j]).magnitude < r &&
+          i > this.minX + 5 &&
+          i < this.maxX - 5 &&
+          j < this.maxY - 5
+        ) {
           this.solidMap.set([i, j], false);
         }
       }

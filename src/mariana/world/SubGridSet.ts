@@ -3,14 +3,14 @@ import { TilePos } from "./TilePos";
 
 // A union of rectangular sections of grid
 export default class SubGridSet implements Iterable<TilePos> {
-  data : SubGrid[] = [];
+  data: SubGrid[] = [];
 
   add(subGrid: SubGrid): void {
     this.data.push(subGrid);
   }
 
   has(cell: TilePos): boolean {
-    return this.data.some(subGrid => subGrid.has(cell));
+    return this.data.some((subGrid) => subGrid.has(cell));
   }
 
   [Symbol.iterator](): Iterator<TilePos> {

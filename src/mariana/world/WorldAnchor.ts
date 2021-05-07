@@ -18,14 +18,21 @@ export class WorldAnchor extends BaseEntity implements Entity {
 
   /** Returns a list of tiles that should stay loaded right now */
   getTilesToLoad(map: WorldMap): SubGrid {
-    const [x, y] = map.worldToTile(this.getCenter());
-    const w = this.widthMeters / 2;
-    const h = this.heightMeters / 2;
-    const [minX, minY] = map.worldToTile(V(x - w, y - h));
-    const [maxX, maxY] = map.worldToTile(V(x + w, y + h));
-    const width = maxX - minX;
-    const height = maxY - minY;
-    return new SubGrid(minX, minY, width, height);
+    const positionWorld = this.getCenter();
+    const halfDimensionMeters = V(this.widthMeters / 2, this.heightMeters / 2);
+    const upperLeftCornerTile = V(
+      map.worldToTile(positionWorld.sub(halfDimensionMeters))
+    );
+    const lowerRightCornerTile = V(
+      map.worldToTile(positionWorld.add(halfDimensionMeters))
+    );
+    const dimensionsTile = lowerRightCornerTile.sub(upperLeftCornerTile);
+    return new SubGrid(
+      upperLeftCornerTile.x,
+      upperLeftCornerTile.y,
+      dimensionsTile.x,
+      dimensionsTile.y
+    );
   }
 }
 
