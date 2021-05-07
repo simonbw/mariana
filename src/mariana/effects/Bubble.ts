@@ -3,13 +3,11 @@ import { Sprite } from "pixi.js";
 import img_bubble from "../../../resources/images/particles/bubble.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
-import { polarToVec } from "../../core/util/MathUtil";
-import { rNormal, rUniform } from "../../core/util/Random";
+import { rNormal } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
-import { getDiver } from "../diver/Diver";
 import { getWorldMap } from "../world/WorldMap";
-import { SplashParticle, SurfaceSplash } from "./SurfaceSplash";
+import { SurfaceSplash } from "./SurfaceSplash";
 import { getWaves } from "./Waves";
 
 const FRICTION = 1.5;
@@ -43,6 +41,7 @@ export class Bubble extends BaseEntity implements Entity {
       ])
     ) {
       this.destroy();
+      return;
     }
 
     const sprite = this.sprite! as Sprite;
@@ -57,15 +56,15 @@ export class Bubble extends BaseEntity implements Entity {
 
     sprite.scale.set(this.size / sprite.texture.width);
 
-    if (this.size > MINIMUM_BREATHING_SIZE) {
-      const diver = getDiver(this.game);
-      if (diver) {
-        const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
-        if (dist < this.size + 0.5) {
-          diver.air.giveOxygen(dt);
-        }
-      }
-    }
+    // if (this.size > MINIMUM_BREATHING_SIZE) {
+    //   const diver = getDiver(this.game);
+    //   if (diver) {
+    //     const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
+    //     if (dist < this.size + 0.5) {
+    //       diver.air.giveOxygen(dt);
+    //     }
+    //   }
+    // }
 
     const waves = getWaves(this.game!);
     const x = sprite.x;

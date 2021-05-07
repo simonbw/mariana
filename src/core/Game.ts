@@ -470,7 +470,23 @@ export default class Game {
     }
   };
 
-  public debugGetCommonEntities() {
-    const counts = new Counter<string>();
+  public debugEntityClasses() {
+    const counts = new Counter<any>();
+
+    for (const entity of this.entities) {
+      const c = (entity as any).constructor as Function;
+
+      counts.increment(c.name);
+    }
+
+    const result = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+
+    let total = 0;
+    for (const [e, c] of result) {
+      total += c;
+    }
+
+    console.log(total, this.entities.all.size);
+    console.table(result.slice(0, 10));
   }
 }

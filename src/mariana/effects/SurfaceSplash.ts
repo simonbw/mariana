@@ -50,7 +50,7 @@ export class SplashParticle extends BaseEntity implements Entity {
     sprite.y += dt * this.velocity[1];
 
     sprite.scale.set(this.size / sprite.texture.width);
-    sprite.tint = colorLerp(sprite.tint, 0xffffff, clamp(dt * 4));
+    // sprite.tint = colorLerp(sprite.tint, 0xffffff, clamp(dt * 4));
 
     if (sprite.y >= waves.getSurfaceHeight(sprite.x)) {
       this.destroy();
@@ -69,18 +69,20 @@ export class SurfaceSplash extends BaseEntity implements Entity {
 
   onAdd(game: Game) {
     const waves = getWaves(game);
-    const n = rRound(25 * this.speed ** 0.7 * this.size);
+    const n = rRound(this.speed ** 0.7 * this.size);
     for (let i = 0; i < n; i++) {
-      const x = rUniform(-0.3, 0.3) * this.size + this.x;
+      const x = rUniform(-0.3, 0.3) + this.x;
       const y = waves.getSurfaceHeight(x);
       const theta = waves.getSurfaceAngle(x);
       const velocity = polarToVec(
         rUniform(-Math.PI, Math.PI) + theta,
         rUniform(0.5, 1) * this.speed
       );
-      this.game!.addEntity(new SplashParticle(V(x, y), velocity));
+      game!.addEntity(new SplashParticle(V(x, y), velocity));
     }
+  }
 
+  onTick() {
     this.destroy();
   }
 }

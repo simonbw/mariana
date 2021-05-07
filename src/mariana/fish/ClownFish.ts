@@ -134,7 +134,9 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
     const isSubmerged = y > surfaceY;
 
     if (isSubmerged != this.wasSubmerged) {
-      this.game?.addEntity(new SurfaceSplash(x, this.getVelocity().magnitude));
+      this.game?.addEntity(
+        new SurfaceSplash(x, this.getVelocity().magnitude, 20)
+      );
     }
 
     this.wasSubmerged = isSubmerged;
