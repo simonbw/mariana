@@ -20,14 +20,7 @@ export class Jellyfish extends BaseFish {
   t = Math.random();
 
   constructor(position: V2d, radius: number = rUniform(0.3, 0.7)) {
-    super(position, {
-      width: radius * 2,
-      height: radius * 2,
-      speed: 0,
-      friction: 0,
-      hp: 5,
-      dropValue: 3,
-    });
+    super({ hp: 5, dropValue: 3 });
 
     this.body = new Body({
       mass: 0,

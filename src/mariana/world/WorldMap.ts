@@ -83,6 +83,8 @@ export class WorldMap extends BaseEntity implements Entity {
       const ty = tilePos[1] * 64;
       this.sprite.tile(tileset.getTexture(tileType), tx, ty);
     }
+
+    this.game?.dispatch({ type: loadTileEventType(tilePos) });
   }
 
   unloadTile(tilePos: TilePos): void {
@@ -91,6 +93,7 @@ export class WorldMap extends BaseEntity implements Entity {
     }
 
     this.tileEntities.delete(tilePos);
+    this.game?.dispatch({ type: unloadTileEventType(tilePos) });
   }
 
   worldPointIsLoaded(worldPos: [number, number]): boolean {
@@ -142,4 +145,12 @@ export class WorldMap extends BaseEntity implements Entity {
 
 export function getWorldMap(game?: Game): WorldMap | undefined {
   return game?.entities.getById("worldMap") as WorldMap;
+}
+
+export function loadTileEventType(tilePos: TilePos) {
+  return `tileLoaded ${tilePos[0]},${tilePos[1]}`;
+}
+
+export function unloadTileEventType(tilePos: TilePos) {
+  return `tileUnloaded ${tilePos[0]},${tilePos[1]}`;
 }

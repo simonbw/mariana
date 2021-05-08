@@ -58,14 +58,7 @@ export class PufferFish extends BaseFish {
   textures: Texture[];
 
   constructor(position: V2d, radius: number = rUniform(1.0, 1.5)) {
-    super(position, {
-      width: 2 * radius,
-      height: 1.5 * radius,
-      speed: SPEED,
-      friction: FRICTION,
-      hp: HP,
-      dropValue: 20,
-    });
+    super({ hp: HP, dropValue: 20 });
 
     this.textures = [
       img_puffer0,
@@ -128,8 +121,6 @@ export class PufferFish extends BaseFish {
   }
 
   onTick(dt: number) {
-    super.onTick(dt);
-
     const diver = getDiver(this.game)!;
     const distance = this.getPosition().isub(diver.getPosition()).magnitude;
     if (!this.isPuffing && distance < PUFF_TRIGGER_RANGE) {
@@ -137,7 +128,11 @@ export class PufferFish extends BaseFish {
     }
 
     const direction = this.movingRight ? 1 : -1;
-    this.swim(V(direction, 0));
+    // this.swim(V(direction, 0));
+  }
+
+  onRender() {
+    this.sprite.position.set(...this.getPosition());
   }
 
   onBeginContact(other: Entity) {

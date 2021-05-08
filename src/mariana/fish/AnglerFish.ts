@@ -23,14 +23,7 @@ export class AnglerFish extends BaseFish {
   t = Math.random();
 
   constructor(position: V2d) {
-    super(position, {
-      width: WIDTH,
-      height: HEIGHT,
-      speed: SPEED,
-      friction: FRICTION,
-      hp: 20,
-      dropValue: 50,
-    });
+    super({ hp: 20, dropValue: 50 });
 
     this.sprite = AnimatedSprite.fromImages([img_angler1]);
 
@@ -44,32 +37,9 @@ export class AnglerFish extends BaseFish {
     this.light = this.addChild(new PointLight({ position, size: 2 }));
   }
 
-  async onAdd() {
-    await this.wait(Math.random() * PATROL_TIME);
-    this.turnAround();
-  }
-
-  async turnAround() {
-    // this.clearTimers("turnAround");
-    this.sprite.scale.x *= -1;
-    this.movingRight = !this.movingRight;
-
-    await this.wait(PATROL_TIME, undefined, "turnAround");
-    this.turnAround();
-  }
-
-  onTick(dt: number) {
-    this.t += dt;
-    super.onTick(dt);
-    const direction = this.movingRight ? 1 : -1;
-    this.swim(V(direction, 0));
-  }
-
   onBeginContact(other: Entity) {
     if (other instanceof Diver) {
       other.damage(20);
-    } else if (other instanceof GroundTile) {
-      this.turnAround();
     }
   }
 
@@ -79,8 +49,7 @@ export class AnglerFish extends BaseFish {
   }
 
   onRender(dt: number) {
-    super.onRender(dt);
-
+    this.sprite.position.set(...this.getPosition());
     this.light.setPosition(this.getLightPosition());
     this.light.intensity = 0.6 + 0.2 * Math.sin(this.t);
   }

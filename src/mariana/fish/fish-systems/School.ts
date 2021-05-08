@@ -1,9 +1,9 @@
 import { Graphics } from "@pixi/graphics";
 import { vec2 } from "p2";
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity from "../../core/entity/Entity";
-import { V, V2d } from "../../core/Vector";
-import { getDiver } from "../diver/Diver";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity from "../../../core/entity/Entity";
+import { V, V2d } from "../../../core/Vector";
+import { getDiver } from "../../diver/Diver";
 
 interface Attractor {
   position: V2d;
@@ -28,7 +28,7 @@ export class School extends BaseEntity implements Entity {
 
   addFish(fish: FlockingFish) {
     this.fish.push(fish);
-    fish.school = this;
+    fish.joinSchool(this);
   }
 
   onTick() {
@@ -72,7 +72,7 @@ export class School extends BaseEntity implements Entity {
 export interface FlockingFish {
   getPosition(): V2d;
   getVelocity(): V2d;
-  school: School | undefined;
+  joinSchool: (school: School) => void;
 }
 
 class SchoolDebugView extends BaseEntity implements Entity {

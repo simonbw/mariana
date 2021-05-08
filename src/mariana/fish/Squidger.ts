@@ -1,4 +1,3 @@
-import { SCALE_MODES } from "@pixi/constants";
 import { Texture } from "@pixi/core";
 import { Sprite } from "@pixi/sprite";
 import { Body, Circle, ContactEquation, Shape } from "p2";
@@ -10,13 +9,14 @@ import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import AimSpring from "../../core/physics/AimSpring";
 import { SoundInstance } from "../../core/sound/SoundInstance";
-import { degToRad, polarToVec } from "../../core/util/MathUtil";
+import { degToRad } from "../../core/util/MathUtil";
 import { rNormal, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { Diver, getDiver } from "../diver/Diver";
 import { BaseFish } from "./BaseFish";
-import { School } from "./School";
+import { FishSubmersion } from "./fish-systems/FishSubmersion";
+import { School } from "./fish-systems/School";
 
 const AIM_STIFFNESS = 100;
 const AIM_DAMPING = 100;
@@ -24,7 +24,7 @@ const DRAG = 0.8;
 const THRUST = 8;
 const ATTACK_RANGE = 10;
 
-export class Squidger extends BaseFish implements Entity {
+export default class Squidger extends BaseFish implements Entity {
   aimSpring!: AimSpring;
   baseScale: number;
 
@@ -52,40 +52,30 @@ export class Squidger extends BaseFish implements Entity {
       mass: 0.2,
       angle: rNormal(degToRad(270), degToRad(50)),
     });
+    // regular collisions
     this.body.addShape(
       new Circle({
-        radius: this.size / 2,
+        radius: this.size * 0.4,
         collisionGroup: CollisionGroups.Fish,
         collisionMask: CollisionGroups.World | CollisionGroups.Harpoon,
       })
     );
+    // damaging the diver collisions
     this.body.addShape(
       new Circle({
-        radius: this.size / 2,
+        radius: this.size * 0.5,
         collisionGroup: CollisionGroups.Fish,
         collisionMask: CollisionGroups.Diver,
         collisionResponse: false,
       })
     );
-  }
 
-  // Store these to reduce allocations
-  private _position: V2d = V(0, 0);
-  private _velocity: V2d = V(0, 0);
-
-  getPosition(): V2d {
-    return this._position.set(this.body.position);
-  }
-
-  getVelocity(): V2d {
-    return this._velocity.set(this.body.velocity);
-  }
-
-  onAdd(game: Game) {
-    this.aimSpring = new AimSpring(game.ground, this.body);
+    this.aimSpring = new AimSpring(this.body);
     this.aimSpring.stiffness = AIM_STIFFNESS;
     this.aimSpring.damping = AIM_DAMPING;
     this.springs = [this.aimSpring];
+
+    this.addChild(new FishSubmersion(this));
   }
 
   private _friction = V(0, 0);

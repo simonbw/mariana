@@ -47,15 +47,10 @@ export class Shark extends BaseFish {
   ];
   aggroTexture = Texture.from(img_shark1);
   biteTexture = Texture.from(img_shark1);
+  speed: number = PATROL_SPEED;
 
   constructor(position: V2d) {
-    super(position, {
-      width: WIDTH,
-      height: HEIGHT,
-      friction: FRICTION,
-      hp: 50,
-      dropValue: 30,
-    });
+    super({ hp: 50, dropValue: 30 });
 
     this.body = new Body({
       mass: 1,
@@ -95,7 +90,7 @@ export class Shark extends BaseFish {
     await this.wait(
       PATROL_TIME,
       () => {
-        this.swim(V(goingRight ? 1 : -1, 0), PATROL_SPEED);
+        // this.swim(V(goingRight ? 1 : -1, 0), PATROL_SPEED);
 
         if (this.getDiverDistanceToMouth() < AGGRO_RANGE) {
           this.clearTimers("patrol");
@@ -135,7 +130,7 @@ export class Shark extends BaseFish {
           return;
         }
 
-        this.swim(direction.inormalize(), AGGRO_SPEED);
+        // this.swim(direction.inormalize(), AGGRO_SPEED);
 
         if (distance < BITE_TRIGGER_RANGE) {
           this.bite(diver);
@@ -202,7 +197,7 @@ export class Shark extends BaseFish {
   }
 
   onRender(dt: number) {
-    super.onRender(dt);
+    this.sprite.position.set(...this.getPosition());
     this.sprite.update(dt);
   }
 

@@ -3,21 +3,21 @@ import { Sprite } from "@pixi/sprite";
 import { Body, Capsule } from "p2";
 import img_clownfish from "../../../resources/images/fish/clownfish.png";
 import Entity from "../../core/entity/Entity";
-import Game from "../../core/Game";
 import AimSpring from "../../core/physics/AimSpring";
-import { clamp, clampUp, polarToVec } from "../../core/util/MathUtil";
+import { clamp, degToRad, normalizeAngle } from "../../core/util/MathUtil";
 import { rBool, rUniform } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
+import { V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
-import { getDiver } from "../diver/Diver";
-import { SurfaceSplash } from "../effects/SurfaceSplash";
-import { getWaves } from "../effects/Waves";
 import { BaseFish } from "./BaseFish";
-import { FlockingFish, School } from "./School";
+import { FishSubmersion } from "./fish-systems/FishSubmersion";
+import { FlockingSystem } from "./fish-systems/FlockingSystem";
+import { Hydrodynamics } from "./fish-systems/Hydrodynamics";
+import { FlockingFish, School } from "./fish-systems/School";
 
 const DRAG = 0.15;
 const LIFT = 1.8;
-const AIM_STIFFNESS = 4;
+const AIM_STIFFNESS = 10;
+const AIM_DAMPING = 4;
 const MIN_THRUST = 2.0;
 const MAX_THRUST = 6.0;
 
@@ -25,27 +25,24 @@ const MAX_THRUST = 6.0;
 const ALIGNMENT = 0.2;
 const COHESION = 0.7;
 const SEPARATION = 1.0;
-const MAX_SEPARATION = 1.5; // the distance fish try to stay from each other in meters
+const SEPARATION_DISTANCE = 1.5; // the distance fish try to stay from each other in meters
 
 export class ClownFish extends BaseFish implements Entity, FlockingFish {
   aimSpring!: AimSpring;
   baseScale: number;
   school: School | undefined;
-  wasSubmerged = true;
 
   width = rUniform(0.6, 0.9);
-  targetVelocity: V2d = V(0, 0);
 
-  // Store these to reduce allocations
-  position: V2d = V(0, 0);
-  velocity: V2d = V(0, 0);
+  // fish subsystems
+  flockingSystem: FlockingSystem;
+  hydrodynamics: Hydrodynamics;
+  submersion: FishSubmersion;
 
-  constructor(position: V2d, school?: School) {
+  constructor(position: V2d) {
     super();
     const height = this.width * 0.5;
     this.dropValue = this.width * 10;
-
-    this.school = school;
 
     this.sprite = Sprite.from(img_clownfish, {
       scaleMode: SCALE_MODES.NEAREST,
@@ -58,7 +55,6 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
       position,
       mass: 0.2,
     });
-
     this.body.addShape(
       new Capsule({
         length: this.width - height,
@@ -68,135 +64,64 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
         collisionMask: CollisionGroups.World | CollisionGroups.Harpoon,
       })
     );
-  }
 
-  getPosition(): V2d {
-    return this.position.set(this.body.position);
-  }
-
-  getVelocity(): V2d {
-    return this.velocity.set(this.body.velocity);
-  }
-
-  onAdd(game: Game) {
-    this.aimSpring = new AimSpring(game.ground, this.body);
+    this.aimSpring = new AimSpring(this.body);
+    this.aimSpring.damping = AIM_DAMPING;
     this.springs = [this.aimSpring];
+
+    this.submersion = this.addChild(new FishSubmersion(this));
+    this.hydrodynamics = this.addChild(
+      new Hydrodynamics(this, { drag: DRAG, lift: LIFT })
+    );
+    this.flockingSystem = this.addChild(
+      new FlockingSystem(this, {
+        cohesion: COHESION,
+        alignment: ALIGNMENT,
+        separation: SEPARATION,
+        separationDistance: SEPARATION_DISTANCE,
+      })
+    );
+  }
+
+  joinSchool(school: School) {
+    this.flockingSystem.school = school;
   }
 
   onRender() {
     this.sprite.position.set(...this.body!.position);
 
-    const heading = polarToVec(this.body.angle, 1);
-    if (heading[0] >= 0) {
-      this.sprite.scale.set(this.baseScale, this.baseScale);
-      this.sprite.rotation = heading.angle;
-    } else {
-      this.sprite.scale.set(this.baseScale, -this.baseScale);
-      this.sprite.rotation = heading.angle;
-    }
-  }
-
-  // store these here to avoid allocating
-  private _cohesion = V(0, 0);
-  private _alignment = V(0, 0);
-  private _separation = V(0, 0);
-  private _awayFromNeighbor = V(0, 0);
-
-  updateTargetVelocity() {
-    if (this.school) {
-      this._cohesion
-        .set(this.school.center)
-        .isub(this.getPosition())
-        .imul(COHESION);
-
-      this._alignment.set(this.school.velocity).imul(ALIGNMENT);
-
-      this._separation.set(0, 0);
-      for (const other of this.school.getNeighbors(
-        this.getPosition(),
-        MAX_SEPARATION
-      )) {
-        this._awayFromNeighbor
-          .set(this.getPosition())
-          .isub(other.getPosition());
-        this._awayFromNeighbor.magnitude =
-          clampUp(MAX_SEPARATION - this._awayFromNeighbor.magnitude) ** 2;
-        this._separation.iadd(this._awayFromNeighbor);
-      }
-      this._separation.imul(SEPARATION);
-
-      this.targetVelocity
-        .set(this._cohesion)
-        .iadd(this._alignment)
-        .iadd(this._separation);
-    } else {
-      const diver = getDiver(this.game!)!;
-      const toDiver = diver.getPosition().isub(this.body.position);
-      this.targetVelocity.set(toDiver.inormalize(3));
-    }
-  }
-
-  getThrust(currentSpeed: number, targetSpeed: number) {
-    return clamp((targetSpeed - currentSpeed) * 3, MIN_THRUST, MAX_THRUST);
+    const angle = normalizeAngle(this.body.angle);
+    this.sprite.rotation = angle;
+    const flip = angle < degToRad(90) || angle > degToRad(270);
+    this.sprite.scale.set(
+      this.baseScale,
+      flip ? this.baseScale : -this.baseScale
+    );
   }
 
   onSlowTick(dt: number) {
     if (rBool(0.25)) {
-      this.updateTargetVelocity();
+      this.flockingSystem.updateTargetVelocity();
     }
-
-    const waves = getWaves(this.game!);
-    const [x, y] = this.getPosition();
-    const surfaceY = waves.getSurfaceHeight(x);
-    const isSubmerged = y > surfaceY;
-
-    if (isSubmerged != this.wasSubmerged) {
-      this.game?.addEntity(
-        new SurfaceSplash(x, this.getVelocity().magnitude, 20)
-      );
-    }
-
-    this.wasSubmerged = isSubmerged;
   }
 
-  // store here to avoid allocating
-  private _heading = V(1, 0);
-  private _normal = V(0, 1);
-  private _thrust = V(0, 0);
-  private _drag = V(0, 0);
-  private _lift = V(0, 0);
-  private _force = V(0, 0);
-
-  // TODO: Make this faster
   onTick(dt: number) {
-    if (this.body.position[1] < 0) {
+    if (this.isSurfaced()) {
       this.aimSpring.stiffness = 0; // free floatin
-      this.body.applyForce([0, 9.8 * this.body.mass]);
       this.body.angle = this.getVelocity().angle;
     } else {
+      const targetVelocity = this.flockingSystem.targetVelocity;
+
       this.aimSpring.stiffness = AIM_STIFFNESS;
-      this.aimSpring.restAngle = this.targetVelocity.angle;
+      this.aimSpring.restAngle = targetVelocity.angle;
 
-      const velocity = this.getVelocity();
-
-      this._heading.angle = this.body.angle;
-      this._heading.inormalize();
-      this._normal.set(this._heading).irotate90ccw();
-
-      // from the fish swimming
-      const thrust = this.getThrust(
-        velocity.magnitude,
-        this.targetVelocity.magnitude
+      const targetSpeed = targetVelocity.magnitude;
+      const currentSpeed = this.getVelocity().magnitude;
+      this.hydrodynamics.thrust = clamp(
+        (targetSpeed - currentSpeed) * 3,
+        MIN_THRUST,
+        MAX_THRUST
       );
-      const drag = velocity.dot(this._heading) * -DRAG;
-      const lift = this._normal.dot(velocity) * -LIFT;
-
-      this._thrust.set(this._heading).imul(thrust);
-      this._drag.set(this._heading).imul(drag);
-      this._lift.set(this._normal).imul(lift);
-
-      this._force.set(this._thrust).iadd(this._drag).iadd(this._lift);
-      this.body.applyForce(this._force);
     }
   }
 }

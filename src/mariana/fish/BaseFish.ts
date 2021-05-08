@@ -1,4 +1,4 @@
-import { Body, Box } from "p2";
+import { Body } from "p2";
 import { Sprite } from "pixi.js";
 import snd_fleshHit1 from "../../../resources/audio/impacts/flesh-hit-1.flac";
 import snd_fleshHit2 from "../../../resources/audio/impacts/flesh-hit-2.flac";
@@ -9,18 +9,14 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
 import { BloodSplash } from "../effects/BloodSplash";
+import { getWaves } from "../effects/Waves";
 import { makeSoulDrops } from "../FishSoul";
 import { ShuffleRing } from "../utils/ShuffleRing";
 import { Harpoon } from "../weapons/Harpoon";
 import { Harpoonable } from "../weapons/Harpoonable";
 
 interface Options {
-  width: number;
-  height: number;
-  speed?: number;
-  friction?: number;
   dropValue?: number;
   hp?: number;
 }
@@ -39,38 +35,30 @@ export abstract class BaseFish
   body!: Body;
   facingRight = true;
 
-  speed: number;
-  friction: number;
   dropValue: number;
   hp: number;
 
-  constructor({
-    speed = 3,
-    friction = 2,
-    dropValue = 1,
-    hp = 10,
-  }: Options = {}) {
+  constructor({ dropValue = 1, hp = 10 }: Options = {}) {
     super();
 
-    this.speed = speed;
-    this.friction = friction;
     this.dropValue = dropValue;
     this.hp = hp;
   }
 
-  onTick(dt: number) {
-    this.body.applyForce(V(this.body.velocity).imul(-this.friction));
-
-    // gravity when above water
-    if (this.body.position[1] < 0) {
-      this.body.applyForce([0, 9.8 * this.body.mass]);
-    }
+  private _position = V(0, 0);
+  getPosition(): V2d {
+    return this._position.set(this.body.position);
   }
 
-  onRender() {
-    if (this.sprite && this.body) {
-      this.sprite.position.set(...this.body.position);
-    }
+  private _velocity = V(0, 0);
+  getVelocity(): V2d {
+    return this._velocity.set(this.body.velocity);
+  }
+
+  isSurfaced() {
+    const waves = getWaves(this.game!);
+    const [x, y] = this.getPosition();
+    return y < waves.getSurfaceHeight(x);
   }
 
   // when we're hit
