@@ -14,7 +14,9 @@ export type UpgradeId =
   | "BCD"
   | "air1"
   | "air2"
-  | "rebreather";
+  | "rebreather"
+  | "autoRetractor"
+  | "turboRetractor";
 
 /** All the upgrades */
 const UPGRADES: Record<UpgradeId, Upgrade> = {
@@ -59,6 +61,18 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     description: "Blow fewer bubbles",
     cost: 800,
     prerequisites: ["air2"],
+  },
+  autoRetractor: {
+    name: "Auto Retractor",
+    description: "Retract your harpoon faster",
+    cost: 100,
+    prerequisites: [],
+  },
+  turboRetractor: {
+    name: "Turbo Retractor",
+    description: "Retract your harpoon super faster",
+    cost: 1000,
+    prerequisites: ["autoRetractor"],
   },
 };
 
