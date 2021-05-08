@@ -6,7 +6,7 @@ import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import AimSpring from "../../core/physics/AimSpring";
 import { clamp, clampUp, polarToVec } from "../../core/util/MathUtil";
-import { rUniform } from "../../core/util/Random";
+import { rBool, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { getDiver } from "../diver/Diver";
@@ -17,7 +17,7 @@ import { FlockingFish, School } from "./School";
 
 const DRAG = 0.15;
 const LIFT = 1.8;
-const AIM_STIFFNESS = 3;
+const AIM_STIFFNESS = 4;
 const MIN_THRUST = 2.0;
 const MAX_THRUST = 6.0;
 
@@ -126,8 +126,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
       this._separation.imul(SEPARATION);
 
       this.targetVelocity
-        .set(0, 0)
-        .iadd(this._cohesion)
+        .set(this._cohesion)
         .iadd(this._alignment)
         .iadd(this._separation);
     } else {
@@ -142,7 +141,10 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
   }
 
   onSlowTick(dt: number) {
-    this.updateTargetVelocity();
+    if (rBool(0.25)) {
+      this.updateTargetVelocity();
+    }
+
     const waves = getWaves(this.game!);
     const [x, y] = this.getPosition();
     const surfaceY = waves.getSurfaceHeight(x);

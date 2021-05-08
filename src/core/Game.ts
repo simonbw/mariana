@@ -159,6 +159,10 @@ export default class Game {
       entity.onAdd(this);
     }
 
+    if (!entity.game) {
+      return entity;
+    }
+
     this.entities.add(entity);
     this.io.addHandler(entity);
 

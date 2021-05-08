@@ -11,6 +11,7 @@ import { Sky } from "../environment/Sky";
 import { isFish } from "../fish/BaseFish";
 import { ClownFish } from "../fish/ClownFish";
 import { School } from "../fish/School";
+import { Squidger } from "../fish/Squidger";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
@@ -69,6 +70,10 @@ export class GameController extends BaseEntity implements Entity {
         new ClownFish(V(9, 7)),
       ]);
       game.addEntity(new School(feesh));
+
+      game.addEntity(new Squidger(V(-10, 5)));
+      game.addEntity(new Squidger(V(-12, 6)));
+      game.addEntity(new Squidger(V(-10, 7)));
 
       game.dispatch({ type: "diveStart" });
     },

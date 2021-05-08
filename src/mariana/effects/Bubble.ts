@@ -72,7 +72,7 @@ export class Bubble extends BaseEntity implements Entity {
 
     if (sprite.y <= surfaceY) {
       const speed = vec2.len(this.velocity);
-      this.game!.addEntity(new SurfaceSplash(sprite.x, speed, this.size));
+      this.game!.addEntity(new SurfaceSplash(sprite.x, speed / 2, this.size));
       this.destroy();
     }
   }
