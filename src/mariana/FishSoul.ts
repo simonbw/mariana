@@ -17,8 +17,8 @@ import { V, V2d } from "../core/Vector";
 import { CollisionGroups } from "./config/CollisionGroups";
 import { Diver, getDiver } from "./diver/Diver";
 import { PointLight } from "./lighting/PointLight";
+import { getUpgradeManager } from "./upgrade/UpgradeManager";
 
-const MAGNET_RADIUS = 4;
 const MAGNET_FORCE = 5;
 const GRAVITY = 3; // meters / sec^2
 const FRICTION = 2; // meters / sec^2
@@ -66,6 +66,14 @@ export class FishSoul extends BaseEntity implements Entity {
     );
   }
 
+  getMagnetRadius() {
+    if (getUpgradeManager(this.game!).hasUpgrade("soulMagnet")) {
+      return 8;
+    } else {
+      return 4;
+    }
+  }
+
   onTick(dt: number) {
     this.t = (this.t + dt / GLOW_PERIOD) % 1;
 
@@ -80,8 +88,9 @@ export class FishSoul extends BaseEntity implements Entity {
       const offset = diver.getPosition().isub(this.getPosition());
       const distance = offset.magnitude;
 
-      if (distance < MAGNET_RADIUS) {
-        const percent = ((MAGNET_RADIUS - distance) / MAGNET_RADIUS) ** 2;
+      const magnetRadius = this.getMagnetRadius();
+      if (distance < magnetRadius) {
+        const percent = ((magnetRadius - distance) / magnetRadius) ** 2;
         const force = percent * MAGNET_FORCE;
         this.body.applyForce(offset.inormalize().imul(force));
       }
