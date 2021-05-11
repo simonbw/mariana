@@ -29,9 +29,10 @@ export class AnglerFish extends BaseFish {
 
     this.sprite.animationSpeed = 1;
     this.sprite.autoUpdate = false;
+    this.sprite.play();
+
     this.sprite.scale.set(WIDTH / this.sprite.texture.width);
     this.sprite.anchor.set(0.5);
-    this.sprite.loop = true;
     this.sprite.position.set(...position);
 
     this.light = this.addChild(new PointLight({ position, size: 2 }));

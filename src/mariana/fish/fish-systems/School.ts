@@ -2,28 +2,29 @@ import { Graphics } from "@pixi/graphics";
 import { vec2 } from "p2";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity from "../../../core/entity/Entity";
+import { clamp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
 import { getDiver } from "../../diver/Diver";
 
 interface Attractor {
   position: V2d;
   strength: number;
+  radius: number;
 }
 
 export class School extends BaseEntity implements Entity {
-  fish: FlockingFish[] = [];
+  private fish: FlockingFish[] = [];
+
   center: V2d = V(0, 0);
   velocity: V2d = V(0, 0);
   attractors: Attractor[] = [];
 
-  constructor(fish: FlockingFish[] = []) {
+  constructor(fish: FlockingFish[] = [], public home?: V2d) {
     super();
 
     for (const f of fish) {
       this.addFish(f);
     }
-
-    // this.addChild(new SchoolDebugView(this));
   }
 
   addFish(fish: FlockingFish) {
@@ -31,10 +32,27 @@ export class School extends BaseEntity implements Entity {
     fish.joinSchool(this);
   }
 
-  onTick() {
+  removeFish(fish: FlockingFish) {
+    const index = this.fish.indexOf(fish);
+    if (index >= 0) {
+      this.fish.splice(index, 1);
+    }
+  }
+
+  getNumFish(): number {
+    return this.fish.length;
+  }
+
+  onTick(dt: number) {
     this.center.set(0, 0);
     this.velocity.set(0, 0);
 
+    for (const fish of this.fish) {
+      const fishEntity = (fish as any) as Entity;
+      if (!fishEntity.game) {
+        this.removeFish(fish);
+      }
+    }
     for (const fish of this.fish) {
       this.center.iadd(fish.getPosition());
       this.velocity.iadd(fish.getVelocity());
@@ -45,23 +63,39 @@ export class School extends BaseEntity implements Entity {
       this.velocity.imul(1.0 / this.fish.length);
     }
 
-    // TODO: Sort fish?
-
     // Keep it below the surface
     this.center[1] = Math.max(2, this.center[1]);
 
-    const diver = getDiver(this.game!)!;
-    if (diver) {
-      const diverPos = diver.getPosition();
-      this.center.ilerp(diverPos, 0.5);
+    if (this.home) {
+      const [hx, hy] = this.home;
+      this.center[0] = clamp(this.center[0], hx - 10, hx + 10);
+      this.center[1] = clamp(this.center[1], hy - 10, hy + 10);
+
+      this.center.ilerp(this.home, dt * 0.1);
+    }
+
+    const diver = getDiver(this.game);
+    if (diver && diver.isSubmerged()) {
+      this.attractors = [
+        {
+          position: diver.getPosition(),
+          strength: -30,
+          radius: 5,
+        },
+
+        {
+          position: diver.getPosition(),
+          strength: 4,
+          radius: 15,
+        },
+      ];
     }
   }
 
-  // TODO: Don't allocate?
-  getNeighbors(pos: V2d, distance = 1): FlockingFish[] {
+  getNeighbors(pos: V2d, maxDistance = 1): FlockingFish[] {
     const neighbors = [];
     for (const fish of this.fish) {
-      if (vec2.distance(pos, fish.getPosition()) < distance) {
+      if (vec2.distance(pos, fish.getPosition()) < maxDistance) {
         neighbors.push(fish);
       }
     }

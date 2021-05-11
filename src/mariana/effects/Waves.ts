@@ -118,7 +118,7 @@ export class DebugWaves extends BaseEntity implements Entity {
   constructor(public getHeight: (x: number) => number) {
     super();
     this.sprite = new Graphics();
-    this.sprite.layerName = Layer.WORLD_EXTRA_FRONT;
+    this.sprite.layerName = Layer.WORLD_FRONTER;
   }
 
   onRender() {

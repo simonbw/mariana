@@ -1,18 +1,18 @@
 import { SCALE_MODES } from "@pixi/constants";
 import { Sprite } from "@pixi/sprite";
 import { Body, Capsule } from "p2";
-import img_clownfish from "../../../resources/images/fish/clownfish.png";
-import Entity from "../../core/entity/Entity";
-import AimSpring from "../../core/physics/AimSpring";
-import { clamp, degToRad, normalizeAngle } from "../../core/util/MathUtil";
-import { rBool, rUniform } from "../../core/util/Random";
-import { V2d } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
-import { BaseFish } from "./BaseFish";
-import { FishSubmersion } from "./fish-systems/FishSubmersion";
-import { FlockingSystem } from "./fish-systems/FlockingSystem";
-import { Hydrodynamics } from "./fish-systems/Hydrodynamics";
-import { FlockingFish, School } from "./fish-systems/School";
+import img_clownfish from "../../../../resources/images/fish/clownfish.png";
+import Entity from "../../../core/entity/Entity";
+import AimSpring from "../../../core/physics/AimSpring";
+import { degToRad, normalizeAngle } from "../../../core/util/MathUtil";
+import { rBool, rDirection, rUniform } from "../../../core/util/Random";
+import { V2d } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
+import { BaseFish } from "../BaseFish";
+import { FishSubmersion } from "../fish-systems/FishSubmersion";
+import { FlockingSystem } from "../fish-systems/FlockingSystem";
+import { FlockingFish, School } from "../fish-systems/School";
+import { StreamlineMovement } from "../fish-systems/StreamlineMovement";
 
 const DRAG = 0.15;
 const LIFT = 1.8;
@@ -30,13 +30,12 @@ const SEPARATION_DISTANCE = 1.5; // the distance fish try to stay from each othe
 export class ClownFish extends BaseFish implements Entity, FlockingFish {
   aimSpring!: AimSpring;
   baseScale: number;
-  school: School | undefined;
 
   width = rUniform(0.6, 0.9);
 
   // fish subsystems
   flockingSystem: FlockingSystem;
-  hydrodynamics: Hydrodynamics;
+  movement: StreamlineMovement;
   submersion: FishSubmersion;
 
   constructor(position: V2d) {
@@ -54,6 +53,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
     this.body = new Body({
       position,
       mass: 0.2,
+      angle: rDirection(),
     });
     this.body.addShape(
       new Capsule({
@@ -70,8 +70,13 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
     this.springs = [this.aimSpring];
 
     this.submersion = this.addChild(new FishSubmersion(this));
-    this.hydrodynamics = this.addChild(
-      new Hydrodynamics(this, { drag: DRAG, lift: LIFT })
+    this.movement = this.addChild(
+      new StreamlineMovement(this, {
+        drag: DRAG,
+        lift: LIFT,
+        minThrust: MIN_THRUST,
+        maxThrust: MAX_THRUST,
+      })
     );
     this.flockingSystem = this.addChild(
       new FlockingSystem(this, {
@@ -100,7 +105,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
   }
 
   onSlowTick(dt: number) {
-    if (rBool(0.25)) {
+    if (rBool(0.5)) {
       this.flockingSystem.updateTargetVelocity();
     }
   }
@@ -117,11 +122,9 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
 
       const targetSpeed = targetVelocity.magnitude;
       const currentSpeed = this.getVelocity().magnitude;
-      this.hydrodynamics.thrust = clamp(
-        (targetSpeed - currentSpeed) * 3,
-        MIN_THRUST,
-        MAX_THRUST
-      );
+      this.movement.setThrust((targetSpeed - currentSpeed) * 3);
     }
   }
+
+  onDestroy() {}
 }

@@ -69,7 +69,11 @@ export class Shark extends BaseFish {
     );
 
     this.sprite = new AnimatedSprite(this.patrolTextures);
+
     this.sprite.animationSpeed = 1.2;
+    this.sprite.autoUpdate = false;
+    this.sprite.play();
+
     this.sprite.scale.set(WIDTH / this.sprite.texture.width);
     this.sprite.anchor.set(0.5);
     this.sprite.position.set(...position);

@@ -30,7 +30,7 @@ export class Bubble extends BaseEntity implements Entity {
     sprite.anchor.set(0.5);
     sprite.alpha = 0.7;
 
-    this.sprite.layerName = Layer.WORLD_EXTRA_FRONT;
+    this.sprite.layerName = Layer.WORLD_FRONTER;
   }
 
   onSlowTick(dt: number) {

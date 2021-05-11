@@ -128,6 +128,10 @@ export class Diver extends BaseEntity implements Entity {
     return this.getDepth() + HEAD_OFFSET <= 0;
   }
 
+  isSubmerged() {
+    return !this.isSurfaced();
+  }
+
   onRender() {
     this.sprite.position.set(...this.body.position);
 

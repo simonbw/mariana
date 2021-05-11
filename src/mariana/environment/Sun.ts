@@ -16,7 +16,6 @@ export class Sun extends BaseEntity implements Entity {
 
     graphics.scale.set(1 / 4);
 
-    // TODO: Mask from waves, and gradient mask
     const mask = new Graphics();
     mask.beginFill(0xffffff);
     mask.drawRect(-10000, -1000, 20000, 1000);
