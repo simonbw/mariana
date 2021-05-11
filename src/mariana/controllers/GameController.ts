@@ -23,6 +23,7 @@ import { VictoryScreen } from "../VictoryScreen";
 import { WorldMap } from "../world/WorldMap";
 import CameraController from "./CameraController";
 import { DiverController } from "./DiverController";
+import { Grabber } from "../plants/Grabber";
 
 /**
  * The top level control flow for the game, basically manages transitioning between menus and stuff
@@ -56,6 +57,8 @@ export class GameController extends BaseEntity implements Entity {
       // TODO: Spawn these somewhere else
       game.addEntity(new Anemone(V(5, 10)));
       game.addEntity(new Anemone(V(-5, 15)));
+
+      game.addEntity(new Grabber(V(0, 20)));
 
       game.addEntity(new Squidger(V(-10, 5)));
       game.addEntity(new Squidger(V(-12, 6)));
