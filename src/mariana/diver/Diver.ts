@@ -26,7 +26,7 @@ import { Flashlight } from "./Flashlight";
 import GlowStick from "./Glowstick";
 import { Inventory } from "./Inventory";
 import { HARPOON_OXYGEN_COST, OxygenManager } from "./OxygenManager";
-import { Submersion } from "./Submersion";
+import { DiverSubmersion } from "./DiverSubmersion";
 
 const HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
@@ -79,7 +79,7 @@ export class Diver extends BaseEntity implements Entity {
     this.air = this.addChild(new OxygenManager(this));
     this.inventory = this.addChild(new Inventory(this));
     this.addChild(new BreatheEffect(this));
-    this.addChild(new Submersion(this));
+    this.addChild(new DiverSubmersion(this));
     this.addChild(new Flashlight(this));
     this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
 
@@ -126,6 +126,10 @@ export class Diver extends BaseEntity implements Entity {
 
   isSurfaced() {
     return this.getDepth() + HEAD_OFFSET <= 0;
+  }
+
+  isSubmerged() {
+    return !this.isSurfaced();
   }
 
   onRender() {

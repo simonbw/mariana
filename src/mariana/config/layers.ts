@@ -20,7 +20,7 @@ export enum Layer {
   // The blue part of water
   WATER_OVERLAY = "water_overlay",
   // Stuff that renders in front of the water too
-  WORLD_EXTRA_FRONT = "world_extra_front",
+  WORLD_FRONTER = "world_fronter",
   // Layer reserved for rendering lighting
   LIGHTING = "lighting",
   // Stuff that's still in the world, but is on top of the lighting

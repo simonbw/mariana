@@ -4,7 +4,7 @@ import { SurfaceSplash } from "../effects/SurfaceSplash";
 import { Diver } from "./Diver";
 
 /** Keeps track of whether or not the diver is submerged */
-export class Submersion extends BaseEntity implements Entity {
+export class DiverSubmersion extends BaseEntity implements Entity {
   wasAboveWater: boolean = false;
 
   constructor(public diver: Diver) {

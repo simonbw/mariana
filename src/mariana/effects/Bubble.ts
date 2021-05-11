@@ -30,7 +30,7 @@ export class Bubble extends BaseEntity implements Entity {
     sprite.anchor.set(0.5);
     sprite.alpha = 0.7;
 
-    this.sprite.layerName = Layer.WORLD_EXTRA_FRONT;
+    this.sprite.layerName = Layer.WORLD_FRONTER;
   }
 
   onSlowTick(dt: number) {
@@ -72,7 +72,7 @@ export class Bubble extends BaseEntity implements Entity {
 
     if (sprite.y <= surfaceY) {
       const speed = vec2.len(this.velocity);
-      this.game!.addEntity(new SurfaceSplash(sprite.x, speed, this.size));
+      this.game!.addEntity(new SurfaceSplash(sprite.x, speed / 2, this.size));
       this.destroy();
     }
   }

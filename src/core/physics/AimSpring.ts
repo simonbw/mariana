@@ -2,23 +2,20 @@ import { Body, RotationalSpring } from "p2";
 import { angleDelta, normalizeAngle } from "../../core/util/MathUtil";
 
 export default class AimSpring extends RotationalSpring {
-  constructor(bodyA: Body, bodyB: Body) {
-    super(bodyA, bodyB, {
+  constructor(bodyA: Body) {
+    super(bodyA, null as any, {
       damping: 1,
       stiffness: 10,
+      restAngle: 0,
     });
   }
   applyForce() {
-    const bodyA = this.bodyA;
-    const bodyB = this.bodyB;
-    const relativeBodyAngle = normalizeAngle(bodyB.angle - bodyA.angle);
-    const angleDisplacement = angleDelta(this.restAngle, relativeBodyAngle);
-    const relativeVelocity = bodyB.angularVelocity - bodyA.angularVelocity;
+    const body = this.bodyA;
+    const displacement = angleDelta(this.restAngle, body.angle);
 
     var torque =
-      -this.stiffness * angleDisplacement - this.damping * relativeVelocity;
+      -this.stiffness * displacement - this.damping * body.angularVelocity;
 
-    bodyA.angularForce -= torque;
-    bodyB.angularForce += torque;
+    body.angularForce += torque;
   }
 }

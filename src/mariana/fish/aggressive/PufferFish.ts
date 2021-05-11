@@ -1,26 +1,26 @@
 import { Body, Particle } from "p2";
 import { Sprite, Texture } from "pixi.js";
-import snd_smallweapon1 from "../../../resources/audio/weapons/smallweapon1.flac";
-import snd_smallweapon2 from "../../../resources/audio/weapons/smallweapon2.flac";
-import snd_smallweapon3 from "../../../resources/audio/weapons/smallweapon3.flac";
-import snd_smallweapon4 from "../../../resources/audio/weapons/smallweapon4.flac";
-import img_puffer0 from "../../../resources/images/fish/puffer0.png";
-import img_puffer1 from "../../../resources/images/fish/puffer1.png";
-import img_puffer2 from "../../../resources/images/fish/puffer2.png";
-import img_puffer3 from "../../../resources/images/fish/puffer3.png";
-import img_puffer4 from "../../../resources/images/fish/puffer4.png";
-import img_pufferSpine from "../../../resources/images/fish/puffer_spine.png";
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
-import { SoundInstance } from "../../core/sound/SoundInstance";
-import { polarToVec } from "../../core/util/MathUtil";
-import { rBool, rUniform, shuffle } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
-import { Diver, getDiver } from "../diver/Diver";
-import { GroundTile } from "../world/GroundTile";
-import { ShuffleRing } from "../utils/ShuffleRing";
-import { BaseFish } from "./BaseFish";
+import snd_smallweapon1 from "../../../../resources/audio/weapons/smallweapon1.flac";
+import snd_smallweapon2 from "../../../../resources/audio/weapons/smallweapon2.flac";
+import snd_smallweapon3 from "../../../../resources/audio/weapons/smallweapon3.flac";
+import snd_smallweapon4 from "../../../../resources/audio/weapons/smallweapon4.flac";
+import img_puffer0 from "../../../../resources/images/fish/puffer0.png";
+import img_puffer1 from "../../../../resources/images/fish/puffer1.png";
+import img_puffer2 from "../../../../resources/images/fish/puffer2.png";
+import img_puffer3 from "../../../../resources/images/fish/puffer3.png";
+import img_puffer4 from "../../../../resources/images/fish/puffer4.png";
+import img_pufferSpine from "../../../../resources/images/fish/puffer_spine.png";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity, { GameSprite } from "../../../core/entity/Entity";
+import { SoundInstance } from "../../../core/sound/SoundInstance";
+import { polarToVec } from "../../../core/util/MathUtil";
+import { rBool, rUniform, shuffle } from "../../../core/util/Random";
+import { V, V2d } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
+import { Diver, getDiver } from "../../diver/Diver";
+import { GroundTile } from "../../world/GroundTile";
+import { ShuffleRing } from "../../utils/ShuffleRing";
+import { BaseFish } from "../BaseFish";
 
 const SPEED = 5;
 const FRICTION = 2.0;
@@ -58,14 +58,7 @@ export class PufferFish extends BaseFish {
   textures: Texture[];
 
   constructor(position: V2d, radius: number = rUniform(1.0, 1.5)) {
-    super(position, {
-      width: 2 * radius,
-      height: 1.5 * radius,
-      speed: SPEED,
-      friction: FRICTION,
-      hp: HP,
-      dropValue: 20,
-    });
+    super({ hp: HP, dropValue: 20 });
 
     this.textures = [
       img_puffer0,
@@ -128,8 +121,6 @@ export class PufferFish extends BaseFish {
   }
 
   onTick(dt: number) {
-    super.onTick(dt);
-
     const diver = getDiver(this.game)!;
     const distance = this.getPosition().isub(diver.getPosition()).magnitude;
     if (!this.isPuffing && distance < PUFF_TRIGGER_RANGE) {
@@ -137,7 +128,11 @@ export class PufferFish extends BaseFish {
     }
 
     const direction = this.movingRight ? 1 : -1;
-    this.swim(V(direction, 0));
+    // this.swim(V(direction, 0));
+  }
+
+  onRender() {
+    this.sprite.position.set(...this.getPosition());
   }
 
   onBeginContact(other: Entity) {

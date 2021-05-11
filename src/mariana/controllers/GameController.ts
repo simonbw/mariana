@@ -9,18 +9,21 @@ import { Diver, getDiver } from "../diver/Diver";
 import { Water } from "../environment/Background";
 import { Sky } from "../environment/Sky";
 import { isFish } from "../fish/BaseFish";
-import { ClownFish } from "../fish/ClownFish";
-import { School } from "../fish/School";
+import { ClownFish } from "../fish/passive/ClownFish";
+import { School } from "../fish/fish-systems/School";
+import Squidger from "../fish/aggressive/Squidger";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
 import PauseMenu from "../menu/PauseMenu";
+import { Anemone } from "../plants/Anemone";
 import { UpgradeManager } from "../upgrade/UpgradeManager";
 import { UpgradeShop } from "../upgrade/UpgradeShop";
 import { VictoryScreen } from "../VictoryScreen";
 import { WorldMap } from "../world/WorldMap";
 import CameraController from "./CameraController";
 import { DiverController } from "./DiverController";
+import { Grabber } from "../plants/Grabber";
 
 /**
  * The top level control flow for the game, basically manages transitioning between menus and stuff
@@ -51,24 +54,15 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
 
-      const feesh = game.addEntities([
-        new ClownFish(V(5, 3)),
-        new ClownFish(V(5, 4)),
-        new ClownFish(V(5, 5)),
-        new ClownFish(V(6, 5)),
-        new ClownFish(V(6, 6)),
-        new ClownFish(V(6, 7)),
-        new ClownFish(V(7, 5)),
-        new ClownFish(V(7, 6)),
-        new ClownFish(V(7, 7)),
-        new ClownFish(V(8, 5)),
-        new ClownFish(V(8, 6)),
-        new ClownFish(V(8, 7)),
-        new ClownFish(V(9, 5)),
-        new ClownFish(V(9, 6)),
-        new ClownFish(V(9, 7)),
-      ]);
-      game.addEntity(new School(feesh));
+      // TODO: Spawn these somewhere else
+      game.addEntity(new Anemone(V(5, 10)));
+      game.addEntity(new Anemone(V(-5, 15)));
+
+      game.addEntity(new Grabber(V(0, 20)));
+
+      game.addEntity(new Squidger(V(-10, 5)));
+      game.addEntity(new Squidger(V(-12, 6)));
+      game.addEntity(new Squidger(V(-10, 7)));
 
       game.dispatch({ type: "diveStart" });
     },

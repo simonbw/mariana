@@ -1,11 +1,11 @@
 import { Filter, Sprite } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
-import { hexToVec3 } from "../../core/util/ColorUtils";
 import { Layer } from "../config/layers";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
 import { Waves } from "../effects/Waves";
 import frag_background from "./background.frag";
+import { Sky } from "./Sky";
 
 export class Water extends BaseEntity implements Entity {
   persistenceLevel = 1;
@@ -39,6 +39,7 @@ export class Water extends BaseEntity implements Entity {
       resolution,
       skyHeight: 30,
       waterDepth: WORLD_BOTTOM - 10,
+      timeOfDay: (this.game!.entities.getById("sky") as Sky).hour,
     };
   }
 

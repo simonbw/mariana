@@ -232,13 +232,13 @@
  [√] Glowsticks
  [√] Complete tileset
  [√] Revamp world generation
+ [√] Fix WorldMap performance (chunks?)
+ [√] Make squid thing
+ [√] Make harpoon retraction smoother - retract when collides with diver?
  [ ] Global audio mixer
  [ ] Volume control
  [ ] Positional sounds
- [ ] Fix WorldMap performance (chunks?)
  [ ] Nicer damage overlay filter — bring back damage system
- [ ] Make squid thing
- [ ] Make harpoon retraction smoother - retract when collides with diver?
  [ ] Do some performance profiling
  [ ] Better death sound
  [ ] Upgrade shop thumbnails

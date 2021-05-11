@@ -3,15 +3,19 @@ import { Graphics } from "pixi.js";
 import snd_reelInHarpoon from "../../../resources/audio/weapons/reel_in_harpoon.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { SoundName } from "../../core/resources/sounds";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { V } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { Diver } from "../diver/Diver";
+import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { Harpoon } from "./Harpoon";
 
 const TETHER_LENGTH = 13.0; // meters
 const NUM_SEGMENTS = 25; // segments in the rope
-const RETRACT_TIME = 1; // seconds
+const TURBO_RETRACT_TIME = 0.5; // seconds
+const AUTO_RETRACT_TIME = 1; // seconds
+const MANUAL_RETRACT_TIME = 3; // seconds
 const FRICTION = 0.001;
 
 const SEGMENT_LENGTH = TETHER_LENGTH / (NUM_SEGMENTS + 1);
@@ -72,12 +76,54 @@ export class Tether extends BaseEntity implements Entity {
     }
   }
 
+  hasAutoretractor(): boolean {
+    return getUpgradeManager(this.game!).hasUpgrade("autoRetractor");
+  }
+
+  hasTurboretractor(): boolean {
+    return getUpgradeManager(this.game!).hasUpgrade("turboRetractor");
+  }
+
+  getRetractorLevel(): 0 | 1 | 2 {
+    if (getUpgradeManager(this.game!).hasUpgrade("turboRetractor")) {
+      return 2;
+    } else if (getUpgradeManager(this.game!).hasUpgrade("autoRetractor")) {
+      return 1;
+    } else {
+      return 0;
+    }
+  }
+
+  getRetractTime() {
+    switch (this.getRetractorLevel()) {
+      case 0:
+        return MANUAL_RETRACT_TIME;
+      case 1:
+        return AUTO_RETRACT_TIME;
+      case 2:
+        return TURBO_RETRACT_TIME;
+    }
+  }
+
+  getRetractSound(): SoundName {
+    switch (this.getRetractorLevel()) {
+      case 0:
+        return snd_reelInHarpoon;
+      case 1:
+        return snd_reelInHarpoon;
+      case 2:
+        return snd_reelInHarpoon;
+    }
+  }
+
   async retract() {
     this.retracting = true;
 
-    this.game!.addEntity(new SoundInstance(snd_reelInHarpoon, { gain: 0.05 }));
+    this.game!.addEntity(
+      new SoundInstance(this.getRetractSound(), { gain: 0.05 })
+    );
 
-    const waitTime = RETRACT_TIME / NUM_SEGMENTS;
+    const waitTime = this.getRetractTime() / NUM_SEGMENTS;
     for (let i = 0; i < this.constraints.length; i++) {
       await this.wait(waitTime, (dt, t) => {
         this.constraints[i].upperLimit = SEGMENT_LENGTH * (1.0 - t);

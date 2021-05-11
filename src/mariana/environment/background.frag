@@ -7,6 +7,7 @@ uniform highp vec4 outputFrame;
 uniform mat3 cameraMatrix;
 uniform float skyHeight;
 uniform float waterDepth;
+uniform float timeOfDay;
 
 vec3 skyTopColor = vec3(0.0, 0.5, 1.0);
 vec3 horizonColor = vec3(0.99, 0.99, 1.0);
