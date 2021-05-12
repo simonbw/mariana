@@ -101,7 +101,7 @@ export default class Squidger extends BaseFish implements Entity {
     this._friction.set(this.body.velocity).imul(-DRAG);
     this.body.applyForce(this._friction);
 
-    if (diver) {
+    if (diver && diver.isSubmerged()) {
       const direction = diver.getPosition().isub(this.getPosition());
       if (direction.magnitude < ATTACK_RANGE) {
         this.aim.setAngle(direction.angle);
