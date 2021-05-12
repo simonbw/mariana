@@ -4,7 +4,7 @@ import Entity, { GameSprite } from "../../../core/entity/Entity";
 import { degToRad, lerp } from "../../../core/util/MathUtil";
 import { Eel } from "./Eel";
 
-const WIDTH = 0.6;
+const WIDTH = 0.4;
 
 export class EelSprite extends BaseEntity implements Entity {
   sprite: Graphics & GameSprite = new Graphics();
