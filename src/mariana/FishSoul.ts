@@ -10,11 +10,12 @@ import img_pickup5 from "../../resources/images/particles/pickup-5.png";
 import img_pickup6 from "../../resources/images/particles/pickup-6.png";
 import img_pickup7 from "../../resources/images/particles/pickup-7.png";
 import BaseEntity from "../core/entity/BaseEntity";
-import Entity from "../core/entity/Entity";
+import Entity, { GameSprite } from "../core/entity/Entity";
 import { SoundInstance } from "../core/sound/SoundInstance";
 import { rBool, rInteger, rNormal, rRound } from "../core/util/Random";
 import { V, V2d } from "../core/Vector";
 import { CollisionGroups } from "./config/CollisionGroups";
+import { Layer } from "./config/layers";
 import { Diver, getDiver } from "./diver/Diver";
 import { PointLight } from "./lighting/PointLight";
 import { getUpgradeManager } from "./upgrade/UpgradeManager";
@@ -25,7 +26,7 @@ const FRICTION = 2; // meters / sec^2
 const GLOW_PERIOD = 1; // seconds
 
 export class FishSoul extends BaseEntity implements Entity {
-  sprite: AnimatedSprite;
+  sprite: AnimatedSprite & GameSprite;
   body: Body;
   light: PointLight;
 
@@ -44,7 +45,9 @@ export class FishSoul extends BaseEntity implements Entity {
       img_pickup7,
     ]);
 
-    // this.sprite.tint = 0xddff99;
+    this.sprite.tint = 0xddff99;
+    this.sprite.alpha = 0.7;
+    this.sprite.layerName = Layer.GLOW;
 
     this.sprite.anchor.set(0.5);
     this.sprite.width = this.sprite.height = 0.5 + Math.sqrt(value) * 0.1;

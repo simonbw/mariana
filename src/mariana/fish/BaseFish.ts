@@ -45,12 +45,12 @@ export abstract class BaseFish
     this.hp = hp;
   }
 
-  private _position = V(0, 0);
+  protected _position = V(0, 0);
   getPosition(): V2d {
     return this._position.set(this.body.position);
   }
 
-  private _velocity = V(0, 0);
+  protected _velocity = V(0, 0);
   getVelocity(): V2d {
     return this._velocity.set(this.body.velocity);
   }
@@ -87,7 +87,7 @@ export abstract class BaseFish
     this.game!.addEntity(
       new BloodSplash(
         this.getPosition(),
-        V(this.body.velocity),
+        this.getVelocity(),
         undefined,
         rUniform(0.7, 1.1)
       )

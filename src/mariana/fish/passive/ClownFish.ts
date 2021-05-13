@@ -97,10 +97,10 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
 
     const angle = normalizeAngle(this.body.angle);
     this.sprite.rotation = angle;
-    const flip = angle < degToRad(90) || angle > degToRad(270);
+    const flip = angle < degToRad(-90) || angle > degToRad(90);
     this.sprite.scale.set(
       this.baseScale,
-      flip ? this.baseScale : -this.baseScale
+      flip ? -this.baseScale : this.baseScale
     );
   }
 

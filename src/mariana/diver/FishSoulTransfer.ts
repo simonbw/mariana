@@ -13,6 +13,7 @@ import { SoundInstance } from "../../core/sound/SoundInstance";
 import { smoothStep } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
 import { Boat } from "../Boat";
+import { Layer } from "../config/layers";
 
 export class FishSoulTransfer extends BaseEntity implements Entity {
   persistenceLevel = 1; // so they stay even when the menu is opened
@@ -34,7 +35,9 @@ export class FishSoulTransfer extends BaseEntity implements Entity {
 
     this.sprite.anchor.set(0.5);
     this.sprite.width = this.sprite.height = 0.5 + Math.sqrt(amount) * 0.1;
-    // this.sprite.tint = 0xddff99;
+    this.sprite.tint = 0xddff99;
+    this.sprite.alpha = 0.7;
+    this.sprite.layerName = Layer.GLOW;
 
     this.sprite.animationSpeed = 8;
     this.sprite.autoUpdate = false;

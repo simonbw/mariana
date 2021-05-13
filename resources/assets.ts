@@ -94,6 +94,8 @@ export const ALL_IMAGES: string[] = [
   require("./images/environment/water-overlay.png"),
   require("./images/fish/angler_1.png"),
   require("./images/fish/clownfish.png"),
+  require("./images/fish/eel-body-1.png"),
+  require("./images/fish/eel-head-1.png"),
   require("./images/fish/jellyfish_1.png"),
   require("./images/fish/jellyfish_2.png"),
   require("./images/fish/puffer_spine.png"),

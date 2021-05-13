@@ -1,14 +1,10 @@
 import { Body, Capsule } from "p2";
-import { SCALE_MODES, Sprite, Texture } from "pixi.js";
 import snd_dialogHelmetPain1 from "../../../resources/audio/dialog/dialog_helmet_pain1.flac";
 import snd_dialogHelmetPain2 from "../../../resources/audio/dialog/dialog_helmet_pain2.flac";
 import snd_dialogHelmetPain3 from "../../../resources/audio/dialog/dialog_helmet_pain3.flac";
 import snd_dialogHelmetPain4 from "../../../resources/audio/dialog/dialog_helmet_pain4.flac";
 import snd_dialogHelmetPain5 from "../../../resources/audio/dialog/dialog_helmet_pain5.flac";
 import snd_dialogHelmetPain6 from "../../../resources/audio/dialog/dialog_helmet_pain6.flac";
-import img_diver from "../../../resources/images/diver/diver.png";
-import img_diverLeft from "../../../resources/images/diver/diver_left.png";
-import img_diverRight from "../../../resources/images/diver/diver_right.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -22,13 +18,14 @@ import { ShuffleRing } from "../utils/ShuffleRing";
 import { HarpoonGun } from "../weapons/HarpoonGun";
 import { WorldAnchor } from "../world/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
+import { DiverSprite } from "./DiverSprite";
+import { DiverSubmersion } from "./DiverSubmersion";
 import { Flashlight } from "./Flashlight";
 import GlowStick from "./Glowstick";
 import { Inventory } from "./Inventory";
 import { HARPOON_OXYGEN_COST, OxygenManager } from "./OxygenManager";
-import { DiverSubmersion } from "./DiverSubmersion";
 
-const HEIGHT = 2.0; // in meters
+export const DIVER_HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
 const BASE_SPEED = 12.0; // Newtons?
 const SPEED_PER_UPGRADE = 4.0; // Newtons?
@@ -48,22 +45,13 @@ const HURT_SOUNDS = new ShuffleRing([
   snd_dialogHelmetPain6,
 ]);
 
-// TODO: Split functionality into more components if possible
 export class Diver extends BaseEntity implements Entity {
   persistenceLevel = 1;
-  sprite: Sprite;
-  body: Body;
-  // So we can easily grab the diver from other entities
   id = "diver";
+  body: Body;
 
   onBoat = true;
   isDead = false;
-
-  textures = {
-    forward: Texture.from(img_diver, { scaleMode: SCALE_MODES.NEAREST }),
-    left: Texture.from(img_diverLeft, { scaleMode: SCALE_MODES.NEAREST }),
-    right: Texture.from(img_diverRight, { scaleMode: SCALE_MODES.NEAREST }),
-  };
 
   harpoonGun: HarpoonGun;
   air: OxygenManager;
@@ -82,6 +70,7 @@ export class Diver extends BaseEntity implements Entity {
     this.addChild(new DiverSubmersion(this));
     this.addChild(new Flashlight(this));
     this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
+    this.addChild(new DiverSprite(this));
 
     this.body = new Body({
       mass: 1,
@@ -90,15 +79,11 @@ export class Diver extends BaseEntity implements Entity {
     });
     const shape = new Capsule({
       radius: WIDTH / 2,
-      length: HEIGHT - WIDTH,
+      length: DIVER_HEIGHT - WIDTH,
       collisionGroup: CollisionGroups.Diver,
       collisionMask: CollisionGroups.All,
     });
     this.body.addShape(shape, [0, 0], Math.PI / 2);
-
-    this.sprite = new Sprite(this.textures.forward);
-    this.sprite.anchor.set(0.5);
-    this.sprite.scale.set(HEIGHT / this.sprite.texture.height);
   }
 
   getMaxSpeed(): number {
@@ -132,19 +117,6 @@ export class Diver extends BaseEntity implements Entity {
     return !this.isSurfaced();
   }
 
-  onRender() {
-    this.sprite.position.set(...this.body.position);
-
-    const xMove = this.moveDirection[0];
-    if (xMove > 0.1) {
-      this.sprite.texture = this.textures.right;
-    } else if (xMove < -0.1) {
-      this.sprite.texture = this.textures.left;
-    } else {
-      this.sprite.texture = this.textures.forward;
-    }
-  }
-
   onTick(dt: number) {
     if (this.onBoat) {
       const boat = this.game!.entities.getById("boat") as Boat;
@@ -168,7 +140,7 @@ export class Diver extends BaseEntity implements Entity {
         const waves = getWaves(this.game!);
         const x = this.body.position[0];
         const surfaceVelocity = waves.getSurfaceVelocity(x);
-        const d = this.getDepth() - HEAD_OFFSET; // that this number doesn't go negative
+        const d = this.getDepth() - HEAD_OFFSET;
         const depthFactor = WAVE_DEPTH_FACTOR ** d;
         this.body.applyImpulse(
           surfaceVelocity.imul(MAX_WAVE_FORCE * depthFactor * dt)

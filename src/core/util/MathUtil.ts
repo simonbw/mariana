@@ -45,6 +45,11 @@ export function lerpOrSnap(
   return lerp(a, b, t);
 }
 
+/** Inverse lerp */
+export function invLerp(a: number, b: number, v: number): number {
+  return (v - a) / (b - a);
+}
+
 /** Normalizes an angle in radians to be in the range [-pi, pi] */
 export function normalizeAngle(angle: number) {
   return mod(angle + Math.PI, Math.PI * 2) - Math.PI;

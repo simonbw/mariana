@@ -1,25 +1,34 @@
-import { Body, Constraint, DistanceConstraint, Particle, Spring } from "p2";
-import BaseEntity from "../../../core/entity/BaseEntity";
-import Entity from "../../../core/entity/Entity";
-import { clamp, lerp } from "../../../core/util/MathUtil";
-import { rBool } from "../../../core/util/Random";
+import {
+  Body,
+  Circle,
+  Constraint,
+  DistanceConstraint,
+  LinearSpring,
+  Spring,
+} from "p2";
+import { clamp, degToRad, lerp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
 import { getDiver } from "../../diver/Diver";
+import { BaseFish } from "../BaseFish";
 import { EelSprite } from "./EelSprite";
 
-const NUM_SEGMENTS = 32;
-const SEGMENT_LENGTH = 0.2;
+const NUM_SEGMENTS = 24;
+const SEGMENT_LENGTH = 0.5;
 
 const HEAD_DRAG = 0.01;
-const TAIL_DRAG = 0.02;
+const TAIL_DRAG = 0.015;
 const HEAD_SPRINGY = 0.0;
 const TAIL_SPRINGY = 0.0;
 
 const WIGGLE_SPEED = 3.0;
-const WIGGLE_AMOUNT = 0.5;
+const WIGGLE_AMOUNT = degToRad(40);
 const MOVE_SPEED = 3;
 
-export class Eel extends BaseEntity implements Entity {
+// TODO: Damage diver
+// TODO: Better springiness
+/** An eel */
+export class Eel extends BaseFish {
   bodies: Body[] = [];
   springs: Spring[] = [];
   constraints: Constraint[] = [];
@@ -28,37 +37,60 @@ export class Eel extends BaseEntity implements Entity {
   t = 0;
 
   constructor(position: V2d) {
-    super();
-
-    this.addChild(new EelSprite(this));
+    super({ dropValue: 20, hp: 50 });
 
     for (let i = 0; i < NUM_SEGMENTS; i++) {
       const body = new Body({
         position: position.add([i * SEGMENT_LENGTH, 0]),
         mass: 0.01,
-        collisionResponse: false,
+        // collisionResponse: false,
       });
-      body.addShape(new Particle());
+      body.addShape(
+        new Circle({
+          radius: 0.2,
+          collisionGroup: CollisionGroups.Fish,
+          collisionMask: CollisionGroups.All,
+        })
+      );
 
       this.bodies.push(body);
       this.directions.push(V(1, 0));
     }
 
     for (let i = 1; i < this.bodies.length; i++) {
-      const bodyA = this.bodies[i - 1];
-      const bodyB = this.bodies[i];
+      const bodyA = this.bodies[i];
+      const bodyB = this.bodies[i - 1];
       const constraint = new DistanceConstraint(bodyA, bodyB, {
         distance: SEGMENT_LENGTH,
+        collideConnected: false,
       });
       constraint.setStiffness(40);
       constraint.setRelaxation(8);
       this.constraints.push(constraint);
+
+      if (i >= 2) {
+        const bodyC = this.bodies[i - 2];
+        const spring = new LinearSpring(bodyA, bodyC, {
+          stiffness: 1000,
+          restLength: SEGMENT_LENGTH * 2,
+          damping: 1,
+        });
+        this.springs.push(spring);
+      }
     }
+
+    this.addChild(new EelSprite(this));
+  }
+
+  getPosition(): V2d {
+    return this._position.set(this.bodies[0].position);
+  }
+
+  getVelocity(): V2d {
+    return this._velocity.set(this.bodies[0].velocity);
   }
 
   private _friction = V(0, 0);
-
-  // TODO: don't allocate
   onTick(dt: number) {
     this.t += dt * WIGGLE_SPEED;
 
@@ -69,30 +101,14 @@ export class Eel extends BaseEntity implements Entity {
     this.moveTowardsDiver();
   }
 
+  // TODO: don't allocate
   updateSegment(i: number) {
     const p = (i - 1) / (this.bodies.length - 1);
     const body = this.bodies[i];
     const parent = this.bodies[i - 1];
 
     const drag = lerp(HEAD_DRAG, TAIL_DRAG, p);
-    body.applyForce(V(body.velocity).imul(-drag));
-
-    if (parent) {
-      const springiness = lerp(HEAD_SPRINGY, TAIL_SPRINGY, p);
-
-      const direction = this.directions[i];
-      const parentDirection = this.directions[i - 1];
-      direction.set(parent.position).isub(body.position).inormalize();
-
-      const normalOffset = direction.dot(parentDirection.rotate90cw());
-      const tangentOffset = direction.dot(parentDirection);
-
-      const amount = springiness * normalOffset;
-
-      const springForce = direction.rotate90cw().imul(amount);
-
-      body.applyForce(springForce);
-    }
+    body.applyForce(this._friction.set(body.velocity).imul(-drag));
   }
 
   private _diverDirection = V(0, 0);
@@ -106,11 +122,8 @@ export class Eel extends BaseEntity implements Entity {
     headDirection.angle += Math.cos(this.t * WIGGLE_SPEED) * WIGGLE_AMOUNT;
 
     if (this._diverDirection.magnitude > 1) {
-      const speed =
-        MOVE_SPEED * clamp((this._diverDirection.magnitude - 5) / 10, 0, 1);
-      if (speed < 0) {
-        console.log("wtf", speed);
-      }
+      const p = clamp((this._diverDirection.magnitude - 1) / 10, 0, 1);
+      const speed = MOVE_SPEED * p;
       head.applyForce(headDirection.mul(-speed));
     }
   }

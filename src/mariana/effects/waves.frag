@@ -36,6 +36,6 @@ void main(void){
     // surface foam
     gl_FragColor = vec4(1, 1, 1, 1) * 0.7;
   } else {
-    gl_FragColor = vec4(waterColor, 1.0) * 0.35;
+    gl_FragColor = vec4(waterColor, 1.0) * 0.3;
   }
 }
