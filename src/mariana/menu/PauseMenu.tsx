@@ -47,6 +47,25 @@ export default class PauseMenu extends BaseEntity implements Entity {
     }
   }
 
+  // Rerender immediately on these specific events for responsiveness of menu
+  handlers = {
+    graphicsQualityChanged: () => {
+      this.reactEntity.reactRender();
+    },
+    mute: () => {
+      this.reactEntity.reactRender();
+    },
+    unMute: () => {
+      this.reactEntity.reactRender();
+    },
+    toggleMute: () => {
+      this.reactEntity.reactRender();
+    },
+    setVolume: () => {
+      this.reactEntity.reactRender();
+    },
+  };
+
   onButtonDown(button: ControllerButton) {
     if (button === ControllerButton.START) {
       this.game?.togglePause();
