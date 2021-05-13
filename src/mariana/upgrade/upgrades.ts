@@ -83,7 +83,7 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     prerequisites: [],
   },
   doubleEndedPoon: {
-    name: "Double Ended Poon",
+    name: "Double Ended 'Poon",
     description: "Sharpen your harpoon at both ends",
     cost: 300,
     prerequisites: ["autoRetractor"],

@@ -102,11 +102,13 @@ export class Boat extends BaseEntity implements Entity {
     }
   }
 
+  private _launchPosition = V(0, 0);
   getLaunchPosition() {
-    return polarToVec(degToRad(-30) + this.sprite.rotation, 3).iadd([
-      this.sprite.x,
-      this.sprite.y,
-    ]);
+    return polarToVec(
+      degToRad(-30) + this.sprite.rotation,
+      3,
+      this._launchPosition
+    ).iadd([this.sprite.x, this.sprite.y]);
   }
 
   getDropoffPosition() {

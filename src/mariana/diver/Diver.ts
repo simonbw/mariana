@@ -1,4 +1,4 @@
-import { Body, Capsule } from "p2";
+import { Body, Capsule, vec2 } from "p2";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -12,6 +12,7 @@ import { WorldAnchor } from "../world/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
 import { DiverSprite } from "./DiverSprite";
 import { DiverSubmersion } from "./DiverSubmersion";
+import { DiverVoice } from "./DiverVoice";
 import { Flashlight } from "./Flashlight";
 import GlowStick from "./Glowstick";
 import { Inventory } from "./Inventory";
@@ -54,6 +55,7 @@ export class Diver extends BaseEntity implements Entity {
     this.addChild(new Flashlight(this));
     this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
     this.addChild(new DiverSprite(this));
+    this.addChild(new DiverVoice(this));
 
     this.body = new Body({
       mass: 1,
@@ -103,11 +105,8 @@ export class Diver extends BaseEntity implements Entity {
   onTick(dt: number) {
     if (this.onBoat) {
       const boat = this.game!.entities.getById("boat") as Boat;
-      const [x, y] = boat.getLaunchPosition();
-      this.body.position[0] = x;
-      this.body.position[1] = y;
-      this.body.velocity[0] = 0;
-      this.body.velocity[1] = 0;
+      vec2.copy(this.body.position, boat.getLaunchPosition());
+      vec2.set(this.body.velocity, 0, 0);
       this.body.collisionResponse = false;
     } else {
       const g = this.isSurfaced() ? SURFACE_GRAVITY : SUBMERGED_GRAVITY;

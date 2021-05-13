@@ -86,8 +86,8 @@ export function reflectXY(theta: number): number {
 }
 
 /** Create a V2d from polar coordinates */
-export function polarToVec(theta: number, r: number): V2d {
-  return V(r * Math.cos(theta), r * Math.sin(theta));
+export function polarToVec(theta: number, r: number, out: V2d = V(0, 0)): V2d {
+  return out.set(r * Math.cos(theta), r * Math.sin(theta));
 }
 
 /** Returns true if points are counter clockwise */
