@@ -26,12 +26,23 @@ const HARPOON_SOUNDS = new ShuffleRing([
 ]);
 
 export class HarpoonGun extends BaseEntity implements Entity {
+  /** The current harpoon. Undefined when it's fully retracted */
   harpoon: Harpoon | undefined;
+  /** The current tether. Undefined when it's fully retracted */
   tether: Tether | undefined;
 
   constructor(public diver: Diver) {
     super();
   }
+
+  handlers = {
+    diverShoot: () => {
+      this.shoot(this.diver.aimDirection);
+    },
+    diverRetract: () => {
+      this.retract();
+    },
+  };
 
   async shoot(direction: V2d) {
     if (!this.harpoon) {

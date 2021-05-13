@@ -48,7 +48,7 @@ export class BreatheEffect extends BaseEntity implements Entity {
     if (!this.diver.isSurfaced()) {
       this.addChild(new SoundInstance(EXHALE_SOUNDS.getNext(), { gain: 0.1 }));
       await this.wait(0.8 / pace, () => {
-        if (rBool(0.7 * pace)) {
+        if (rBool(0.4 * pace)) {
           this.game!.addEntity(
             new Bubble(
               this.diver

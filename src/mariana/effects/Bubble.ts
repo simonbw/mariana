@@ -67,10 +67,7 @@ export class Bubble extends BaseEntity implements Entity {
     // }
 
     const waves = getWaves(this.game!);
-    const x = sprite.x;
-    const surfaceY = waves.getSurfaceHeight(x);
-
-    if (sprite.y <= surfaceY) {
+    if (waves.isAbovewater([sprite.x, sprite.y])) {
       const speed = vec2.len(this.velocity);
       this.game!.addEntity(new SurfaceSplash(sprite.x, speed / 2, this.size));
       this.destroy();

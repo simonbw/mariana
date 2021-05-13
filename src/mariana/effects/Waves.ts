@@ -57,6 +57,16 @@ export class Waves extends BaseEntity implements Entity {
     return wave1;
   }
 
+  /** Returns true if a point is underwater */
+  isUnderwater([x, y]: [number, number]): boolean {
+    return y > this.getSurfaceHeight(x);
+  }
+
+  /** Returns true if a point is above water */
+  isAbovewater(position: [number, number]): boolean {
+    return !this.isUnderwater(position);
+  }
+
   getSurfaceVelocity(x: number): V2d {
     const { t, a, lambda, T } = this.getWaveStats();
     // this is the derivative of the surface height wave

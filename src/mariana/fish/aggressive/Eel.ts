@@ -10,6 +10,7 @@ import { clamp, degToRad, lerp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { getDiver } from "../../diver/Diver";
+import { getWaves } from "../../effects/Waves";
 import { BaseFish } from "../BaseFish";
 import { EelSprite } from "./EelSprite";
 
@@ -102,6 +103,7 @@ export class Eel extends BaseFish {
   }
 
   // TODO: don't allocate
+  private _gravity = V(0, 0);
   updateSegment(i: number) {
     const p = (i - 1) / (this.bodies.length - 1);
     const body = this.bodies[i];
@@ -109,6 +111,11 @@ export class Eel extends BaseFish {
 
     const drag = lerp(HEAD_DRAG, TAIL_DRAG, p);
     body.applyForce(this._friction.set(body.velocity).imul(-drag));
+
+    const waves = getWaves(this.game!);
+    if (!waves.isUnderwater(body.position)) {
+      body.applyForce(this._gravity.set(0, 9.8 * body.mass));
+    }
   }
 
   private _diverDirection = V(0, 0);

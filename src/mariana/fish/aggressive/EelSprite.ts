@@ -1,4 +1,3 @@
-import { Geometry } from "@pixi/core";
 import { Graphics } from "@pixi/graphics";
 import { Mesh, MeshMaterial } from "@pixi/mesh";
 import { Sprite } from "@pixi/sprite";
@@ -7,10 +6,10 @@ import img_eelBody1 from "../../../../resources/images/fish/eel-body-1.png";
 import img_eelHead1 from "../../../../resources/images/fish/eel-head-1.png";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../../core/entity/Entity";
-import { degToRad, lerp, normalizeAngle } from "../../../core/util/MathUtil";
+import { degToRad, normalizeAngle } from "../../../core/util/MathUtil";
 import { Eel } from "./Eel";
 
-const WIDTH = 0.5a;
+const WIDTH = 0.5;
 const HEAD_SIZE = 1.2;
 
 export class EelSprite extends BaseEntity implements Entity {
@@ -37,7 +36,6 @@ export class EelSprite extends BaseEntity implements Entity {
     this.headSprite.scale.set(this.headScale);
     this.headSprite.anchor.set(0.7, 0.5);
     this.sprite.addChild(this.headSprite);
-    
 
     for (const body of eel.bodies) {
       const [x, y] = body.position;
@@ -46,8 +44,8 @@ export class EelSprite extends BaseEntity implements Entity {
 
     this.geometry = new RopeGeometry(WIDTH, this.points);
     const shader = new MeshMaterial(Texture.from(img_eelBody1));
-    this.mesh = new Mesh(this.geometry, shader)
-    
+    this.mesh = new Mesh(this.geometry, shader);
+
     this.sprite.addChild(this.mesh);
   }
 

@@ -11,6 +11,7 @@ import { CollisionGroups } from "../config/CollisionGroups";
 import { Bubble } from "../effects/Bubble";
 import { SurfaceSplash } from "../effects/SurfaceSplash";
 import { getWaves } from "../effects/Waves";
+import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { isHarpoonable } from "./Harpoonable";
 import { SIZE } from "./HarpoonGun";
 
@@ -104,7 +105,10 @@ export class Harpoon extends BaseEntity implements Entity {
   }
 
   getDamageAmount(): number {
-    if (this.minSpeed < MIN_SPEED_FOR_DAMAGE) {
+    const speed = getUpgradeManager(this.game!).hasUpgrade("doubleEndedPoon")
+      ? vec2.length(this.body.velocity)
+      : this.minSpeed;
+    if (speed < MIN_SPEED_FOR_DAMAGE) {
       return 0;
     } else {
       return 10;

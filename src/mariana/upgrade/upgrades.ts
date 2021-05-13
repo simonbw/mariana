@@ -17,6 +17,7 @@ export type UpgradeId =
   | "rebreather"
   | "autoRetractor"
   | "turboRetractor"
+  | "doubleEndedPoon"
   | "soulMagnet";
 
 /** All the upgrades */
@@ -80,6 +81,12 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     description: "Collect fish souls from farther away",
     cost: 200,
     prerequisites: [],
+  },
+  doubleEndedPoon: {
+    name: "Double Ended Poon",
+    description: "Sharpen your harpoon at both ends",
+    cost: 300,
+    prerequisites: ["autoRetractor"],
   },
 };
 

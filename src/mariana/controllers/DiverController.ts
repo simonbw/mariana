@@ -56,11 +56,11 @@ export class DiverController extends BaseEntity implements Entity {
   }
 
   onMouseDown() {
-    this.diver.shoot();
+    this.game?.dispatch({ type: "diverShoot" });
   }
 
   onMouseUp() {
-    this.diver.retract();
+    this.game?.dispatch({ type: "diverRetract" });
   }
 
   onButtonDown(button: ControllerButton) {

@@ -1,20 +1,12 @@
 import { Body, Capsule } from "p2";
-import snd_dialogHelmetPain1 from "../../../resources/audio/dialog/dialog_helmet_pain1.flac";
-import snd_dialogHelmetPain2 from "../../../resources/audio/dialog/dialog_helmet_pain2.flac";
-import snd_dialogHelmetPain3 from "../../../resources/audio/dialog/dialog_helmet_pain3.flac";
-import snd_dialogHelmetPain4 from "../../../resources/audio/dialog/dialog_helmet_pain4.flac";
-import snd_dialogHelmetPain5 from "../../../resources/audio/dialog/dialog_helmet_pain5.flac";
-import snd_dialogHelmetPain6 from "../../../resources/audio/dialog/dialog_helmet_pain6.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { SoundInstance } from "../../core/sound/SoundInstance";
 import { V, V2d } from "../../core/Vector";
 import { Boat } from "../Boat";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { getWaves } from "../effects/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
-import { ShuffleRing } from "../utils/ShuffleRing";
 import { HarpoonGun } from "../weapons/HarpoonGun";
 import { WorldAnchor } from "../world/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
@@ -35,15 +27,6 @@ const SUBMERGED_GRAVITY = 0; //5.0; // meters / second^2
 const HEAD_OFFSET = -0.35; // meters offset from center for head to be submerged
 const MAX_WAVE_FORCE = 3; // multiplier of wave velocity
 const WAVE_DEPTH_FACTOR = 0.95; // multiplier of wave velocity
-
-const HURT_SOUNDS = new ShuffleRing([
-  snd_dialogHelmetPain1,
-  snd_dialogHelmetPain2,
-  snd_dialogHelmetPain3,
-  snd_dialogHelmetPain4,
-  snd_dialogHelmetPain5,
-  snd_dialogHelmetPain6,
-]);
 
 export class Diver extends BaseEntity implements Entity {
   persistenceLevel = 1;
@@ -159,10 +142,6 @@ export class Diver extends BaseEntity implements Entity {
   }
 
   damage(amount: number) {
-    this.game?.addEntity(
-      new SoundInstance(HURT_SOUNDS.getNext(), { gain: 0.5 })
-    );
-
     this.game?.dispatch({ type: "diverHurt", amount });
   }
 
