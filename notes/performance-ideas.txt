@@ -1,0 +1,35 @@
+
+|———————————————————|
+| Performance Ideas |
+|———————————————————|
+
+—————————
+ General 
+—————————
+
+Cache V2ds
+ - There's a lot of performance to be gained by reducing allocations/collection of V2d's
+ - Replace default getPosition() with cached version
+
+Reduce stuff done in `onTick`
+ - Try to move stuff to onSlowTick
+ - Try to move stuff to event handlers
+
+
+—————————
+ Physics 
+—————————
+
+Allow marking non-particle bodies as "particle"
+
+Eel
+ - Can we use fewer bodies, and just interpolate for the mesh?
+
+
+———————————
+ Rendering
+———————————
+
+Do screen-to-world conversion in vertex not fragment Shader
+
+Use a different shader for the waves on the surface so that we're not calculating wave heights everywhere

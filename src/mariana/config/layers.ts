@@ -1,35 +1,37 @@
 import Game from "../../core/Game";
-import { GameRenderer2d } from "../../core/graphics/GameRenderer2d";
 import { LayerInfo } from "../../core/graphics/LayerInfo";
-import { V } from "../../core/Vector";
 
-// Layers for rendering stuff in front of other stuff
+/** Layers for rendering stuff in front of other stuff */
 export enum Layer {
-  // The real background layer
-  BACKGROUND = "background",
+  /** The sky */
+  SKY = "sky",
+  /** The sun */
   SUN = "sun",
-  // The clouds, for parallax
+  /** The real background layer */
+  BACKGROUND = "background",
+  /** The clouds, for parallax */
   CLOUDS = "clouds",
+  /** The clouds, for parallax, again */
   CLOUDS2 = "clouds2",
-  // Stuff that renders behind the normal stuff
+  /** Stuff that renders behind the normal stuff */
   WORLD_BACK = "world_back",
-  // The main layer where most stuff is
+  /** The main layer where most stuff is */
   WORLD = "world",
-  // Stuff that renders in front of other stuff, but still in the water
+  /** Stuff that renders in front of other stuff, but still in the water */
   WORLD_FRONT = "world_front",
-  // The blue part of water
+  /** The blue part of water */
   WATER_OVERLAY = "water_overlay",
-  // Stuff that renders in front of the water too
+  /** Stuff that renders in front of the water too */
   WORLD_FRONTER = "world_fronter",
-  // Layer reserved for rendering lighting
+  /** Layer reserved for rendering lighting */
   LIGHTING = "lighting",
-  // Stuff that's still in the world, but is on top of the lighting
+  /** Stuff that's still in the world, but is on top of the lighting */
   GLOW = "glow",
-  // Stuff not in the world, so it doesn't move when the camera moves
+  /** Stuff not in the world, so it doesn't move when the camera moves */
   HUD = "hud",
-  // Stuff above even the HUD
+  /** Stuff above even the HUD */
   MENU = "menu",
-  // debug info that goes on top of everything
+  /** debug info that goes on top of everything */
   DEBUG_INFO = "debug_info",
 }
 

@@ -5,7 +5,7 @@ import Game from "../../core/Game";
 import { V, V2d } from "../../core/Vector";
 import { Boat } from "../Boat";
 import { CollisionGroups } from "../config/CollisionGroups";
-import { getWaves } from "../effects/Waves";
+import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { HarpoonGun } from "../weapons/HarpoonGun";
 import { WorldAnchor } from "../world/WorldAnchor";

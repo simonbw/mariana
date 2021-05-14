@@ -3,9 +3,9 @@ import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { Layer } from "../config/layers";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
-import { Waves } from "../effects/Waves";
+import { getWaves, Waves } from "../environment/Waves";
 import frag_background from "./background.frag";
-import { Sky } from "./Sky";
+import { getTimeOfDay, Sky } from "./Sky";
 
 export class Water extends BaseEntity implements Entity {
   persistenceLevel = 1;
@@ -34,12 +34,16 @@ export class Water extends BaseEntity implements Entity {
       .scale(resolution, resolution)
       .invert();
 
+    const waves = getWaves(this.game!);
+    const hour = getTimeOfDay(this.game!);
+
     return {
+      ...waves.getWaveStats(),
       cameraMatrix,
       resolution,
       skyHeight: 30,
       waterDepth: WORLD_BOTTOM - 10,
-      timeOfDay: (this.game!.entities.getById("sky") as Sky).hour,
+      hour,
     };
   }
 

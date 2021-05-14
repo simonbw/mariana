@@ -1,0 +1,94 @@
+
+——————————
+|| Fish ||
+——————————
+
+Coral Reef Fish — https://en.wikipedia.org/wiki/Coral_reef_fish
+ - Angelfish
+ - Damselfish
+ - Yellow Tang
+ - Blue Tang (dory)
+ - Goby
+ - Butterflyfish
+ - Seahorse
+ - Surgeonfish
+ - Perch
+
+Eels
+ - Electric
+ - Split into sub-eels
+
+Whales
+ - big
+ - Friendly
+
+
+Swordfish
+ - Tries to impale you
+
+Emperor shrimp
+
+Fish that blend in with the walls until you get close, then they strike
+
+Barnacle
+ - Attaches to walls
+ - Shoots spines as you go by
+
+Crabs
+
+Vent Crabs
+ - big
+ - steel armor
+
+Vent Worms
+
+
+Squid
+ - giant
+ - colossal
+
+
+
+Octopus
+
+Angler
+
+Double Angler
+
+Exploding Fish
+
+Bosses
+ - kraken
+ - super giant fish swallows you whole
+
+
+
+—————————————————
+|| Decorations ||
+—————————————————
+
+Coral reef species for inspiration (coral, anemones, & urchins):
+  - acropora humilis
+  - acropora cervicornis
+  - heliopora coerulea
+  - diploria labyrinthiformis
+  - dendrogyra cylindrus
+  - gorgonia ventalina
+  - urticina eques
+  - echinometra viridis
+  - paracentrotus lividus
+
+
+
+——————————————
+|| Ambience ||
+——————————————
+
+Better sun
+
+Change the background color with time of day
+
+Use waves for the background shader
+
+Some sort of plankton overlay
+

@@ -1,0 +1,46 @@
+
+Sprites
+ - Ground tilesets
+   - Finish the existing rock tileset with the new corners
+   - More tilesets for more biomes would be cool
+   - Tiles can have other layers for bioluminescence if you want
+
+ - Seaweed
+   - Should be straight up-and-down
+   - I'm gonna deform it with a mesh to make it wiggle
+
+ - Shark
+   - Remove/change blood dripping (The dripping is cool but doesn't work well at a low frame rate)
+   - Separate frames/animation for idle vs aggroed
+   - A couple frames for a biting animation
+
+ - Coral reef fauna
+   - 
+  
+ - Coral reef fish
+   - Just a lot sprites to bring life to the coral reef
+   - Single frame fish work, but 2-4 swimming frames is better
+ - 
+ - Moving squidger thing
+ - Upgrade icons
+
+
+Audio
+ - More Music
+   - Drowning Music
+   - Combat Music
+   - More musics per depth level
+ 
+ - Sounds Effects
+   - Different harpoon reeling speeds
+
+ - Fish Sounds
+   - Jellyfish
+     - Squidge
+     - Sting
+   - Shark
+     - Aggro
+     - Bite miss
+   - Eel
+ 
+ - Dialogue 

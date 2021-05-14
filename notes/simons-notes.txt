@@ -99,15 +99,6 @@
 
   ## Ideas for cool features to have in the game
 
-    Dynamic lighting
-     - Basically the same as in previous game but without shadows
-     - Flashlight based on diver aim direction
-     - Glowsticks
-     - Depth lighting could be done with one large gradient sprite pretty easily
-     - Angler fish
-     - Glow in the dark plants
-     - Day/night cycle!
-  
     Terrain/Flora
      - Current that moves you/sucks you down
      - Geiser that burns you
@@ -115,28 +106,6 @@
      - Sea cucumber
      - Fan worm
 
-    More Types of Fish
-     - Passive fish that don't harm you
-       - fish: angelfish, clownfish, perch
-       - bigboys: whales, whale shark, manatee, 
-       - other: emperor shrimp, 
-     - Crabs
-     - Barracuda
-     - Fish that blend in with the walls until you get close, then they strike
-     - Large segmented (worm) fish like an eel
-     - Barnacle — shoots when you go by
-     - Fish that travel through walls
-     - Exploding fish
-     - Sword fish — impales you
-     - Squid — ink?
-     - Electric Eel
-     - Leviathon that will eat you in one shot
-     - Double angler — An angler with an angler for a bobble thing
-     - Thing that propels itself in bursts
-     - Something that grabs you with a tentacle and pulls you in
-       - Maybe a small something like a Barnacle
-       - Also could be a cool boss fight with a kraken
-     - School of fish that you kill many per harpoon shot
     
     Advanced World Generation — Biome
      - Choose region for biome based on depth
@@ -216,48 +185,3 @@
 
 # Bugs
  [ ] Diver catches on walls
-
-
-# Prioritized Things I wanna work on
- [√] Special case particle bodies in broadphase collision detection
- [√] Dynamic Lighting
- [√] Autogenerate preloader stuff
- [√] Surface waves shader
- [√] Surface splashes
- [√] Revamp upgrades
- [√] Upgrade Pixi Version
- [√] Menus with react
- [√] Revamp upgrade shop
- [√] Organize assets
- [√] Glowsticks
- [√] Complete tileset
- [√] Revamp world generation
- [√] Fix WorldMap performance (chunks?)
- [√] Make squid thing
- [√] Make harpoon retraction smoother - retract when collides with diver?
- [ ] Global audio mixer
- [ ] Volume control
- [ ] Positional sounds
- [ ] Nicer damage overlay filter — bring back damage system
- [ ] Do some performance profiling
- [ ] Better death sound
- [ ] Upgrade shop thumbnails
- [ ] Credits screen
-
-
-# Art to ask Rachel for
- [ ] More complete tileset
- [ ] Shark animations
- [ ] Plants
- [ ] Some passive fish sprites
- [ ] Moving squidger thing
- [ ] Upgrade icons
-
-
-# World generation Ideas
- - Plant spawning
-   - find all the tiles hit by daylight
-
-   thoughts on fish spawning
-
-  - How do we load in large objects?

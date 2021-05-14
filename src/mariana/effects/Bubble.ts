@@ -6,9 +6,9 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { rNormal } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
+import { getWaves } from "../environment/Waves";
 import { getWorldMap } from "../world/WorldMap";
 import { SurfaceSplash } from "./SurfaceSplash";
-import { getWaves } from "./Waves";
 
 const FRICTION = 1.5;
 const RISE_SPEED = 16; // meters / sec ^ 2

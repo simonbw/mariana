@@ -10,7 +10,7 @@ import { SoundInstance } from "../../core/sound/SoundInstance";
 import { rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { BloodSplash } from "../effects/BloodSplash";
-import { getWaves } from "../effects/Waves";
+import { getWaves } from "../environment/Waves";
 import { makeSoulDrops } from "../FishSoul";
 import { ShuffleRing } from "../utils/ShuffleRing";
 import { Harpoon } from "../weapons/Harpoon";

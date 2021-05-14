@@ -10,7 +10,7 @@ import { clamp, degToRad, lerp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { getDiver } from "../../diver/Diver";
-import { getWaves } from "../../effects/Waves";
+import { getWaves } from "../../environment/Waves";
 import { BaseFish } from "../BaseFish";
 import { EelSprite } from "./EelSprite";
 

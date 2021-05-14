@@ -145,7 +145,6 @@ export default class SpatialHashingBroadphase extends SAPBroadphase {
       this.addBodyToHash(dBody);
     }
 
-    //
     for (const pBody of this.particleBodies) {
       for (const other of this.aabbQuery(
         world,

@@ -10,22 +10,14 @@ export class Sun extends BaseEntity implements Entity {
 
     const graphics = new Graphics();
 
-    graphics.beginFill(0xffff00);
-    graphics.drawCircle(0, 0, 4);
-    graphics.endFill();
+    // graphics.beginFill(0xffff00);
+    // graphics.drawCircle(0, 0, 4);
+    // graphics.endFill();
 
     graphics.scale.set(1 / 4);
 
-    const mask = new Graphics();
-    mask.beginFill(0xffffff);
-    mask.drawRect(-10000, -1000, 20000, 1000);
-    mask.endFill();
-    graphics.mask = mask;
-
     this.sprite = graphics;
     this.sprite.layerName = Layer.SUN;
-
-    this.sprites = [mask];
   }
 
   onRender() {

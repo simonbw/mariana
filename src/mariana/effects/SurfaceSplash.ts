@@ -3,12 +3,11 @@ import img_waterSplash from "../../../resources/images/particles/water-splash.pn
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { colorLerp } from "../../core/util/ColorUtils";
-import { clamp, polarToVec } from "../../core/util/MathUtil";
+import { polarToVec } from "../../core/util/MathUtil";
 import { rDirection, rRound, rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
-import { getWaves, WATER_COLOR } from "./Waves";
+import { getWaves, WATER_COLOR } from "../environment/Waves";
 
 const FRICTION = 0.8;
 const GRAVITY = 9.8;

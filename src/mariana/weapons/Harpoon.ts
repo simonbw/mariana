@@ -10,7 +10,7 @@ import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { Bubble } from "../effects/Bubble";
 import { SurfaceSplash } from "../effects/SurfaceSplash";
-import { getWaves } from "../effects/Waves";
+import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { isHarpoonable } from "./Harpoonable";
 import { SIZE } from "./HarpoonGun";

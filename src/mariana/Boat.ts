@@ -9,7 +9,7 @@ import { degToRad, lerp, polarToVec } from "../core/util/MathUtil";
 import { V } from "../core/Vector";
 import { Layer } from "./config/layers";
 import { getDiver } from "./diver/Diver";
-import { getWaves } from "./effects/Waves";
+import { getWaves } from "./environment/Waves";
 import { FONT_HEADING } from "./fonts";
 import { PointLight } from "./lighting/PointLight";
 

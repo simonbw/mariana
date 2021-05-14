@@ -1,0 +1,20 @@
+
+⌜—————————————⌝
+| UX Problems |
+⌞—————————————⌟
+
+
+It's not obvious when I'm in dangerous
+ - Bring back screen fading
+ - Add suffocating sounds
+ - Add suffocating music
+
+
+Music is too loud
+ - Add volume Slider
+ - Add multiple volume sliders
+
+
+Diver gets stuck on walls
+ - 
+

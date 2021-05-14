@@ -7,14 +7,18 @@ uniform highp vec4 outputFrame;
 uniform mat3 cameraMatrix;
 uniform vec3 waterColor;
 
+float PI2 = 2.0 * 3.1415926538;
+
 // wave stuff
 uniform highp float t;
 uniform highp float a;
 uniform highp float T;
 uniform highp float lambda;
 
-float PI2 = 2.0 * 3.1415926538;
-
+/** Returns the height of the surface at x */
+float getSurfaceY(float x) {
+  return a * sin(PI2 * (x / lambda - t / T));
+}
 
 void main(void){
   gl_FragColor = texture2D(uSampler, vTextureCoord);
@@ -25,9 +29,7 @@ void main(void){
   float x = worldPosition.x; // meters
   float y = worldPosition.y; // meters
 
-  float wave1 = a * sin(PI2 * (x / lambda - t / T));
-
-  float height = wave1;
+  float height = getSurfaceY(x);
 
   if (y < height) {
     // Transparent above the surface
