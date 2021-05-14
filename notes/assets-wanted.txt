@@ -3,7 +3,7 @@ Sprites
  - Ground tilesets
    - Finish the existing rock tileset with the new corners
    - More tilesets for more biomes would be cool
-   - Tiles can have other layers for bioluminescence if you want
+   - Tiles can have an emmissive layer if you want
 
  - Seaweed
    - Should be straight up-and-down
@@ -15,14 +15,43 @@ Sprites
    - A couple frames for a biting animation
 
  - Coral reef fauna
-   - 
+   - acropora humilis
+   - acropora cervicornis
+   - heliopora coerulea
+   - diploria labyrinthiformis
+   - dendrogyra cylindrus
+   - gorgonia ventalina
+   - urticina eques
+   - echinometra viridis
+   - paracentrotus lividus
   
  - Coral reef fish
    - Just a lot sprites to bring life to the coral reef
    - Single frame fish work, but 2-4 swimming frames is better
- - 
+   - Some ideas:
+     - https://en.wikipedia.org/wiki/Coral_reef_fish
+     - Angelfish
+     - Blue Tang (think Dory)
+     - Butterflyfish
+     - Damselfish
+     - Goby
+     - Seahorse
+     - Surgeonfish
+     - Yellow Tang
+  
  - Moving squidger thing
+ 
  - Upgrade icons
+
+ - New Boat
+   - Needs more pixels
+   - Should have a hanging lamp that swings with the motion of the ocean
+ 
+ - Redesign diver
+   - Harpoon aiming
+   - Maybe some animations
+   - Have lights on him
+   - 
 
 
 Audio

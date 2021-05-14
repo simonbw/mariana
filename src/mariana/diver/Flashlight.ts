@@ -4,7 +4,7 @@ import { getTimeOfDay } from "../environment/TimeOfDay";
 import { DirectionalLight } from "../lighting/DirectionalLight";
 import { Diver } from "./Diver";
 
-const ACTIVATION_DEPTH = 80;
+const ACTIVATION_DEPTH = 80; // meters
 
 export class Flashlight extends BaseEntity implements Entity {
   light: DirectionalLight;

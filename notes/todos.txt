@@ -10,3 +10,4 @@ General TODOs:
  [ ] Better death sound
  [ ] Upgrade shop thumbnails
  [ ] Credits screen
+ [ ] Fish spawning system

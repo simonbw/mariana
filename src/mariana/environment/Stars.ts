@@ -22,7 +22,7 @@ export class Stars extends BaseEntity implements Entity {
     const minX = -50;
     const maxX = 50;
     const minY = -40;
-    const maxY = 3;
+    const maxY = 20;
 
     for (let i = 0; i < NUM_STARS; i++) {
       const x = rUniform(minX, maxX) * UPSCALE;

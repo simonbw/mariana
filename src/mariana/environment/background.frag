@@ -72,8 +72,8 @@ void main(void){
     // clear above water
     gl_FragColor.rgba = vec4(0.0);
   } else {
+    gl_FragColor.a = 1.0;
     if (y < midPoint) {
-      gl_FragColor.a = 1.0;
       float t = invLerp(horizonPoint, midPoint, y);
       gl_FragColor.rgb = mix(waterTopColor, waterMiddleColor, t);
     } else if (y < bottomPoint) {

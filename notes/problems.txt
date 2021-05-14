@@ -1,7 +1,7 @@
 
-⌜—————————————⌝
-| UX Problems |
-⌞—————————————⌟
+⌜———————————————⌝
+|  UX Problems  |
+⌞———————————————⌟
 
 
 It's not obvious when I'm in dangerous
@@ -17,4 +17,11 @@ Music is too loud
 
 Diver gets stuck on walls
  - 
+
+
+⌜———————————————⌝
+|     Bugs      |
+⌞———————————————⌟
+
+Harpoon/tether doesn't despawn when you die
 
