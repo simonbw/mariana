@@ -18,7 +18,7 @@ import { rBool, rUniform, shuffle } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { Diver, getDiver } from "../../diver/Diver";
-import { GroundTile } from "../../world/GroundTile";
+import { GroundTile } from "../../plants/GroundTile";
 import { ShuffleRing } from "../../utils/ShuffleRing";
 import { BaseFish } from "../BaseFish";
 

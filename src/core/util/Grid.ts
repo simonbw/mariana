@@ -17,6 +17,13 @@ export default class Grid<T> {
     return this.data[x][y];
   }
 
+  getOrCreate(cell: Cell, fallback: T): T {
+    if (!this.has(cell)) {
+      this.set(cell, fallback);
+    }
+    return this.get(cell)!;
+  }
+
   delete([x, y]: Cell) {
     if (this.data[x]) {
       delete this.data[x][y];

@@ -5,7 +5,7 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { rBool } from "../../core/util/Random";
 import { V2d } from "../../core/Vector";
 import { Diver } from "../diver/Diver";
-import { GroundTile } from "../world/GroundTile";
+import { GroundTile } from "../plants/GroundTile";
 import { BaseFish } from "./BaseFish";
 
 const PATROL_TIME = 5.0; // seconds travelled in each direction

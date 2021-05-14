@@ -1,4 +1,4 @@
-import { TilePos } from "./TilePos";
+import { TilePos } from "../TilePos";
 
 // A rectangular subsection of a grid
 export class SubGrid implements Iterable<TilePos> {
@@ -7,9 +7,7 @@ export class SubGrid implements Iterable<TilePos> {
     public y: number,
     public width: number,
     public height: number
-  ) {
-    console.log([x, y, width, height]);
-  }
+  ) {}
 
   has(cell: TilePos): boolean {
     const [x, y] = cell;

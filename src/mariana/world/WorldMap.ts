@@ -1,30 +1,30 @@
-import { CompositeTilemap } from "@pixi/tilemap";
 import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
+import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import Grid from "../../core/util/Grid";
-import { rInteger } from "../../core/util/Random";
-import SubGridSet from "../../core/util/SubGridSet";
+import { rBool, rInteger } from "../../core/util/Random";
 import { TilePos } from "../../core/util/TilePos";
 import { V, V2d } from "../../core/Vector";
-import { Layer } from "../config/layers";
 import { TILE_SIZE_METERS, WORLD_SIZE_TILES } from "../constants";
-import { getDefaultTileset, getTileType } from "../utils/Tileset";
-import BiomeMap from "./BiomeMap";
-import GroundMap from "./GroundMap";
-import { GroundTile } from "./GroundTile";
-import { Minimap } from "./Minimap";
-import { isWorldAnchor } from "./WorldAnchor";
+import { Minimap } from "../hud/Minimap";
+import BiomeMap from "./generation/BiomeMap";
+import GroundMap from "./generation/GroundMap";
+import StuffMap from "./generation/StuffMap";
+import { GroundLoader } from "./loading/GroundLoader";
+import { StuffLoader } from "./loading/StuffLoader";
+import SubGridSet from "./loading/SubGridSet";
+import { isWorldAnchor } from "./loading/WorldAnchor";
 
 /** Keeps track of all the tiles and stuff */
 export class WorldMap extends BaseEntity implements Entity {
   id = "worldMap";
-  sprite!: CompositeTilemap & GameSprite;
 
-  tilesLoaded: SubGridSet = new SubGridSet();
-  tileEntities: Grid<Entity[]> = new Grid();
   groundMap: GroundMap;
   biomeMap: BiomeMap;
+  stuffMap: StuffMap;
+
+  tilesLoaded: SubGridSet = new SubGridSet();
+  groundLoader: GroundLoader;
+  stuffLoader: StuffLoader;
 
   constructor(
     public minX = -WORLD_SIZE_TILES[0] / 2,
@@ -33,75 +33,39 @@ export class WorldMap extends BaseEntity implements Entity {
     public seed = rInteger(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
   ) {
     super();
-
-    this.sprite = new CompositeTilemap();
-    this.sprite.layerName = Layer.WORLD_BACK;
-    this.sprite.scale.set(TILE_SIZE_METERS / 64);
+    // Generators
     this.biomeMap = new BiomeMap(minX, maxX, maxY);
     this.groundMap = new GroundMap(this.seed, this.minX, this.maxX, this.maxY);
+    this.stuffMap = new StuffMap(this);
+
+    // Loaders
+    this.groundLoader = this.addChild(new GroundLoader(this));
+    this.stuffLoader = this.addChild(new StuffLoader(this));
+
+    this.addChild(new Minimap(this));
   }
 
   onAdd(game: Game) {
     // Make sure we can find the WorldAnchors quickly
     game.entities.addFilter(isWorldAnchor);
-
-    this.addChild(new Minimap(this));
-  }
-
-  tileIsSolid(tilePos: TilePos): boolean {
-    return this.groundMap.tileIsSolid(tilePos);
-  }
-
-  /** Calculates which  */
-  getTileType(tilePos: TilePos): number {
-    const middle = V(tilePos);
-    return getTileType({
-      middle: this.tileIsSolid(middle),
-      left: this.tileIsSolid(middle.add([-1, 0])),
-      top: this.tileIsSolid(middle.add([0, -1])),
-      right: this.tileIsSolid(middle.add([1, 0])),
-      bottom: this.tileIsSolid(middle.add([0, 1])),
-      topLeft: this.tileIsSolid(middle.add([-1, -1])),
-      topRight: this.tileIsSolid(middle.add([1, -1])),
-      bottomLeft: this.tileIsSolid(middle.add([-1, 1])),
-      bottomRight: this.tileIsSolid(middle.add([1, 1])),
-    });
   }
 
   loadTile(tilePos: TilePos): void {
-    const isSolid = this.tileIsSolid(tilePos);
-
-    if (isSolid) {
-      const worldPos = this.tileToWorld(tilePos);
-      const tileset = getDefaultTileset();
-      const tileType = this.getTileType(tilePos);
-      const groundTile = new GroundTile(worldPos);
-      this.addChild(groundTile);
-      this.tileEntities.set(tilePos, [groundTile]);
-
-      const tx = tilePos[0] * 64;
-      const ty = tilePos[1] * 64;
-      this.sprite.tile(tileset.getTexture(tileType), tx, ty);
-    }
-
-    this.game?.dispatch({ type: loadTileEventType(tilePos) });
+    this.game!.dispatch({ type: "tileLoaded", tilePos });
+    this.game!.dispatch({ type: loadTileEventType(tilePos) });
   }
 
   unloadTile(tilePos: TilePos): void {
-    for (const entity of this.tileEntities.get(tilePos) ?? []) {
-      entity.destroy();
-    }
-
-    this.tileEntities.delete(tilePos);
-    this.game?.dispatch({ type: unloadTileEventType(tilePos) });
-  }
-
-  worldPointIsLoaded(worldPos: [number, number]): boolean {
-    return this.tileIsLoaded(this.worldToTile(worldPos));
+    this.game!.dispatch({ type: "tileUnloaded", tilePos });
+    this.game!.dispatch({ type: unloadTileEventType(tilePos) });
   }
 
   tileIsLoaded(tilePos: TilePos): boolean {
     return this.tilesLoaded.has(tilePos);
+  }
+
+  worldPointIsLoaded(worldPos: [number, number]): boolean {
+    return this.tileIsLoaded(this.worldToTile(worldPos));
   }
 
   /** Get the tile that a world position is in */

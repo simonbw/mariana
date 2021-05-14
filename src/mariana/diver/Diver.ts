@@ -8,7 +8,7 @@ import { CollisionGroups } from "../config/CollisionGroups";
 import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { HarpoonGun } from "../weapons/HarpoonGun";
-import { WorldAnchor } from "../world/WorldAnchor";
+import { WorldAnchor } from "../world/loading/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
 import { DiverSprite } from "./DiverSprite";
 import { DiverSubmersion } from "./DiverSubmersion";

@@ -1,15 +1,16 @@
-import Grid from "../../core/util/Grid";
-import { lerp, polarToVec } from "../../core/util/MathUtil";
-import { rUniform } from "../../core/util/Random";
-import { TilePos } from "../../core/util/TilePos";
-import { V, V2d } from "../../core/Vector";
+import Grid from "../../../core/util/Grid";
+import { lerp, polarToVec } from "../../../core/util/MathUtil";
+import { rUniform } from "../../../core/util/Random";
+import { TilePos } from "../../../core/util/TilePos";
+import { V, V2d } from "../../../core/Vector";
 import {
   TILE_SIZE_METERS,
   WORLD_LEFT_EDGE,
   WORLD_RIGHT_EDGE,
-  WORLD_SIZE_METERS
-} from "../constants";
-import { makeTurbulence1D, makeTurbulence2D } from "./signal/noise";
+  WORLD_SIZE_METERS,
+} from "../../constants";
+import { getTileType } from "../../utils/Tileset";
+import { makeTurbulence1D, makeTurbulence2D } from "./noise";
 
 // Terrain heights should be between these values
 const MIN_SURFACE_Y_TILE_COORDS = 5;
@@ -66,6 +67,23 @@ export default class GroundMap {
       y++;
     }
     return y;
+  }
+
+  // TODO: Don't allocate so much
+  /** Calculates which type of tile a tile is */
+  getTileType(tilePos: TilePos): number {
+    const middle = V(tilePos);
+    return getTileType({
+      middle: this.tileIsSolid(middle),
+      left: this.tileIsSolid(middle.add([-1, 0])),
+      top: this.tileIsSolid(middle.add([0, -1])),
+      right: this.tileIsSolid(middle.add([1, 0])),
+      bottom: this.tileIsSolid(middle.add([0, 1])),
+      topLeft: this.tileIsSolid(middle.add([-1, -1])),
+      topRight: this.tileIsSolid(middle.add([1, -1])),
+      bottomLeft: this.tileIsSolid(middle.add([-1, 1])),
+      bottomRight: this.tileIsSolid(middle.add([1, 1])),
+    });
   }
 
   private generateSurface(): void {

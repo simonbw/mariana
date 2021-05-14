@@ -15,6 +15,7 @@ import { makeSoulDrops } from "../FishSoul";
 import { ShuffleRing } from "../utils/ShuffleRing";
 import { Harpoon } from "../weapons/Harpoon";
 import { Harpoonable } from "../weapons/Harpoonable";
+import { getWorldMap } from "../world/WorldMap";
 
 interface Options {
   dropValue?: number;
@@ -59,6 +60,20 @@ export abstract class BaseFish
     const waves = getWaves(this.game!);
     const [x, y] = this.getPosition();
     return y < waves.getSurfaceHeight(x);
+  }
+
+  onSlowTick(dt: number) {
+    this.destroyIfUnloaded();
+  }
+
+  /** Destroys the fish if it's not in the loaded part of the world. Returns whether or not it did the destroying. */
+  destroyIfUnloaded(): boolean {
+    const worldMap = getWorldMap(this.game!)!;
+    if (!worldMap.worldPointIsLoaded(this.getPosition())) {
+      this.destroy();
+      return true;
+    }
+    return false;
   }
 
   // when we're hit

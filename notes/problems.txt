@@ -24,4 +24,3 @@ Diver gets stuck on walls
 ⌞———————————————⌟
 
 Harpoon/tether doesn't despawn when you die
-

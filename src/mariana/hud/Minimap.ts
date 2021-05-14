@@ -6,8 +6,9 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { KeyCode } from "../../core/io/Keys";
 import { Layer } from "../config/layers";
 import { getDefaultTileset } from "../utils/Tileset";
-import { WorldMap } from "./WorldMap";
+import { WorldMap } from "../world/WorldMap";
 
+/** Really bad, just for testing world generation */
 export class Minimap extends BaseEntity implements Entity {
   sprite: Sprite & GameSprite;
 
@@ -21,7 +22,7 @@ export class Minimap extends BaseEntity implements Entity {
     const { minX, maxX, maxY } = worldMap;
     for (let x = minX - 5; x < maxX + 5; x++) {
       for (let y = 0; y < maxY; y++) {
-        if (worldMap.tileIsSolid([x, y])) {
+        if (worldMap.groundMap.tileIsSolid([x, y])) {
           tilemap.tile(tileset.getTexture(7), x * 64, y * 64);
         }
       }

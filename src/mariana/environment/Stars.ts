@@ -7,9 +7,10 @@ import { rUniform } from "../../core/util/Random";
 import { Layer } from "../config/layers";
 import { getTimeOfDay } from "./TimeOfDay";
 
-const NUM_STARS = 3500;
+const NUM_STARS = 4000;
 
 const UPSCALE = 4.0;
+const ROTATION_POINT = 40;
 
 export class Stars extends BaseEntity implements Entity {
   sprite: Graphics & GameSprite;
@@ -18,11 +19,12 @@ export class Stars extends BaseEntity implements Entity {
     super();
 
     this.sprite = new Graphics();
+    this.sprite.position.set(0, ROTATION_POINT);
 
-    const minX = -50;
-    const maxX = 50;
-    const minY = -40;
-    const maxY = 20;
+    const minX = -70;
+    const maxX = 70;
+    const minY = -70 - ROTATION_POINT;
+    const maxY = 70 - ROTATION_POINT;
 
     for (let i = 0; i < NUM_STARS; i++) {
       const x = rUniform(minX, maxX) * UPSCALE;
@@ -40,8 +42,11 @@ export class Stars extends BaseEntity implements Entity {
     this.sprite.cacheAsBitmapResolution = 8;
   }
 
-  onRender() {
-    const nightPercent = getTimeOfDay(this.game!).getNightPercent();
+  onRender(dt: number) {
+    const timeOfDay = getTimeOfDay(this.game!);
+    const nightPercent = timeOfDay.getNightPercent();
     this.sprite.alpha = smootherStep(nightPercent);
+
+    this.sprite.rotation = (timeOfDay.hour / 24) * Math.PI * 2;
   }
 }

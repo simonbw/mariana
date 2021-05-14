@@ -1,8 +1,8 @@
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity from "../../core/entity/Entity";
-import { SubGrid } from "../../core/util/SubGrid";
-import { V, V2d } from "../../core/Vector";
-import { WorldMap } from "./WorldMap";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity from "../../../core/entity/Entity";
+import { V, V2d } from "../../../core/Vector";
+import { SubGrid } from "./SubGrid";
+import { WorldMap } from "../WorldMap";
 
 /** Keeps certain tiles loaded */
 export class WorldAnchor extends BaseEntity implements Entity {

@@ -1,5 +1,5 @@
 import { SubGrid } from "./SubGrid";
-import { TilePos } from "./TilePos";
+import { TilePos } from "../TilePos";
 
 // A union of rectangular sections of grid
 export default class SubGridSet implements Iterable<TilePos> {

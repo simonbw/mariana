@@ -5,6 +5,7 @@ import { DirectionalLight } from "../lighting/DirectionalLight";
 import { Diver } from "./Diver";
 
 const ACTIVATION_DEPTH = 80; // meters
+const INTENSITY = 0.6;
 
 export class Flashlight extends BaseEntity implements Entity {
   light: DirectionalLight;
@@ -14,9 +15,7 @@ export class Flashlight extends BaseEntity implements Entity {
   constructor(public diver: Diver) {
     super();
 
-    this.light = this.addChild(
-      new DirectionalLight({ length: 30, width: 18, intensity: 0.6 })
-    );
+    this.light = this.addChild(new DirectionalLight({ length: 30, width: 18 }));
   }
 
   onTick() {
@@ -25,7 +24,7 @@ export class Flashlight extends BaseEntity implements Entity {
     const shouldBeOn = isDeep || isNight;
 
     if (!this.on && shouldBeOn) {
-      this.turnOn;
+      this.turnOn();
     } else if (this.on && !shouldBeOn) {
       this.turnOff();
     }
@@ -33,12 +32,12 @@ export class Flashlight extends BaseEntity implements Entity {
 
   async turnOn() {
     this.on = true;
-    this.light.intensity = 1.0;
+    this.light.intensity = INTENSITY;
   }
 
   async turnOff() {
     this.on = false;
-    this.light.intensity = 1.0;
+    this.light.intensity = 0.0;
   }
 
   onRender() {

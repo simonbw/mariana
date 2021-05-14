@@ -105,8 +105,12 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
   }
 
   onSlowTick(dt: number) {
-    if (rBool(0.5)) {
-      this.flockingSystem.updateTargetVelocity();
+    super.onSlowTick(dt);
+
+    if (!this.isDestroyed) {
+      if (rBool(0.5)) {
+        this.flockingSystem.updateTargetVelocity();
+      }
     }
   }
 

@@ -4,7 +4,7 @@ import Game from "../../core/Game";
 import { invLerp } from "../../core/util/MathUtil";
 
 /** Real world seconds per in-game hour */
-const SECONDS_PER_HOUR = 1;
+const SECONDS_PER_HOUR = 60;
 
 export const SUNRISE_START = 4.3;
 export const SUNRISE_MID = 6.3;
@@ -48,7 +48,12 @@ export class TimeOfDay extends BaseEntity implements Entity {
   }
 
   onTick(dt: number) {
-    this.hour += dt / SECONDS_PER_HOUR;
+    if (this.game!.io.keyIsDown("Quote")) {
+      this.hour += (30 * dt) / SECONDS_PER_HOUR;
+    } else {
+      this.hour += dt / SECONDS_PER_HOUR;
+    }
+
     this.hour %= 24;
   }
 }
