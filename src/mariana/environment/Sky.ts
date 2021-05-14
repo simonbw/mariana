@@ -14,17 +14,13 @@ import {
 import { Cloud } from "./Cloud";
 import { Daylight } from "./Daylight";
 import frag_sky from "./sky.frag";
-import { Sun } from "./Sun";
+import { Stars } from "./Stars";
+import { getTimeOfDay, TIME_UNIFORMS } from "./TimeOfDay";
 
-const SECONDS_PER_HOUR = 1;
 const NUM_CLOUDS = 0;
-
-export const SUNRISE = 6;
-export const SUNSET = 18;
 
 export class Sky extends BaseEntity implements Entity {
   id = "sky";
-  hour: number = 3;
   filter: Filter;
 
   constructor() {
@@ -39,7 +35,7 @@ export class Sky extends BaseEntity implements Entity {
     this.filter = new Filter(undefined, frag_sky);
     sprite.filters = [this.filter];
 
-    this.sprite.layerName = Layer.BACKGROUND;
+    this.sprite.layerName = Layer.SKY;
 
     for (let i = 0; i < NUM_CLOUDS; i++) {
       const x = rUniform(WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE);
@@ -48,27 +44,23 @@ export class Sky extends BaseEntity implements Entity {
       this.addChild(new Cloud(V(x, y), front));
     }
 
-    this.addChild(new Sun(() => this.hour));
-    this.addChild(new Daylight(() => this.hour));
-  }
-
-  onTick(dt: number) {
-    this.hour += dt / SECONDS_PER_HOUR;
-    this.hour %= 24;
+    this.addChild(new Daylight());
+    this.addChild(new Stars());
   }
 
   getUniforms() {
     const resolution = this.filter.resolution;
     const cameraMatrix = this.game?.camera
-      .getMatrix()
+      .getMatrix([0.01, 0.5])
       .scale(resolution, resolution)
       .invert();
-
+    const hour = getTimeOfDay(this.game!).hour;
     return {
       cameraMatrix,
       resolution,
       skyHeight: 30,
-      hour: this.hour,
+      hour,
+      ...TIME_UNIFORMS,
     };
   }
 
@@ -79,16 +71,6 @@ export class Sky extends BaseEntity implements Entity {
   }
 }
 
-export function isNight(game: Game): boolean {
-  const hour = (game.entities.getById("sky") as Sky).hour;
-  return hour < SUNRISE || hour > SUNSET;
-}
-
 export function getWind(game: Game): number {
   return 20 * (1000 / 3600); // 20 km/h
-}
-
-export function getTimeOfDay(game: Game): number {
-  const sky = game.entities.getById("sky") as Sky;
-  return sky.hour;
 }

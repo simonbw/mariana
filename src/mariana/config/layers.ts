@@ -5,8 +5,8 @@ import { LayerInfo } from "../../core/graphics/LayerInfo";
 export enum Layer {
   /** The sky */
   SKY = "sky",
-  /** The sun */
-  SUN = "sun",
+  /** The sky */
+  STARS = "stars",
   /** The real background layer */
   BACKGROUND = "background",
   /** The clouds, for parallax */
@@ -53,7 +53,8 @@ export function initLayers(game: Game) {
     game.renderer.layerInfos.get(layerName)!.paralax.set(0, 0);
   }
 
-  game.renderer.layerInfos.get(Layer.SUN)!.paralax.set(0.1, 0.9);
+  game.renderer.layerInfos.get(Layer.SKY)!.paralax.set(0.01, 0.5);
+  game.renderer.layerInfos.get(Layer.STARS)!.paralax.set(0.05, 0.3);
   game.renderer.layerInfos.get(Layer.CLOUDS)!.paralax.set(0.5, 1.0);
   game.renderer.layerInfos.get(Layer.CLOUDS2)!.paralax.set(0.7, 1.0);
 

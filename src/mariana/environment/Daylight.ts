@@ -3,16 +3,22 @@ import img_daylight from "../../../resources/images/lights/daylight.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { colorLerp } from "../../core/util/ColorUtils";
-import { lerp } from "../../core/util/MathUtil";
+import { invLerp } from "../../core/util/MathUtil";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
 import { Light } from "../lighting/Light";
-import { SUNRISE, SUNSET } from "./Sky";
+import {
+  getTimeOfDay,
+  SUNRISE_END,
+  SUNRISE_START,
+  SUNSET_END,
+  SUNSET_START,
+} from "./TimeOfDay";
 
 export class Daylight extends BaseEntity implements Entity {
   lightSprite: Sprite;
   sky: Graphics;
 
-  constructor(private getTimeOfDay: () => number) {
+  constructor() {
     super();
 
     this.sky = new Graphics();
@@ -30,7 +36,7 @@ export class Daylight extends BaseEntity implements Entity {
   }
 
   onRender() {
-    const hour = this.getTimeOfDay();
+    const hour = getTimeOfDay(this.game!).hour;
 
     const color = getSkyColor(hour);
     this.lightSprite.tint = color;
@@ -42,14 +48,16 @@ export class Daylight extends BaseEntity implements Entity {
 }
 
 export function getSkyColor(hour: number): number {
-  if (hour < SUNRISE) {
+  if (hour < SUNRISE_START) {
     return 0xaaaaff;
-  } else if (hour < SUNRISE + 1) {
-    return colorLerp(0xaaaaff, 0xffffff, hour - SUNRISE);
-  } else if (hour < SUNSET) {
+  } else if (hour < SUNRISE_END) {
+    const t = invLerp(SUNRISE_START, SUNRISE_END, hour);
+    return colorLerp(0xaaaaff, 0xffffff, t);
+  } else if (hour < SUNSET_START) {
     return 0xffffff;
-  } else if (hour < SUNSET + 1) {
-    return colorLerp(0xffffff, 0xaaaaff, hour - SUNSET);
+  } else if (hour < SUNSET_END) {
+    const t = invLerp(SUNSET_START, SUNSET_END, hour);
+    return colorLerp(0xffffff, 0xaaaaff, t);
   } else {
     return 0xaaaaff;
   }

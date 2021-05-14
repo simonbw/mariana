@@ -23,6 +23,7 @@ import { VictoryScreen } from "../VictoryScreen";
 import { WorldMap } from "../world/WorldMap";
 import CameraController from "./CameraController";
 import { DiverController } from "./DiverController";
+import { TimeOfDay } from "../environment/TimeOfDay";
 
 /**
  * The top level control flow for the game, basically manages transitioning between menus and stuff
@@ -36,6 +37,7 @@ export class GameController extends BaseEntity implements Entity {
     newGame: () => {
       const game = this.game!;
       game.addEntity(new PauseMenu());
+      game.addEntity(new TimeOfDay());
       game.addEntity(new LightingManager());
       game.addEntity(new Sky());
       game.addEntity(new Water());

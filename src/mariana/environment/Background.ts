@@ -5,7 +5,7 @@ import { Layer } from "../config/layers";
 import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
 import { getWaves, Waves } from "../environment/Waves";
 import frag_background from "./background.frag";
-import { getTimeOfDay, Sky } from "./Sky";
+import { getTimeOfDay, TIME_UNIFORMS } from "./TimeOfDay";
 
 export class Water extends BaseEntity implements Entity {
   persistenceLevel = 1;
@@ -35,7 +35,7 @@ export class Water extends BaseEntity implements Entity {
       .invert();
 
     const waves = getWaves(this.game!);
-    const hour = getTimeOfDay(this.game!);
+    const hour = getTimeOfDay(this.game!).hour;
 
     return {
       ...waves.getWaveStats(),
@@ -44,6 +44,7 @@ export class Water extends BaseEntity implements Entity {
       skyHeight: 30,
       waterDepth: WORLD_BOTTOM - 10,
       hour,
+      ...TIME_UNIFORMS,
     };
   }
 

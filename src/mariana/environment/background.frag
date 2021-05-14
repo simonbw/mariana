@@ -14,6 +14,11 @@ uniform highp float a;
 uniform highp float T;
 uniform highp float lambda;
 
+uniform float sunriseStart;
+uniform float sunriseEnd;
+uniform float sunsetStart;
+uniform float sunsetEnd;
+
 float PI2 = 2.0 * 3.1415926538;
 
 /** Returns the height of the surface at x */
@@ -33,11 +38,6 @@ vec3 nightColor = vec3(0.0, 0.0, 0.01);
 float horizonPoint = 0.0;
 float midPoint = 40.0;
 float bottomPoint = 80.0;
-
-float sunriseStart = 4.0;
-float sunriseEnd = 7.5;
-float sunsetStart = 16.0;
-float sunsetEnd = 21.5;
 
 float getDayPercent(float hour) {
   if (hour < sunriseStart) {

@@ -7,9 +7,16 @@ uniform highp vec4 outputFrame;
 uniform mat3 cameraMatrix;
 uniform float hour;
 
+uniform float sunriseStart;
+uniform float sunriseMid;
+uniform float sunriseEnd;
+uniform float sunsetStart;
+uniform float sunsetMid;
+uniform float sunsetEnd;
+
 float PI2 = 2.0 * 3.1415926538;
 
-float invLerp(float from, float to, float value){
+float invLerp(float from, float to, float value) {
   return clamp((value - from) / (to - from), 0.0, 1.0);
 }
 
@@ -22,19 +29,13 @@ vec3 topColorSunset = vec3(0.3, 0.2, 0.5);
 vec3 bottomColorSunset = vec3(1.0, 0.7, 0.5);
 
 // night
-vec3 topColorNight = vec3(0.0, 0.0, 0.1);
-vec3 bottomColorNight = vec3(0.0, 0.0, 0.2);
+vec3 topColorNight = vec3(0.0, 0.0, 0.05);
+vec3 bottomColorNight = vec3(0.02, 0.05, 0.22);
 
 // sunrise
 vec3 topColorSunrise = vec3(0.5, 0.3, 0.9);
 vec3 bottomColorSunrise = vec3(1.0, 0.7, 0.5);
 
-float sunriseStart = 4.3;
-float sunriseMid = 6.3;
-float sunriseEnd = 7.5;
-float sunsetStart = 17.0;
-float sunsetMid = 19.0;
-float sunsetEnd = 21.0;
 
 vec3 getTopColor(float hour) {
   if (hour < sunriseStart) {
@@ -95,16 +96,16 @@ void main(void){
   gl_FragColor.a = 1.0;
 
   float t2 = radians(270.0) - (PI2 * hour) / 24.0;
-  vec2 sunPos = vec2(10.0 * cos(t2), -8.0 * sin(t2)); 
-  vec3 sunColor = vec3(1.0, 1.0, 0.7);
+  vec2 sunPos = vec2(20.0 * cos(t2), -12.0 * sin(t2)); 
+  vec2 sunOffset = sunPos - pos;
 
   float r = 1.2;
-  float glowPercent = (invLerp(sunriseMid, sunriseStart - 1.0, hour) + invLerp(sunsetMid, sunsetEnd, hour));
-  float m = 0.5 + 3.0 * smoothstep(0.0, 1.0, glowPercent);
+  float glowPercent = (invLerp(sunriseMid, sunriseStart - 1.0, hour) + invLerp(sunsetStart, sunsetEnd, hour));
+  float m = 0.8 + 4.0 * smoothstep(0.0, 1.0, glowPercent);
 
-  vec2 offset = sunPos - pos;
+  vec3 sunColor = mix(vec3(1.0, 1.0, 0.8), vec3(1.0, 0.8, 0.6), glowPercent);
   
-  float d = smoothstep(r, r + m, length(offset));
+  float d = smoothstep(r, r + m, length(sunOffset));
   
   gl_FragColor.rgb = mix(sunColor, gl_FragColor.rgb,  d);
 }

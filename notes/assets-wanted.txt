@@ -33,6 +33,11 @@ Audio
  
  - Sounds Effects
    - Different harpoon reeling speeds
+     - Manual
+     - Auto (we can use the existing one)
+     - Turbo
+   - Flashlight click on
+   - Flashlight click off
 
  - Fish Sounds
    - Jellyfish
