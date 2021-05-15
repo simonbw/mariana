@@ -1,3 +1,25 @@
+—————————————————————
+|| Actual Gameplay ||
+—————————————————————
+
+Train the player to look for glowing green stuff 
+
+Purchasable oxygen hose
+ - Thing the player can drag
+ - Provides oxygen while down lower
+ - Upgrades to allow longer tether
+ - Upgrade to allow shop
+
+More resources
+ - Basically souls, but different colors
+ - Different types of souls required for different Upgrades
+ - 
+
+Consumables
+ - Emergency Air
+ - Rapid Ascent Device
+ - 
+
 
 ——————————————————
 ||     Fish     ||
@@ -47,13 +69,13 @@ Squid
  - giant
  - colossal
 
-
-
-Octopus
-
 Angler
+ - 
 
 Double Angler
+ - Once the player 
+
+Octopus
 
 Exploding Fish
 

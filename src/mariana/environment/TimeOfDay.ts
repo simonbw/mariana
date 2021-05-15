@@ -4,7 +4,7 @@ import Game from "../../core/Game";
 import { invLerp } from "../../core/util/MathUtil";
 
 /** Real world seconds per in-game hour */
-const SECONDS_PER_HOUR = 60;
+const SECONDS_PER_HOUR = 20;
 
 export const SUNRISE_START = 4.3;
 export const SUNRISE_MID = 6.3;
@@ -25,7 +25,7 @@ export const TIME_UNIFORMS = {
 export class TimeOfDay extends BaseEntity implements Entity {
   id = "timeOfDay";
 
-  hour: number = 0.0;
+  hour: number = 7.0;
 
   constructor() {
     super();

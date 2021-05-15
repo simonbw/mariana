@@ -15,12 +15,14 @@ export class Flashlight extends BaseEntity implements Entity {
   constructor(public diver: Diver) {
     super();
 
-    this.light = this.addChild(new DirectionalLight({ length: 30, width: 18 }));
+    this.light = this.addChild(
+      new DirectionalLight({ length: 30, width: 18, intensity: 0 })
+    );
   }
 
   onTick() {
     const isDeep = this.diver.getDepth() > ACTIVATION_DEPTH;
-    const isNight = getTimeOfDay(this.game!).getNightPercent() > 0.9;
+    const isNight = getTimeOfDay(this.game!).getNightPercent() > 0.5;
     const shouldBeOn = isDeep || isNight;
 
     if (!this.on && shouldBeOn) {

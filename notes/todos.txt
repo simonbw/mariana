@@ -2,7 +2,7 @@
 
 General TODOs:
 
- [ ] Fish spawning system
+ [ ] Make fish avoid walls
  [ ] Global audio mixer
  [ ] Volume control
  [ ] Positional sounds
