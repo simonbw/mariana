@@ -116,6 +116,7 @@ export const ALL_IMAGES: string[] = [
   require("./images/flora/anemone-2.png"),
   require("./images/flora/anemone-3.png"),
   require("./images/flora/anemone-4.png"),
+  require("./images/flora/seaweed-1.png"),
   require("./images/lights/daylight.png"),
   require("./images/lights/flashlight-overlay.png"),
   require("./images/lights/point-light.png"),

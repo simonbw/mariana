@@ -18,6 +18,8 @@ Music is too loud
 Diver gets stuck on walls
  - 
 
+Can't navigate menus with a gamepad
+
 
 ⌜———————————————⌝
 |     Bugs      |

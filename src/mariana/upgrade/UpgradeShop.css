@@ -1,5 +1,5 @@
 .UpgradeShop {
-  background: #fff5;
+  background: #fff9;
   cursor: default;
   user-select: none;
   position: absolute;
@@ -12,8 +12,8 @@
   max-height: calc(100vh - 48px);
   padding: 24px;
   border-radius: 4px;
-
   box-shadow: 2px 1px 8px #0003;
+  backdrop-filter: blur(8px);
 }
 
 .UpgradeShop h1 {

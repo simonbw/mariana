@@ -2,10 +2,9 @@ import { AnimatedSprite } from "pixi.js";
 import img_angler1 from "../../../resources/images/fish/angler_1.png";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import { rBool } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
+import { V2d } from "../../core/Vector";
 import { Diver } from "../diver/Diver";
 import { PointLight } from "../lighting/PointLight";
-import { GroundTile } from "../plants/GroundTile";
 import { BaseFish } from "./BaseFish";
 
 const SPEED = 5;

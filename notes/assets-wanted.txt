@@ -6,8 +6,9 @@ Sprites
    - Tiles can have an emmissive layer if you want
 
  - Seaweed
-   - Should be straight up-and-down
+   - Should be straight up-and-down to be bendable
    - I'm gonna deform it with a mesh to make it wiggle
+   - Various types is good
 
  - Shark
    - Remove/change blood dripping (The dripping is cool but doesn't work well at a low frame rate)

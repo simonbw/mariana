@@ -5,9 +5,10 @@
   left: 0;
   right: 0;
   z-index: 100;
-  background: #36ad;
+  background: #36a9;
   user-select: none;
   cursor: default;
+  backdrop-filter: blur(8px);
 }
 
 .PauseMenu:not(.paused) {
