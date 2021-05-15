@@ -1,5 +1,8 @@
+import snd_flashlightOff from "../../../resources/audio/diver/flashlight-off.flac";
+import snd_flashlightOn from "../../../resources/audio/diver/flashlight-on.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { SoundInstance } from "../../core/sound/SoundInstance";
 import { getTimeOfDay } from "../environment/TimeOfDay";
 import { DirectionalLight } from "../lighting/DirectionalLight";
 import { Diver } from "./Diver";
@@ -35,11 +38,13 @@ export class Flashlight extends BaseEntity implements Entity {
   async turnOn() {
     this.on = true;
     this.light.intensity = INTENSITY;
+    this.game!.addEntity(new SoundInstance(snd_flashlightOn));
   }
 
   async turnOff() {
     this.on = false;
     this.light.intensity = 0.0;
+    this.game!.addEntity(new SoundInstance(snd_flashlightOff));
   }
 
   onRender() {

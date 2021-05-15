@@ -38,6 +38,8 @@ export const ALL_SOUNDS: string[] = [
   require("./audio/diver/breathe_out_1.flac"),
   require("./audio/diver/breathe_out_2.flac"),
   require("./audio/diver/dead.flac"),
+  require("./audio/diver/flashlight-off.flac"),
+  require("./audio/diver/flashlight-on.flac"),
   require("./audio/diver/glow-stick-crack-1.flac"),
   require("./audio/diver/oww.flac"),
   require("./audio/fish/electrocution.flac"),

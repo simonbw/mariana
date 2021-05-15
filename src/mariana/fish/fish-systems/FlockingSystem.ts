@@ -2,6 +2,7 @@ import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity from "../../../core/entity/Entity";
 import { clamp, clampUp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
+import { getWorldMap } from "../../world/WorldMap";
 import { BaseFish } from "../BaseFish";
 import { School } from "./School";
 
@@ -124,13 +125,37 @@ export class FlockingSystem extends BaseEntity implements Entity {
     return this._fAttractors;
   }
 
+  private _fAvoid = V(0, 0);
+  private getAvoidanceForce(): V2d {
+    const worldMap = getWorldMap(this.game!)!;
+    const [tx, ty] = worldMap.worldToTile(this.fish.getPosition());
+
+    this._fAvoid.set(0, 0);
+
+    if (worldMap.groundMap.tileIsSolid([tx - 1, ty])) {
+      this._fAvoid.iadd([10, 0]);
+    }
+    if (worldMap.groundMap.tileIsSolid([tx + 1, ty])) {
+      this._fAvoid.iadd([-10, 0]);
+    }
+    if (worldMap.groundMap.tileIsSolid([tx, ty + 1])) {
+      this._fAvoid.iadd([0, -10]);
+    }
+    if (worldMap.groundMap.tileIsSolid([tx, ty - 1])) {
+      this._fAvoid.iadd([0, 10]);
+    }
+
+    return this._fAvoid;
+  }
+
   updateTargetVelocity() {
     if (this.school) {
       this.targetVelocity
         .set(this.getCohesionForce())
         .iadd(this.getAlignmentForce())
         .iadd(this.getSeparationForce())
-        .iadd(this.getAttractionForce());
+        .iadd(this.getAttractionForce())
+        .iadd(this.getAvoidanceForce());
     }
     return this.targetVelocity;
   }

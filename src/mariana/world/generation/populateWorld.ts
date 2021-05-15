@@ -6,7 +6,7 @@ import { TILE_SIZE_METERS } from "../../constants";
 import { FishSpawner } from "../../fish/FishSpawner";
 import { Anemone } from "../../plants/Anemone";
 import { Seaweed } from "../../plants/Seaweed";
-import { SoulPlant } from "../../plants/SoulPlant";
+import { Soulweed } from "../../plants/Soulweed";
 import { TileLoadListener } from "../loading/OnLoader";
 import { TilePos } from "../TilePos";
 import { WorldMap } from "../WorldMap";
@@ -61,7 +61,7 @@ export function populateSurface(worldMap: WorldMap) {
     const [tilePos, worldPos] = getSurfacePos();
     entities.push(
       new TileLoadListener(tilePos, (game: Game) =>
-        game.addEntity(new SoulPlant(worldPos))
+        game.addEntity(new Soulweed(worldPos))
       )
     );
   }

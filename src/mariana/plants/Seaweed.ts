@@ -1,6 +1,6 @@
 import { Point } from "@pixi/math";
 import { RopeGeometry } from "@pixi/mesh-extras";
-import { Graphics, Mesh, MeshMaterial, Sprite, Texture } from "pixi.js";
+import { Mesh, MeshMaterial, Sprite, Texture } from "pixi.js";
 import img_seaweed1 from "../../../resources/images/flora/seaweed-1.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
@@ -60,13 +60,6 @@ export class Seaweed extends BaseEntity implements Entity {
 
     this.sprite = new Sprite();
     this.sprite.addChild(mesh);
-
-    const graphics = new Graphics();
-    graphics.beginFill(0x00ff00);
-    graphics.drawCircle(0, 0, 1);
-    graphics.endFill();
-    // this.sprite.addChild(graphics);
-
     this.sprite.tint = tint;
     this.sprite.layerName = Layer.WORLD_BACK;
     this.sprite.position.set(...position);

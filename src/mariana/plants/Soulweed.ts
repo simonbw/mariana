@@ -23,14 +23,14 @@ import { getWorldMap } from "../world/WorldMap";
 
 const SEGMENT_DISTANCE = 0.225;
 
-export class SoulPlant extends BaseEntity implements Entity {
+export class Soulweed extends BaseEntity implements Entity {
   points: Point[];
   geometry: RopeGeometry;
   sprite: Sprite & GameSprite;
 
   t: number;
   rigidity = rNormal(16, 2);
-  buds: SoulPlantBud[];
+  buds: SoulweedBud[];
 
   constructor(
     private position: V2d,
@@ -58,17 +58,10 @@ export class SoulPlant extends BaseEntity implements Entity {
       this.geometry,
       new MeshMaterial(Texture.from(img_seaweed1), {})
     );
-    mesh.tint = 0xff0000;
 
     this.sprite = new Sprite();
     this.sprite.addChild(mesh);
-
-    const graphics = new Graphics();
-    graphics.beginFill(0x00ff00);
-    graphics.drawCircle(0, 0, 1);
-    graphics.endFill();
-    // this.sprite.addChild(graphics);
-
+    this.sprite.tint = 0xff5555;
     this.sprite.layerName = Layer.WORLD_BACK;
     this.sprite.position.set(...position);
 
@@ -77,7 +70,7 @@ export class SoulPlant extends BaseEntity implements Entity {
     console.log({ numBuds });
     for (let i = 0; i < numBuds; i++) {
       this.buds.push(
-        this.addChild(new SoulPlantBud(position.clone(), budsGrowns[i]))
+        this.addChild(new SoulweedBud(position.clone(), budsGrowns[i]))
       );
     }
   }
@@ -94,7 +87,7 @@ export class SoulPlant extends BaseEntity implements Entity {
           new TileLoadListener(tilePos, (game) => {
             const budsGrown = this.buds.map((bud) => bud.grown);
             game.addEntity(
-              new SoulPlant(
+              new Soulweed(
                 this.position,
                 this.width,
                 this.points.length,
@@ -135,11 +128,11 @@ export class SoulPlant extends BaseEntity implements Entity {
   }
 }
 
-const SECONDS_TO_MATURE = 5.0;
+const SECONDS_TO_MATURE = 60.0;
 const MAX_VALUE = 20.0;
 const ACTIVATION_DISTANCE = 2.0;
 
-export class SoulPlantBud extends BaseEntity implements Entity {
+export class SoulweedBud extends BaseEntity implements Entity {
   sprite: Sprite & GameSprite;
   light: PointLight;
 
