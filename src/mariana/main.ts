@@ -13,6 +13,7 @@ import VolumeController from "./controllers/VolumeController";
 import { isFish } from "./fish/BaseFish";
 import Preloader from "../core/resources/Preloader";
 import { getFontsToPreload } from "./fonts";
+import { AudioMixer } from "./audio/AudioMixer";
 
 // So we can attach stuff to the window
 declare global {
@@ -71,6 +72,7 @@ export async function main() {
   // Add various singletons that will live forever
   game.addEntity(new AutoPauser()); // pauses when window loses focus
   game.addEntity(new GraphicsQualityController()); // allows toggling of graphics quality
+  game.addEntity(new AudioMixer(game.audio)); //
   game.addEntity(new VolumeController()); // allows muting
   game.addEntity(new PositionalSoundListener()); // like the camera, but for our ears
   game.addEntity(new GameController()); // Top level control flow for our actual game logic

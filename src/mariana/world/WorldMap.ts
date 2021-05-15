@@ -1,16 +1,15 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { rBool, rInteger } from "../../core/util/Random";
+import { rInteger } from "../../core/util/Random";
 import { TilePos } from "../../core/util/TilePos";
 import { V, V2d } from "../../core/Vector";
 import { TILE_SIZE_METERS, WORLD_SIZE_TILES } from "../constants";
 import { Minimap } from "../hud/Minimap";
 import BiomeMap from "./generation/BiomeMap";
 import GroundMap from "./generation/GroundMap";
-import StuffMap from "./generation/StuffMap";
+import { populateWorld } from "./generation/populateWorld";
 import { GroundLoader } from "./loading/GroundLoader";
-import { StuffLoader } from "./loading/StuffLoader";
 import SubGridSet from "./loading/SubGridSet";
 import { isWorldAnchor } from "./loading/WorldAnchor";
 
@@ -20,11 +19,9 @@ export class WorldMap extends BaseEntity implements Entity {
 
   groundMap: GroundMap;
   biomeMap: BiomeMap;
-  stuffMap: StuffMap;
 
   tilesLoaded: SubGridSet = new SubGridSet();
   groundLoader: GroundLoader;
-  stuffLoader: StuffLoader;
 
   constructor(
     public minX = -WORLD_SIZE_TILES[0] / 2,
@@ -36,11 +33,9 @@ export class WorldMap extends BaseEntity implements Entity {
     // Generators
     this.biomeMap = new BiomeMap(minX, maxX, maxY);
     this.groundMap = new GroundMap(this.seed, this.minX, this.maxX, this.maxY);
-    this.stuffMap = new StuffMap(this);
 
     // Loaders
     this.groundLoader = this.addChild(new GroundLoader(this));
-    this.stuffLoader = this.addChild(new StuffLoader(this));
 
     this.addChild(new Minimap(this));
   }
@@ -48,6 +43,8 @@ export class WorldMap extends BaseEntity implements Entity {
   onAdd(game: Game) {
     // Make sure we can find the WorldAnchors quickly
     game.entities.addFilter(isWorldAnchor);
+
+    this.addChildren(...populateWorld(this));
   }
 
   loadTile(tilePos: TilePos): void {

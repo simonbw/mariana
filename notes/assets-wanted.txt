@@ -49,9 +49,11 @@ Sprites
    - Should have a hanging lamp that swings with the motion of the ocean
  
  - Redesign diver
-   - Harpoon aiming
+   - Separate layers for arms to be able to aim with harpoon
    - Maybe some animations
    - Have lights on him
+ 
+ - Harpoon
    - 
 
 

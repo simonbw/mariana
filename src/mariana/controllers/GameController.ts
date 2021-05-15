@@ -11,6 +11,7 @@ import { Sky } from "../environment/Sky";
 import { TimeOfDay } from "../environment/TimeOfDay";
 import Squidger from "../fish/aggressive/Jellyfish";
 import { isFish } from "../fish/BaseFish";
+import { DamagedOverlay } from "../hud/DamagedOverlay";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
@@ -46,8 +47,7 @@ export class GameController extends BaseEntity implements Entity {
 
       const diver = this.game!.addEntity(new Diver());
 
-      // TODO: Re-add damage overlay when it's better
-      // game.addEntity(new DamagedOverlay(() => diver));
+      game.addEntity(new DamagedOverlay(() => diver));
       game.addEntity(new DiverController(diver));
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));

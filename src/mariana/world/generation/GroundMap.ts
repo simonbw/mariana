@@ -135,6 +135,7 @@ export default class GroundMap {
             ? lerp(1, layeredTurbulence, tilesFromEdge / transitionWidthTiles)
             : layeredTurbulence;
         strengthGrid.set([x, y], strength);
+
         if (strength < -0.2) {
           this.solidMap.set([x, y], false);
         }

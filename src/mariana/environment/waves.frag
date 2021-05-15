@@ -14,10 +14,17 @@ uniform highp float t;
 uniform highp float a;
 uniform highp float T;
 uniform highp float lambda;
+// wave2 stuff
+uniform highp float t2;
+uniform highp float a2;
+uniform highp float T2;
+uniform highp float lambda2;
 
 /** Returns the height of the surface at x */
 float getSurfaceY(float x) {
-  return a * sin(PI2 * (x / lambda - t / T));
+  float wave1 = a * sin(PI2 * (x / lambda - t / T));
+  float wave2 = a2 * sin(PI2 * (x / lambda2 - t2 / T2));
+  return wave1 + wave2;
 }
 
 void main(void){

@@ -42,7 +42,7 @@ export class DamagedOverlay extends BaseEntity implements Entity {
 
   handlers = {
     diverHurt: ({ amount }: { amount: number }) => {
-      this.flash(0x550011, 0, 0.4, 0.2);
+      // this.flash(0x550011, 0, 0.4, 0.2);
     },
 
     graphicsQualityChanged: ({ quality }: { quality: GraphicsQuality }) => {

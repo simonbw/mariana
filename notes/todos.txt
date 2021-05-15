@@ -2,6 +2,7 @@
 
 General TODOs:
 
+ [ ] Fish spawning system
  [ ] Global audio mixer
  [ ] Volume control
  [ ] Positional sounds
@@ -10,4 +11,3 @@ General TODOs:
  [ ] Better death sound
  [ ] Upgrade shop thumbnails
  [ ] Credits screen
- [ ] Fish spawning system

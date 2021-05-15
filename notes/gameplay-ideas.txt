@@ -1,7 +1,7 @@
 
-——————————
-|| Fish ||
-——————————
+——————————————————
+||     Fish     ||
+——————————————————
 
 Coral Reef Fish — https://en.wikipedia.org/wiki/Coral_reef_fish
  - Angelfish
@@ -63,24 +63,21 @@ Bosses
 
 
 
-—————————————————
-|| Decorations ||
-—————————————————
-
-Coral reef species for inspiration (coral, anemones, & urchins):
+————————————————————
+|| Plants n stuff ||
+————————————————————
 
 
 
+———————————————————
+||     Diver     ||
+———————————————————
 
-——————————————
-|| Ambience ||
-——————————————
+Separate into multiple sprites for arms
 
-Better sun
-
-Change the background color with time of day
-
-Use waves for the background shader
+——————————————————
+||   Ambience   ||
+——————————————————
 
 Some sort of plankton overlay
 

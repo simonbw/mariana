@@ -4,5 +4,6 @@ export const CollisionGroups = {
   Diver: 0b10,
   Fish: 0b100,
   Harpoon: 0b1000,
+  Particles: 0b10000,
   All: 0b11111111111111111111111111111111,
 };

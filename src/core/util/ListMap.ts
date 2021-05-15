@@ -1,5 +1,5 @@
 /**
- * A map of lists. Automatically creates and removes
+ * A map of lists. Automatically creates and removes arrays as needed.
  */
 export default class ListMap<K, V> {
   private map: Map<K, V[]>;

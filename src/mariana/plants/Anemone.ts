@@ -4,15 +4,21 @@ import img_anemone2 from "../../../resources/images/flora/anemone-2.png";
 import img_anemone3 from "../../../resources/images/flora/anemone-3.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
+import Game from "../../core/Game";
 import { rBool } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
+import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
-import { ClownFish } from "../fish/passive/ClownFish";
 import { School } from "../fish/fish-systems/School";
+import { ClownFish } from "../fish/passive/ClownFish";
+import {
+  TileLoadListener,
+  TileUnloadListener,
+} from "../world/loading/OnLoader";
+import { getWorldMap } from "../world/WorldMap";
 
 const SIZE = 1.5;
-const SPAWN_RATE = 0.5; // per second
-const MAX_FISH = 8;
+const SPAWN_RATE = 0.2; // per second
+const MAX_FISH = 7;
 
 /** Spawns clownfish */
 export class Anemone extends BaseEntity implements Entity {
@@ -47,11 +53,29 @@ export class Anemone extends BaseEntity implements Entity {
     this.school = this.addChild(new School([], this.position));
   }
 
-  onAdd() {
+  onAdd(game: Game) {
+    // TODO: Spawn number of fish based on how many since last time
     this.spawnFish();
     this.spawnFish();
     this.spawnFish();
     this.spawnFish();
+
+    const tilePos = getWorldMap(game)!.worldToTile(this.position);
+    this.addChild(
+      new TileUnloadListener(tilePos, (game) => {
+        this.unload(game);
+      })
+    );
+  }
+
+  unload(game: Game) {
+    const tilePos = getWorldMap(game)!.worldToTile(this.position);
+    game.addEntity(
+      new TileLoadListener(tilePos, (game) => {
+        game.addEntity(new Anemone(this.position));
+      })
+    );
+    this.destroy();
   }
 
   onSlowTick(dt: number) {

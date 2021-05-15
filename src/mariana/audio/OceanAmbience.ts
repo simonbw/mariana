@@ -4,6 +4,7 @@ import snd_oceanTexture from "../../../resources/audio/music-and-ambience/ocean_
 import snd_spookySinking from "../../../resources/audio/music-and-ambience/spooky_sinking.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import Game from "../../core/Game";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { clamp, lerp, smoothStep } from "../../core/util/MathUtil";
 import { Diver, getDiver } from "../diver/Diver";
@@ -63,16 +64,16 @@ export class OceanAmbience extends BaseEntity implements Entity {
     );
   }
 
-  onAdd() {
-    this.filter = this.game!.audio.createBiquadFilter();
+  onAdd(game: Game) {
+    this.filter = game.audio.createBiquadFilter();
     this.filter.type = "lowpass";
-    this.filter.frequency.setValueAtTime(22050, this.game!.audio.currentTime);
+    this.filter.frequency.setValueAtTime(22050, game.audio.currentTime);
     this.filter.Q.value = 0.4;
 
-    this.gain = this.game!.audio.createGain();
+    this.gain = game.audio.createGain();
 
     this.filter.connect(this.gain);
-    this.gain.connect(this.game!.masterGain);
+    this.gain.connect(game.masterGain);
   }
 
   handlers = {

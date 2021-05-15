@@ -3,6 +3,7 @@ import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import { hexToVec3 } from "../../core/util/ColorUtils";
+import { degToRad } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import {
@@ -51,10 +52,11 @@ export class Waves extends BaseEntity implements Entity {
   }
 
   getSurfaceHeight(x: number) {
-    const { t, a, lambda, T } = this.getWaveStats();
+    const { t, t2, a, a2, lambda, lambda2, T, T2 } = this.getWaveStats();
     const wave1 = a * Math.sin(2 * Math.PI * (x / lambda - t / T));
+    const wave2 = a2 * Math.sin(2 * Math.PI * (x / lambda2 - t2 / T2));
 
-    return wave1;
+    return wave1 + wave2;
   }
 
   /** Returns true if a point is underwater */
@@ -78,8 +80,9 @@ export class Waves extends BaseEntity implements Entity {
   }
 
   getSurfaceAngle(x: number): number {
-    const { t, a, lambda, T } = this.getWaveStats();
-    const wave1 = a * Math.cos(2 * Math.PI * (x / lambda - t / T));
+    const { t, t2, a, a2, lambda, lambda2, T, T2 } = this.getWaveStats();
+    const wave1 = a * Math.sin(2 * Math.PI * (x / lambda - t / T));
+    const wave2 = a2 * Math.sin(2 * Math.PI * (x / lambda2 - t2 / T2));
 
     return Math.atan(wave1 / lambda) * 10; // rise / run
   }
@@ -89,9 +92,13 @@ export class Waves extends BaseEntity implements Entity {
     const w2 = 1.37 * this.w;
     return {
       t: this.t,
+      t2: this.t + degToRad(43),
       a: (1.039702 - 0.08155357 * w1 + 0.002481548 * w1 ** 2) / 2,
+      a2: (1.039702 - 0.08155357 * w2 + 0.002481548 * w2 ** 2) / 2,
       lambda: -738512.1 + 738525.2 * Math.exp(0.00001895026 * w1),
+      lambda2: -738512.1 + 738525.2 * Math.exp(0.00001895026 * w2),
       T: 17.91851 - 15.52928 * Math.exp(-0.006572834 * w1),
+      T2: 17.91851 - 15.52928 * Math.exp(-0.006572834 * w2),
     };
   }
 
