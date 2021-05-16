@@ -6,6 +6,7 @@ import {
   LinearSpring,
   Spring,
 } from "p2";
+import Entity from "../../../core/entity/Entity";
 import { clamp, degToRad, lerp } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
@@ -30,6 +31,8 @@ const MOVE_SPEED = 3;
 // TODO: Better springiness
 /** An eel */
 export class Eel extends BaseFish {
+  tags = ["eel"];
+
   bodies: Body[] = [];
   springs: Spring[] = [];
   constraints: Constraint[] = [];
@@ -102,7 +105,6 @@ export class Eel extends BaseFish {
     this.moveTowardsDiver();
   }
 
-  // TODO: don't allocate
   private _gravity = V(0, 0);
   updateSegment(i: number) {
     const p = (i - 1) / (this.bodies.length - 1);
@@ -124,14 +126,18 @@ export class Eel extends BaseFish {
     const head = this.bodies[0];
 
     this._diverDirection.set(head.position).isub(diver!.getPosition());
-    const headDirection = this.directions[0];
-    headDirection.set(this._diverDirection).inormalize();
-    headDirection.angle += Math.cos(this.t * WIGGLE_SPEED) * WIGGLE_AMOUNT;
+    const distance = this._diverDirection.magnitude;
 
-    if (this._diverDirection.magnitude > 1) {
-      const p = clamp((this._diverDirection.magnitude - 1) / 10, 0, 1);
-      const speed = MOVE_SPEED * p;
-      head.applyForce(headDirection.mul(-speed));
+    if (distance < 15) {
+      const headDirection = this.directions[0];
+      headDirection.set(this._diverDirection).inormalize();
+      headDirection.angle += Math.cos(this.t * WIGGLE_SPEED) * WIGGLE_AMOUNT;
+
+      if (distance > 1) {
+        const p = clamp((this._diverDirection.magnitude - 1) / 10, 0, 1);
+        const speed = MOVE_SPEED * p;
+        head.applyForce(headDirection.mul(-speed));
+      }
     }
   }
 
@@ -146,4 +152,8 @@ export class Eel extends BaseFish {
     }
     return direction;
   }
+}
+
+export function isEel(entity: Entity): entity is Eel {
+  return entity instanceof Eel;
 }

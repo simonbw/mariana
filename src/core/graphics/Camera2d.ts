@@ -105,19 +105,10 @@ export class Camera2d extends BaseEntity implements Entity {
     );
   }
 
-  getWorldViewport(): {
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
-    width: number;
-    height: number;
-  } {
+  getWorldViewport() {
     const [top, left] = this.toWorld(V(0, 0));
     const [bottom, right] = this.toWorld(this.getViewportSize());
-    const width = right - left;
-    const height = bottom - top;
-    return { top, bottom, left, right, width, height };
+    return new Viewport(top, bottom, left, right);
   }
 
   // Convert screen coordinates to world coordinates
@@ -166,5 +157,27 @@ export class Camera2d extends BaseEntity implements Entity {
         this.getMatrix(layer.paralax, layer.anchor)
       );
     }
+  }
+}
+
+class Viewport {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+  width: number;
+  height: number;
+
+  constructor(top: number, bottom: number, left: number, right: number) {
+    this.top = top;
+    this.bottom = bottom;
+    this.left = left;
+    this.right = right;
+    this.width = right - left;
+    this.height = bottom - top;
+  }
+
+  containsPoint([x, y]: [number, number]): boolean {
+    return x > this.left && x < this.right && y < this.bottom && y > this.top;
   }
 }

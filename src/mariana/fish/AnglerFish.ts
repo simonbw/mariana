@@ -53,8 +53,4 @@ export class AnglerFish extends BaseFish {
     this.light.setPosition(this.getLightPosition());
     this.light.intensity = 0.6 + 0.2 * Math.sin(this.t);
   }
-
-  onDestroy() {
-    console.log("angler fish dead");
-  }
 }

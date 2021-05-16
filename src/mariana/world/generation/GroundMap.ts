@@ -41,12 +41,12 @@ export default class GroundMap {
     public maxX: number,
     public maxY: number
   ) {
-    console.time("worldGen");
+    console.time("ground generation");
     this.generateSurface();
     this.generateCaves();
     this.generateTunnels();
 
-    console.timeEnd("worldGen");
+    console.timeEnd("ground generation");
   }
 
   public tileIsSolid(tilePos: TilePos): boolean {

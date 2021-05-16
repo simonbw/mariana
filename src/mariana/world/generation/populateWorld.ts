@@ -3,6 +3,8 @@ import Game from "../../../core/Game";
 import { shuffle } from "../../../core/util/Random";
 import { V2d } from "../../../core/Vector";
 import { TILE_SIZE_METERS } from "../../constants";
+import { Eel } from "../../fish/aggressive/Eel";
+import Jellyfish from "../../fish/aggressive/Jellyfish";
 import { FishSpawner } from "../../fish/FishSpawner";
 import { Anemone } from "../../plants/Anemone";
 import { Seaweed } from "../../plants/Seaweed";
@@ -13,7 +15,10 @@ import { WorldMap } from "../WorldMap";
 
 /** Generates the stuff in the world */
 export function populateWorld(worldMap: WorldMap): Entity[] {
-  return [...populateSurface(worldMap)];
+  console.time("populateWorld");
+  const entities = [...populateSurface(worldMap), ...makeDeeperStuff(worldMap)];
+  console.timeEnd("populateWorld");
+  return entities;
 }
 
 /** Generates the stuff on the surface */
@@ -75,24 +80,59 @@ export function makeDeeperStuff(worldMap: WorldMap) {
   const available: TilePos[] = [];
 
   for (let x = worldMap.minX; x < worldMap.maxX; x++) {
-    for (let y = 5; y < worldMap.maxY; x++) {
+    for (let y = 5; y < worldMap.maxY; y++) {
       if (!worldMap.groundMap.tileIsSolid([x, y])) {
         available.push([x, y]);
       }
     }
   }
-
   shuffle(available);
 
-  while (available.length > 0) {
+  const jellyfishNumber = Math.floor(available.length * 0.01);
+  for (let i = 0; i < jellyfishNumber; i++) {
     const tilePos = available.pop()!;
     const worldPos = worldMap.tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) => [
-        game.addEntity(new FishSpawner(worldPos)),
+        game.addEntity(
+          new FishSpawner(
+            worldPos,
+            (game) => {
+              game.addEntity(new Jellyfish(worldPos));
+            },
+            (game) => game.entities.getTagged("jellyfish").length,
+            5,
+            1.0 / 30
+          )
+        ),
       ])
     );
   }
+
+  const eelNumber = Math.floor(available.length * 0.002);
+  for (let i = 0; i < eelNumber; i++) {
+    const tilePos = available.pop()!;
+    const worldPos = worldMap.tileToWorld(tilePos);
+    entities.push(
+      new TileLoadListener(tilePos, (game: Game) => [
+        game.addEntity(
+          new FishSpawner(
+            worldPos,
+            (game) => {
+              game.addEntity(new Eel(worldPos));
+            },
+            (game) => game.entities.getTagged("eel").length,
+            2,
+            1.0 / 30
+          )
+        ),
+      ])
+    );
+  }
+
+  // TODO: Squidgers
+  // TODO: Grabbers
+  console.timeEnd("makeDeeperStuff3");
 
   return entities;
 }

@@ -31,12 +31,13 @@ const LIGHT_INTENSITY = 0.1;
 const LIGHT_SIZE = 3;
 const STING_DURATION = 1.5;
 
-export default class Squidger extends BaseFish implements Entity {
-  baseScale: number;
+export default class Jellyfish extends BaseFish implements Entity {
+  tags = ["jellyfish"];
 
   size: number;
   targetVelocity: V2d = V(0, 0);
   squidging = false;
+  baseScale: number;
 
   textures = [
     Texture.from(img_squid1),

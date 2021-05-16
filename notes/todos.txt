@@ -2,12 +2,11 @@
 
 General TODOs:
 
- [ ] Make fish avoid walls
+ [√] Make fish avoid walls
  [ ] Global audio mixer
  [ ] Volume control
  [ ] Positional sounds
  [ ] Nicer damage overlay filter — bring back damage system
- [ ] Do some performance profiling
  [ ] Better death sound
- [ ] Upgrade shop thumbnails
+ [ ] Shop thumbnails
  [ ] Credits screen

@@ -9,7 +9,7 @@ import { Diver, getDiver } from "../diver/Diver";
 import { Water } from "../environment/Background";
 import { Sky } from "../environment/Sky";
 import { TimeOfDay } from "../environment/TimeOfDay";
-import Squidger from "../fish/aggressive/Jellyfish";
+import Jellyfish from "../fish/aggressive/Jellyfish";
 import { isFish } from "../fish/BaseFish";
 import { DamagedOverlay } from "../hud/DamagedOverlay";
 import { DiveWatch } from "../hud/DiveWatch";
@@ -52,18 +52,10 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
 
-      // TODO: Spawn these somewhere else
-      // game.addEntity(new Grabber(V(10, 30)));
-      // game.addEntity(new Eel(V(0, 20)));
-      // game.addEntity(new Squidger(V(-10, 5)));
-      // game.addEntity(new Squidger(V(-12, 6)));
-      // game.addEntity(new Squidger(V(-10, 7)));
-
       game.dispatch({ type: "diveStart" });
     },
 
     diveStart: () => {
-      console.log("dive start");
       const diver = getDiver(this.game)!;
       diver.onBoat = true;
     },

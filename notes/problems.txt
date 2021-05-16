@@ -13,10 +13,17 @@ It's not obvious when I'm in dangerous
 Music is too loud
  - Add volume Slider
  - Add multiple volume sliders
+ - Do a comprehensive pass over all sounds to get volumes correct
 
 
 Diver gets stuck on walls
- - 
+ - Try merging adjacent tiles? This seems hard
+
+
+It's too easy
+ - Bring back the health system
+ - Add in enemies again
+
 
 Constantly Resurfacing and unsurfacing
  - Should have the equilibrium point for floating on the surface be different than the point for determining if we're surfaced

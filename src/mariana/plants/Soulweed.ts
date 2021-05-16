@@ -67,7 +67,6 @@ export class Soulweed extends BaseEntity implements Entity {
 
     this.buds = [];
     const numBuds = Math.floor(segments / 6);
-    console.log({ numBuds });
     for (let i = 0; i < numBuds; i++) {
       this.buds.push(
         this.addChild(new SoulweedBud(position.clone(), budsGrowns[i]))
