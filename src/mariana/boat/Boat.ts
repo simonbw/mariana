@@ -145,7 +145,7 @@ export class Boat extends BaseEntity implements Entity {
 
   handlers = {
     upgradeBought: ({ upgradeId }: { upgradeId: UpgradeId }) => {
-      if (upgradeId === "oxygenBuoy") {
+      if (upgradeId === "diveBell") {
         this.addChild(new DiveBell(V(3, -1)));
       }
     },

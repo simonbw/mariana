@@ -20,7 +20,7 @@ export type UpgradeId =
   | "turboRetractor"
   | "doubleEndedPoon"
   | "soulMagnet"
-  | "oxygenBuoy";
+  | "diveBell";
 
 /** All the upgrades */
 const UPGRADES: Record<UpgradeId, Upgrade> = {
@@ -96,8 +96,8 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     cost: 300,
     prerequisites: ["autoRetractor"],
   },
-  oxygenBuoy: {
-    name: "Oxygen Buoy",
+  diveBell: {
+    name: "Dive Bell",
     description: "Provides air under water",
     cost: 100,
     prerequisites: ["air1"],
