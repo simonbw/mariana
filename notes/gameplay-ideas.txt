@@ -20,6 +20,9 @@ Consumables
  - Rapid Ascent Device
  - 
 
+BCD
+ - Control your buoyancy
+ - Upgradable
 
 ——————————————————
 ||     Fish     ||

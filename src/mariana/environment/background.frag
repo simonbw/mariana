@@ -5,7 +5,8 @@ uniform highp float resolution;
 uniform highp vec4 outputFrame;
 
 uniform mat3 cameraMatrix;
-uniform float waterDepth;
+uniform float midDepth;
+uniform float darkDepth;
 uniform float hour;
 
 uniform float sunriseStart;
@@ -38,13 +39,11 @@ float invLerp(float from, float to, float value){
 }
 
 vec3 waterTopColorDay = vec3(0.8, 0.9, 1.0);
-vec3 waterMiddleColorDay = vec3(0.0, 0.3, 0.7);
-vec3 waterBottomColorDay = vec3(0.0, 0.0, 0.01);
+vec3 waterMidColorDay = vec3(0.0, 0.3, 0.7);
+vec3 waterDarkColorDay = vec3(0.0, 0.0, 0.01);
 vec3 nightColor = vec3(0.0, 0.0, 0.01);
 
-float horizonPoint = 0.0;
-float midPoint = 40.0;
-float bottomPoint = 80.0;
+float horizonDepth = 0.0;
 
 float getDayPercent(float hour) {
   if (hour < sunriseStart) {
@@ -70,8 +69,8 @@ void main(void){
   float nightPercent = mix(0.7, 0.0, getDayPercent(hour));
 
   vec3 waterTopColor = mix(waterTopColorDay, nightColor, nightPercent);
-  vec3 waterMiddleColor = mix(waterMiddleColorDay, nightColor, nightPercent);
-  vec3 waterBottomColor = mix(waterBottomColorDay, nightColor, nightPercent);
+  vec3 waterMidColor = mix(waterMidColorDay, nightColor, nightPercent);
+  vec3 waterDarkColor = mix(waterDarkColorDay, nightColor, nightPercent);
 
   float surfaceY = getSurfaceY(x);
 
@@ -80,14 +79,14 @@ void main(void){
     gl_FragColor.rgba = vec4(0.0);
   } else {
     gl_FragColor.a = 1.0;
-    if (y < midPoint) {
-      float t = invLerp(horizonPoint, midPoint, y);
-      gl_FragColor.rgb = mix(waterTopColor, waterMiddleColor, t);
-    } else if (y < bottomPoint) {
-      float t = invLerp(midPoint, bottomPoint, y);
-      gl_FragColor.rgb = mix(waterMiddleColor, waterBottomColor, t);
+    if (y < midDepth) {
+      float t = invLerp(horizonDepth, midDepth, y);
+      gl_FragColor.rgb = mix(waterTopColor, waterMidColor, t);
+    } else if (y < darkDepth) {
+      float t = invLerp(midDepth, darkDepth, y);
+      gl_FragColor.rgb = mix(waterMidColor, waterDarkColor, t);
     } else {
-      gl_FragColor.rgb = waterBottomColor;
+      gl_FragColor.rgb = waterDarkColor;
     }
   }
 

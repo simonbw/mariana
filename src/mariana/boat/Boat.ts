@@ -1,17 +1,19 @@
 import { SCALE_MODES, Sprite, Text } from "pixi.js";
-import img_boat from "../../resources/images/environment/boat.png";
-import BaseEntity from "../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../core/entity/Entity";
-import Game from "../core/Game";
-import { ControllerButton } from "../core/io/Gamepad";
-import { KeyCode } from "../core/io/Keys";
-import { degToRad, lerp, polarToVec } from "../core/util/MathUtil";
-import { V } from "../core/Vector";
-import { Layer } from "./config/layers";
-import { getDiver } from "./diver/Diver";
-import { getWaves } from "./environment/Waves";
-import { FONT_HEADING } from "./fonts";
-import { PointLight } from "./lighting/PointLight";
+import img_boat from "../../../resources/images/environment/boat.png";
+import BaseEntity from "../../core/entity/BaseEntity";
+import Entity, { GameSprite } from "../../core/entity/Entity";
+import Game from "../../core/Game";
+import { ControllerButton } from "../../core/io/Gamepad";
+import { KeyCode } from "../../core/io/Keys";
+import { degToRad, lerp, polarToVec } from "../../core/util/MathUtil";
+import { V } from "../../core/Vector";
+import { Layer } from "../config/layers";
+import { getDiver } from "../diver/Diver";
+import { getWaves } from "../environment/Waves";
+import { FONT_HEADING } from "../config/fonts";
+import { PointLight } from "../lighting/PointLight";
+import { DiveBell } from "./DiveBell";
+import { UpgradeId } from "../upgrade/upgrades";
 
 const BOAT_X = 0;
 const BOAT_WIDTH = 8; // meters
@@ -140,6 +142,14 @@ export class Boat extends BaseEntity implements Entity {
 
     this.light.setPosition(this.getDropoffPosition());
   }
+
+  handlers = {
+    upgradeBought: ({ upgradeId }: { upgradeId: UpgradeId }) => {
+      if (upgradeId === "oxygenBuoy") {
+        this.addChild(new DiveBell(V(3, -1)));
+      }
+    },
+  };
 }
 
 export function getBoat(game?: Game): Boat | undefined {

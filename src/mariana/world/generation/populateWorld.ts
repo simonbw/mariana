@@ -1,5 +1,6 @@
 import Entity from "../../../core/entity/Entity";
 import Game from "../../../core/Game";
+import { range } from "../../../core/util/FunctionalUtils";
 import { shuffle } from "../../../core/util/Random";
 import { V2d } from "../../../core/Vector";
 import { TILE_SIZE_METERS } from "../../constants";
@@ -12,6 +13,7 @@ import { Soulweed } from "../../plants/Soulweed";
 import { TileLoadListener } from "../loading/OnLoader";
 import { TilePos } from "../TilePos";
 import { WorldMap } from "../WorldMap";
+import { TileList } from "./TileList";
 
 /** Generates the stuff in the world */
 export function populateWorld(worldMap: WorldMap): Entity[] {
@@ -25,25 +27,21 @@ export function populateWorld(worldMap: WorldMap): Entity[] {
 export function populateSurface(worldMap: WorldMap) {
   const entities: Entity[] = [];
 
-  const available: number[] = [];
-  for (let x = worldMap.minX; x < worldMap.maxX; x++) {
-    available.push(x);
-  }
-  shuffle(available);
+  const available = new TileList(
+    range(worldMap.minX, worldMap.maxX).map((x) => [
+      x,
+      worldMap.groundMap.getHighestTile(x) - 1,
+    ])
+  );
 
-  const getSurfacePos = (): [TilePos, V2d] => {
-    const tx = available.pop()!;
-    const ty = worldMap.groundMap.getHighestTile(tx) - 1;
-    const worldPos = worldMap
-      .tileToWorld([tx, ty])
-      .iadd([0, TILE_SIZE_METERS / 2]);
-
-    return [[tx, ty], worldPos];
+  const tileToWorld = (tilePos: TilePos): V2d => {
+    return worldMap.tileToWorld(tilePos).iadd([0, TILE_SIZE_METERS / 2]);
   };
 
-  const totalAnemonies = Math.floor(available.length * 0.1);
-  for (let i = 0; i < totalAnemonies; i++) {
-    const [tilePos, worldPos] = getSurfacePos();
+  const totalAnemonies = Math.floor(available.size * 0.1);
+
+  for (const tilePos of available.take(totalAnemonies)) {
+    const worldPos = tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) =>
         game.addEntity(new Anemone(worldPos))
@@ -51,9 +49,9 @@ export function populateSurface(worldMap: WorldMap) {
     );
   }
 
-  const totalSeaweeds = Math.floor(available.length * 0.5);
-  for (let i = 0; i < totalSeaweeds; i++) {
-    const [tilePos, worldPos] = getSurfacePos();
+  const totalSeaweeds = Math.floor(available.size * 0.5);
+  for (const tilePos of available.take(totalSeaweeds)) {
+    const worldPos = tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) =>
         game.addEntity(new Seaweed(worldPos))
@@ -61,9 +59,9 @@ export function populateSurface(worldMap: WorldMap) {
     );
   }
 
-  const soulPlants = Math.floor(available.length * 0.3);
-  for (let i = 0; i < soulPlants; i++) {
-    const [tilePos, worldPos] = getSurfacePos();
+  const soulPlants = Math.floor(available.size * 0.3);
+  for (const tilePos of available.take(soulPlants)) {
+    const worldPos = tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) =>
         game.addEntity(new Soulweed(worldPos))
@@ -88,7 +86,7 @@ export function makeDeeperStuff(worldMap: WorldMap) {
   }
   shuffle(available);
 
-  const jellyfishNumber = Math.floor(available.length * 0.01);
+  const jellyfishNumber = Math.floor(available.length * 0.05);
   for (let i = 0; i < jellyfishNumber; i++) {
     const tilePos = available.pop()!;
     const worldPos = worldMap.tileToWorld(tilePos);
@@ -102,7 +100,7 @@ export function makeDeeperStuff(worldMap: WorldMap) {
             },
             (game) => game.entities.getTagged("jellyfish").length,
             5,
-            1.0 / 30
+            1.0 / 10
           )
         ),
       ])
@@ -130,9 +128,7 @@ export function makeDeeperStuff(worldMap: WorldMap) {
     );
   }
 
-  // TODO: Squidgers
   // TODO: Grabbers
-  console.timeEnd("makeDeeperStuff3");
 
   return entities;
 }

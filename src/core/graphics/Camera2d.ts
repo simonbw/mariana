@@ -2,9 +2,9 @@ import { Matrix, Point } from "pixi.js";
 import BaseEntity from "../entity/BaseEntity";
 import Entity from "../entity/Entity";
 import { lerpOrSnap } from "../util/MathUtil";
+import { V, V2d } from "../Vector";
 import { GameRenderer2d } from "./GameRenderer2d";
 import { LayerInfo } from "./LayerInfo";
-import { V2d, V } from "../Vector";
 
 //  Controls the viewport.
 export class Camera2d extends BaseEntity implements Entity {
@@ -74,61 +74,66 @@ export class Camera2d extends BaseEntity implements Entity {
     this.y += this.vy * dt;
   }
 
-  // Center the camera on a position
-  center([x, y]: V2d) {
+  /** Center the camera on a position */
+  center([x, y]: [number, number]) {
     this.x = x;
     this.y = y;
   }
 
-  // Move the camera toward being centered on a position, with a target velocity
-  smoothCenter([x, y]: V2d, [vx, vy]: V2d = V([0, 0]), smooth: number = 0.9) {
+  /** Move the camera toward being centered on a position, with a target velocity */
+  smoothCenter(
+    [x, y]: [number, number],
+    [vx, vy]: [number, number] = V([0, 0]),
+    smooth: number = 0.9
+  ) {
     const dx = (x - this.x) / this.game!.averageFrameDuration;
     const dy = (y - this.y) / this.game!.averageFrameDuration;
     this.smoothSetVelocity(V([vx + dx, vy + dy]), smooth);
   }
 
-  smoothSetVelocity([vx, vy]: V2d, smooth: number = 0.9) {
+  smoothSetVelocity([vx, vy]: [number, number], smooth: number = 0.9) {
     this.vx = lerpOrSnap(this.vx, vx, smooth);
     this.vy = lerpOrSnap(this.vy, vy, smooth);
   }
 
-  // Move the camera part of the way to the desired zoom.
+  /** Move the camera part of the way to the desired zoom. */
   smoothZoom(z: number, smooth: number = 0.9) {
     this.z = smooth * this.z + (1 - smooth) * z;
   }
 
-  // Returns [width, height] of the viewport in pixels
+  /** Returns [width, height] of the viewport in pixels */
+  private _viewportSize = V(0, 0);
   getViewportSize(): V2d {
-    return V(
+    return this._viewportSize.set(
       this.renderer.pixiRenderer.width / this.renderer.pixiRenderer.resolution,
       this.renderer.pixiRenderer.height / this.renderer.pixiRenderer.resolution
     );
   }
 
   getWorldViewport() {
-    const [top, left] = this.toWorld(V(0, 0));
-    const [bottom, right] = this.toWorld(this.getViewportSize());
-    return new Viewport(top, bottom, left, right);
+    const [left, top] = this.toWorld(V(0, 0));
+    const [right, bottom] = this.toWorld(this.getViewportSize());
+    return new Viewport({ top, bottom, left, right });
   }
 
-  // Convert screen coordinates to world coordinates
+  /** Convert screen coordinates to world coordinates */
   toWorld([x, y]: V2d, parallax = V(1.0, 1.0)): V2d {
     let p = new Point(x, y);
     p = this.getMatrix(parallax).applyInverse(p, p);
     return V(p.x, p.y);
   }
 
-  // Convert world coordinates to screen coordinates
-  toScreen([x, y]: V2d, parallax = V(1.0, 1.0)): V2d {
+  /** Convert world coordinates to screen coordinates */
+  toScreen([x, y]: V2d, parallax: [number, number] = [1.0, 1.0]): V2d {
     let p = new Point(x, y);
     p = this.getMatrix(parallax).apply(p, p);
     return V(p.x, p.y);
   }
 
-  // Creates a transformation matrix to go from screen world space to screen space.
+  /** Creates a transformation matrix to go from screen world space to screen space. */
   getMatrix(
     [px, py]: [number, number] = [1, 1],
-    [ax, ay]: V2d = V(0, 0)
+    [ax, ay]: [number, number] = V(0, 0)
   ): Matrix {
     const [w, h] = this.getViewportSize();
     const { x: cx, y: cy, z, angle } = this;
@@ -149,7 +154,7 @@ export class Camera2d extends BaseEntity implements Entity {
     );
   }
 
-  // Update the properties of a renderer layer to match this camera
+  /** Update the properties of a renderer layer to match this camera */
   updateLayer(layer: LayerInfo) {
     const container = layer.container;
     if (!layer.paralax.equals([0, 0])) {
@@ -160,6 +165,7 @@ export class Camera2d extends BaseEntity implements Entity {
   }
 }
 
+/** Represents the area that a camera can see */
 class Viewport {
   top: number;
   bottom: number;
@@ -168,7 +174,17 @@ class Viewport {
   width: number;
   height: number;
 
-  constructor(top: number, bottom: number, left: number, right: number) {
+  constructor({
+    top,
+    bottom,
+    left,
+    right,
+  }: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  }) {
     this.top = top;
     this.bottom = bottom;
     this.left = left;
@@ -177,7 +193,13 @@ class Viewport {
     this.height = bottom - top;
   }
 
-  containsPoint([x, y]: [number, number]): boolean {
-    return x > this.left && x < this.right && y < this.bottom && y > this.top;
+  /**  */
+  containsPoint([x, y]: [number, number], buffer = 0.0): boolean {
+    return (
+      x > this.left - buffer &&
+      x < this.right + buffer &&
+      y < this.bottom + buffer &&
+      y > this.top - buffer
+    );
   }
 }

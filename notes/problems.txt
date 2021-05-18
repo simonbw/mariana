@@ -25,7 +25,7 @@ It's too easy
  - Add in enemies again
 
 
-Constantly Resurfacing and unsurfacing
+Rapid resurfacing and unsurfacing when at surface
  - Should have the equilibrium point for floating on the surface be different than the point for determining if we're surfaced
  - We need diver.isSurfaced and diver.headAboveWater
 
@@ -36,4 +36,8 @@ Can't navigate menus with a gamepad
 |     Bugs      |
 ⌞———————————————⌟
 
+Ground no longer stops diver
+
 Harpoon/tether doesn't despawn when you die
+
+Something is off with the submersion audio filter

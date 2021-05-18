@@ -116,9 +116,13 @@ export class Soulweed extends BaseEntity implements Entity {
     }
 
     for (const [i, bud] of this.buds.entries()) {
-      const pointI = Math.floor((this.points.length * i) / this.buds.length);
+      const budPercent = i / (this.buds.length - 1);
+      const heightPercent = lerp(0.2, 0.8, budPercent);
+      const pointI = Math.floor(this.points.length * heightPercent);
       const point = this.points[pointI];
-      const x = this.position[0] + point.x + (i % 2 == 0 ? 0.5 : -0.5);
+      const isLeft = i % 2 == 0;
+      const xOffset = (isLeft ? -1 : 1) * (1.0 - heightPercent);
+      const x = this.position[0] + point.x + xOffset;
       const y = this.position[1] + point.y;
       bud.setPosition([x, y]);
     }

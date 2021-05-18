@@ -1,3 +1,4 @@
+import { Graphics } from "@pixi/graphics";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -19,6 +20,17 @@ export class FishSpawner extends BaseEntity implements Entity {
     private makeupTime: number = 0
   ) {
     super();
+
+    const graphics = new Graphics();
+    graphics.beginFill(0xff0000);
+    graphics.drawCircle(0, 0, 2.0);
+    graphics.endFill();
+    graphics.scale.set(1 / 4);
+    graphics.position.set(...position);
+
+    this.sprite = graphics;
+
+    this.sprite.visible = false;
   }
 
   onAdd(game: Game) {
@@ -54,10 +66,19 @@ export class FishSpawner extends BaseEntity implements Entity {
     if (rBool(dt * this.spawnRate)) {
       const fishCount = this.getFishCount(this.game!);
       if (fishCount < this.targetNumber) {
-        if (this.game?.camera.getWorldViewport().containsPoint(this.position)) {
+        if (!this.isOnScreen()) {
           this.spawnFish(this.game!);
         }
       }
     }
+  }
+
+  isOnScreen() {
+    const viewport = this.game!.camera.getWorldViewport();
+    return viewport.containsPoint(this.position, 2);
+  }
+
+  onRender() {
+    this.sprite!.alpha = this.isOnScreen() ? 0.5 : 1.0;
   }
 }

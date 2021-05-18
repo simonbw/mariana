@@ -42,7 +42,8 @@ export class Water extends BaseEntity implements Entity {
       cameraMatrix,
       resolution,
       skyHeight: 30,
-      waterDepth: WORLD_BOTTOM - 10,
+      midDepth: 100,
+      darkDepth: 250,
       hour,
       ...TIME_UNIFORMS,
     };

@@ -7,11 +7,18 @@ import { BaseFish } from "../BaseFish";
 import { School } from "./School";
 
 interface Options {
+  /** How strongly this fish will say with the group */
   cohesion?: number;
+  /** How strongly this fish go in the same direction as the group */
   alignment?: number;
+  /** How strongly this fish will avoid others in the group */
   separation?: number;
+  /** How far away from other group members this fish will try to stay */
   separationDistance?: number;
+  /** How strongly this fish will move towards/away from attractors/repulsors */
   attraction?: number;
+  /** How strongly this fish will move away from the ground */
+  avoidance?: number;
 }
 
 /** Provides 2d flocking behavior based on 4 principals:
@@ -32,6 +39,8 @@ export class FlockingSystem extends BaseEntity implements Entity {
   public separationDistance: number;
   /** How strongly this fish will move towards/away from attractors/repulsors */
   public attraction: number;
+  /** How strongly this fish will move away from the ground */
+  public avoidance: number;
 
   public school?: School;
   public targetVelocity = V(0, 0);
@@ -44,6 +53,7 @@ export class FlockingSystem extends BaseEntity implements Entity {
       separation = 1,
       separationDistance = 1,
       attraction = 1,
+      avoidance = 1,
     }: Options = {}
   ) {
     super();
@@ -53,6 +63,7 @@ export class FlockingSystem extends BaseEntity implements Entity {
     this.separation = separation;
     this.separationDistance = separationDistance;
     this.attraction = attraction;
+    this.avoidance = avoidance;
   }
 
   // cached to avoid allocations
@@ -128,7 +139,8 @@ export class FlockingSystem extends BaseEntity implements Entity {
   private _fAvoid = V(0, 0);
   private getAvoidanceForce(): V2d {
     const worldMap = getWorldMap(this.game!)!;
-    const [tx, ty] = worldMap.worldToTile(this.fish.getPosition());
+    const pos = this.fish.getPosition();
+    const [tx, ty] = worldMap.worldToTile(pos);
 
     this._fAvoid.set(0, 0);
 
@@ -144,6 +156,13 @@ export class FlockingSystem extends BaseEntity implements Entity {
     if (worldMap.groundMap.tileIsSolid([tx, ty - 1])) {
       this._fAvoid.iadd([0, 10]);
     }
+
+    if (pos.y < 3) {
+      const p = clamp((3.0 - pos.y) / 3);
+      this._fAvoid.iadd([0, p * 10]);
+    }
+
+    this._fAvoid.imul(this.avoidance);
 
     return this._fAvoid;
   }

@@ -7,7 +7,8 @@ import {
   Spring,
 } from "p2";
 import Entity from "../../../core/entity/Entity";
-import { clamp, degToRad, lerp } from "../../../core/util/MathUtil";
+import { clamp, degToRad, lerp, polarToVec } from "../../../core/util/MathUtil";
+import { rDirection } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { getDiver } from "../../diver/Diver";
@@ -43,9 +44,11 @@ export class Eel extends BaseFish {
   constructor(position: V2d) {
     super({ dropValue: 20, hp: 50 });
 
+    let lastPosition = position.clone();
+    const direction = polarToVec(rDirection(), SEGMENT_LENGTH);
     for (let i = 0; i < NUM_SEGMENTS; i++) {
       const body = new Body({
-        position: position.add([i * SEGMENT_LENGTH, 0]),
+        position: lastPosition.iadd(direction).clone(),
         mass: 0.01,
         // collisionResponse: false,
       });

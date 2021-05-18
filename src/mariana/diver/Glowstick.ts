@@ -64,7 +64,7 @@ export default class GlowStick extends BaseEntity implements Entity {
       l: 0.8,
     });
     this.light = this.addChild(
-      new PointLight({ position, size: 10, color: color })
+      new PointLight({ position, size: 20, color: color })
     );
 
     this.sprite = Sprite.from(choose(...GLOWSTICK_TEXTURES));

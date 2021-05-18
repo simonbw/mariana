@@ -1,7 +1,6 @@
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity from "../../../core/entity/Entity";
 import AimSpring from "../../../core/physics/AimSpring";
-import { V2d } from "../../../core/Vector";
 import { BaseFish } from "../BaseFish";
 
 export class FishAim extends BaseEntity implements Entity {

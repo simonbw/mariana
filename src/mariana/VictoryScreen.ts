@@ -5,7 +5,7 @@ import Entity, { GameSprite } from "../core/entity/Entity";
 import { SoundInstance } from "../core/sound/SoundInstance";
 import { V2d } from "../core/Vector";
 import { Layer } from "./config/layers";
-import { FONT_HEADING } from "./fonts";
+import { FONT_HEADING } from "./config/fonts";
 
 const LINES = [
   "Phew, I did it!",

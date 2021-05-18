@@ -24,8 +24,10 @@ const HARPOON_TETHER_OFFSET = V(-0.45, 0);
 
 export class Tether extends BaseEntity implements Entity {
   sprite: Graphics;
-  retracting = false;
   constraints: DistanceConstraint[];
+
+  retracting = false;
+  retractPercent: number = 0.0;
 
   constructor(public diver: Diver, public harpoon: Harpoon) {
     super();
@@ -127,6 +129,7 @@ export class Tether extends BaseEntity implements Entity {
     for (let i = 0; i < this.constraints.length; i++) {
       await this.wait(waitTime, (dt, t) => {
         this.constraints[i].upperLimit = SEGMENT_LENGTH * (1.0 - t);
+        this.retractPercent = (i + t) / this.constraints.length;
       });
     }
 

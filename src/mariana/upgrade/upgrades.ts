@@ -14,11 +14,13 @@ export type UpgradeId =
   | "BCD"
   | "air1"
   | "air2"
+  | "nitrox"
   | "rebreather"
   | "autoRetractor"
   | "turboRetractor"
   | "doubleEndedPoon"
-  | "soulMagnet";
+  | "soulMagnet"
+  | "oxygenBuoy";
 
 /** All the upgrades */
 const UPGRADES: Record<UpgradeId, Upgrade> = {
@@ -58,6 +60,12 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     cost: 300,
     prerequisites: ["air1"],
   },
+  nitrox: {
+    name: "Nitrox",
+    description: "Don't use more air as you get deeper",
+    cost: 300,
+    prerequisites: ["air1"],
+  },
   rebreather: {
     name: "Rebreather",
     description: "Blow fewer bubbles",
@@ -87,6 +95,12 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     description: "Sharpen your harpoon at both ends",
     cost: 300,
     prerequisites: ["autoRetractor"],
+  },
+  oxygenBuoy: {
+    name: "Oxygen Buoy",
+    description: "Provides air under water",
+    cost: 100,
+    prerequisites: ["air1"],
   },
 };
 

@@ -13,7 +13,7 @@ import { SurfaceSplash } from "../effects/SurfaceSplash";
 import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { isHarpoonable } from "./Harpoonable";
-import { SIZE } from "./HarpoonGun";
+import { HarpoonGun, SIZE } from "./HarpoonGun";
 
 const MIN_SPEED_FOR_DAMAGE = 5; // meters/second
 const FRICTION = 0.04;
@@ -21,12 +21,15 @@ const FRICTION = 0.04;
 export class Harpoon extends BaseEntity implements Entity {
   body: Body;
   sprite: Sprite & GameSprite;
-
   minSpeed = Infinity;
 
   wasSurfaced: boolean = false;
 
-  constructor(position: V2d, public velocity: V2d) {
+  constructor(
+    position: V2d,
+    public velocity: V2d,
+    public harpoonGun: HarpoonGun
+  ) {
     super();
 
     const sprite = (this.sprite = Sprite.from(img_harpoon));

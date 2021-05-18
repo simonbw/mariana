@@ -69,20 +69,19 @@ export default class GroundMap {
     return y;
   }
 
-  // TODO: Don't allocate so much
   /** Calculates which type of tile a tile is */
   getTileType(tilePos: TilePos): number {
-    const middle = V(tilePos);
+    const pos = V(tilePos);
     return getTileType({
-      middle: this.tileIsSolid(middle),
-      left: this.tileIsSolid(middle.add([-1, 0])),
-      top: this.tileIsSolid(middle.add([0, -1])),
-      right: this.tileIsSolid(middle.add([1, 0])),
-      bottom: this.tileIsSolid(middle.add([0, 1])),
-      topLeft: this.tileIsSolid(middle.add([-1, -1])),
-      topRight: this.tileIsSolid(middle.add([1, -1])),
-      bottomLeft: this.tileIsSolid(middle.add([-1, 1])),
-      bottomRight: this.tileIsSolid(middle.add([1, 1])),
+      middle: this.tileIsSolid(pos.set(tilePos)),
+      left: this.tileIsSolid(pos.set(tilePos).iadd([-1, 0])),
+      top: this.tileIsSolid(pos.set(tilePos).add([0, -1])),
+      right: this.tileIsSolid(pos.set(tilePos).add([1, 0])),
+      bottom: this.tileIsSolid(pos.set(tilePos).add([0, 1])),
+      topLeft: this.tileIsSolid(pos.set(tilePos).add([-1, -1])),
+      topRight: this.tileIsSolid(pos.set(tilePos).add([1, -1])),
+      bottomLeft: this.tileIsSolid(pos.set(tilePos).add([-1, 1])),
+      bottomRight: this.tileIsSolid(pos.set(tilePos).add([1, 1])),
     });
   }
 

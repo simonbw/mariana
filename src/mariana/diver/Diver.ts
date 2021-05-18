@@ -1,15 +1,16 @@
-import { Body, Capsule, vec2 } from "p2";
+import { Body, Capsule } from "p2";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
+import { clamp, invLerp } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
-import { Boat } from "../Boat";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { HarpoonGun } from "../weapons/HarpoonGun";
 import { WorldAnchor } from "../world/loading/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
+import { DiverPhysics } from "./DiverPhysics";
 import { DiverSprite } from "./DiverSprite";
 import { DiverSubmersion } from "./DiverSubmersion";
 import { DiverVoice } from "./DiverVoice";
@@ -22,12 +23,6 @@ export const DIVER_HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
 const BASE_SPEED = 12.0; // Newtons?
 const SPEED_PER_UPGRADE = 4.0; // Newtons?
-const WATER_FRICTION = 2.2; // Water friction
-const SURFACE_GRAVITY = 9.8; // meters / second^2
-const SUBMERGED_GRAVITY = 0; //5.0; // meters / second^2
-const HEAD_OFFSET = -0.35; // meters offset from center for head to be submerged
-const MAX_WAVE_FORCE = 3; // multiplier of wave velocity
-const WAVE_DEPTH_FACTOR = 0.95; // multiplier of wave velocity
 
 export class Diver extends BaseEntity implements Entity {
   persistenceLevel = 1;
@@ -56,19 +51,23 @@ export class Diver extends BaseEntity implements Entity {
     this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
     this.addChild(new DiverSprite(this));
     this.addChild(new DiverVoice(this));
+    this.addChild(new DiverPhysics(this));
 
     this.body = new Body({
       mass: 1,
       position: position.clone(),
       fixedRotation: true,
     });
-    const shape = new Capsule({
-      radius: WIDTH / 2,
-      length: DIVER_HEIGHT - WIDTH,
-      collisionGroup: CollisionGroups.Diver,
-      collisionMask: CollisionGroups.All,
-    });
-    this.body.addShape(shape, [0, 0], Math.PI / 2);
+    this.body.addShape(
+      new Capsule({
+        radius: WIDTH / 2,
+        length: DIVER_HEIGHT - WIDTH,
+        collisionGroup: CollisionGroups.Diver,
+        collisionMask: CollisionGroups.All,
+      }),
+      [0, 0],
+      Math.PI / 2
+    );
   }
 
   getMaxSpeed(): number {
@@ -85,7 +84,7 @@ export class Diver extends BaseEntity implements Entity {
     return speed;
   }
 
-  // Return the current depth in meters under the surface
+  /** Return the current depth in meters under the surface */
   getDepth() {
     const waves = getWaves(this.game!);
     const x = this.body.position[1];
@@ -94,42 +93,20 @@ export class Diver extends BaseEntity implements Entity {
     return this.body.position[1] - surfaceHeight;
   }
 
+  getPercentSubmerged(): number {
+    const depth = this.getDepth();
+    return clamp(invLerp(-DIVER_HEIGHT / 2, DIVER_HEIGHT / 2, depth));
+  }
+
   isSurfaced() {
-    return this.getDepth() + HEAD_OFFSET <= 0;
+    return this.getPercentSubmerged() < 0.7;
   }
 
   isSubmerged() {
     return !this.isSurfaced();
   }
 
-  onTick(dt: number) {
-    if (this.onBoat) {
-      const boat = this.game!.entities.getById("boat") as Boat;
-      vec2.copy(this.body.position, boat.getLaunchPosition());
-      vec2.set(this.body.velocity, 0, 0);
-      this.body.collisionResponse = false;
-    } else {
-      const g = this.isSurfaced() ? SURFACE_GRAVITY : SUBMERGED_GRAVITY;
-      this.body.applyForce([0, this.body.mass * g]);
-
-      if (!this.isSurfaced()) {
-        if (!this.isDead) {
-          this.body.applyForce(this.moveDirection.mul(this.getMaxSpeed()));
-        }
-        this.body.applyForce(V(this.body.velocity).imul(-WATER_FRICTION));
-
-        // Wave forces
-        const waves = getWaves(this.game!);
-        const x = this.body.position[0];
-        const surfaceVelocity = waves.getSurfaceVelocity(x);
-        const d = this.getDepth() - HEAD_OFFSET;
-        const depthFactor = WAVE_DEPTH_FACTOR ** d;
-        this.body.applyImpulse(
-          surfaceVelocity.imul(MAX_WAVE_FORCE * depthFactor * dt)
-        );
-      }
-    }
-  }
+  onTick(dt: number) {}
 
   jump() {
     if (this.onBoat) {

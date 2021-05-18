@@ -69,22 +69,29 @@ export class Waves extends BaseEntity implements Entity {
     return !this.isUnderwater(position);
   }
 
-  getSurfaceVelocity(x: number): V2d {
-    const { t, a, lambda, T } = this.getWaveStats();
+  getSurfaceVelocity(x: number, out: V2d = V(0, 0)): V2d {
+    const { t, t2, a, a2, lambda, lambda2, T, T2 } = this.getWaveStats();
     // this is the derivative of the surface height wave
-    const inside = 2 * Math.PI * (x / lambda - t / T);
-    const coefficient = (-2 * Math.PI * a) / T;
-    const wave1 = coefficient * Math.cos(inside);
+    const inside1 = 2 * Math.PI * (x / lambda - t / T);
+    const coefficient1 = (-2 * Math.PI * a) / T;
+    const wave1 = coefficient1 * Math.cos(inside1);
 
-    return V(0, wave1);
+    // this is the derivative of the surface height wave
+    const inside2 = 2 * Math.PI * (x / lambda2 - t2 / T2);
+    const coefficient2 = (-2 * Math.PI * a2) / T2;
+    const wave2 = coefficient2 * Math.cos(inside2);
+
+    return out.set(0, wave1 + wave2);
   }
 
   getSurfaceAngle(x: number): number {
     const { t, t2, a, a2, lambda, lambda2, T, T2 } = this.getWaveStats();
-    const wave1 = a * Math.sin(2 * Math.PI * (x / lambda - t / T));
-    const wave2 = a2 * Math.sin(2 * Math.PI * (x / lambda2 - t2 / T2));
+    // TODO: I think we can get this exact rather than approximate
+    const h1 = this.getSurfaceHeight(x - 0.1);
+    const h2 = this.getSurfaceHeight(x + 0.1);
 
-    return Math.atan(wave1 / lambda) * 10; // rise / run
+    const slope = (h2 - h1) / 0.2; // rise / run
+    return Math.atan(slope);
   }
 
   getWaveStats() {

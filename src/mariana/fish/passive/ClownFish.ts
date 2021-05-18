@@ -3,23 +3,23 @@ import { Sprite } from "@pixi/sprite";
 import { Body, Capsule } from "p2";
 import img_clownfish from "../../../../resources/images/fish/clownfish.png";
 import Entity from "../../../core/entity/Entity";
-import AimSpring from "../../../core/physics/AimSpring";
 import { degToRad, normalizeAngle } from "../../../core/util/MathUtil";
 import { rBool, rDirection, rUniform } from "../../../core/util/Random";
 import { V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { BaseFish } from "../BaseFish";
+import { FishAim } from "../fish-systems/FishAim";
 import { FishSubmersion } from "../fish-systems/FishSubmersion";
 import { FlockingSystem } from "../fish-systems/FlockingSystem";
 import { FlockingFish, School } from "../fish-systems/School";
 import { StreamlineMovement } from "../fish-systems/StreamlineMovement";
 
-const DRAG = 0.15;
+const DRAG = 0.18;
 const LIFT = 1.8;
-const AIM_STIFFNESS = 10;
+const AIM_STIFFNESS = 15;
 const AIM_DAMPING = 4;
 const MIN_THRUST = 2.0;
-const MAX_THRUST = 6.0;
+const MAX_THRUST = 5.0;
 
 // const ATTRACTION = 0.2;
 const ALIGNMENT = 0.2;
@@ -28,15 +28,16 @@ const SEPARATION = 1.0;
 const SEPARATION_DISTANCE = 1.5; // the distance fish try to stay from each other in meters
 
 export class ClownFish extends BaseFish implements Entity, FlockingFish {
-  aimSpring!: AimSpring;
   baseScale: number;
+  tags = ["clownfish"];
 
-  width = rUniform(0.6, 0.9);
+  width = rUniform(0.5, 0.75);
 
   // fish subsystems
   flockingSystem: FlockingSystem;
   movement: StreamlineMovement;
   submersion: FishSubmersion;
+  aim: FishAim;
 
   constructor(position: V2d) {
     super();
@@ -65,10 +66,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
       })
     );
 
-    this.aimSpring = new AimSpring(this.body);
-    this.aimSpring.damping = AIM_DAMPING;
-    this.springs = [this.aimSpring];
-
+    this.aim = this.addChild(new FishAim(this, AIM_STIFFNESS, AIM_DAMPING));
     this.submersion = this.addChild(new FishSubmersion(this));
     this.movement = this.addChild(
       new StreamlineMovement(this, {
@@ -84,6 +82,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
         alignment: ALIGNMENT,
         separation: SEPARATION,
         separationDistance: SEPARATION_DISTANCE,
+        avoidance: 0,
       })
     );
   }
@@ -116,13 +115,10 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
 
   onTick(dt: number) {
     if (this.isSurfaced()) {
-      this.aimSpring.stiffness = 0; // free floatin
       this.body.angle = this.getVelocity().angle;
     } else {
       const targetVelocity = this.flockingSystem.targetVelocity;
-
-      this.aimSpring.stiffness = AIM_STIFFNESS;
-      this.aimSpring.restAngle = targetVelocity.angle;
+      this.aim.setAngle(targetVelocity.angle);
 
       const targetSpeed = targetVelocity.magnitude;
       const currentSpeed = this.getVelocity().magnitude;

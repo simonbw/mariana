@@ -2,6 +2,7 @@ import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import { invLerp } from "../../core/util/MathUtil";
+import { rUniform } from "../../core/util/Random";
 
 /** Real world seconds per in-game hour */
 const SECONDS_PER_HOUR = 20;
@@ -25,7 +26,7 @@ export const TIME_UNIFORMS = {
 export class TimeOfDay extends BaseEntity implements Entity {
   id = "timeOfDay";
 
-  hour: number = 7.0;
+  hour: number = rUniform(0, 24);
 
   constructor() {
     super();

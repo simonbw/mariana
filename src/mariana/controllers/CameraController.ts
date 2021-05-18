@@ -4,7 +4,7 @@ import { Camera2d } from "../../core/graphics/Camera2d";
 import { getPositionalSoundListener } from "../../core/sound/PositionalSoundListener";
 import { clamp, stepToward } from "../../core/util/MathUtil";
 import { V } from "../../core/Vector";
-import { Boat } from "../Boat";
+import { Boat } from "../boat/Boat";
 import { WORLD_BOTTOM, WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE } from "../constants";
 import { getDiver } from "../diver/Diver";
 

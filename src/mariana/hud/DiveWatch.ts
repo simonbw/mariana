@@ -8,7 +8,7 @@ import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { WORLD_BOTTOM } from "../constants";
 import { Diver } from "../diver/Diver";
-import { FONT_ALTERNATE, FONT_BODY } from "../fonts";
+import { FONT_ALTERNATE, FONT_BODY } from "../config/fonts";
 
 const MIN_AIR_ANGLE = degToRad(-135);
 const MAX_AIR_ANGLE = degToRad(135);

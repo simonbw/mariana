@@ -13,12 +13,15 @@ const CUTOFF_HIGH = 250;
 const CUTOFF_LOW = 100;
 const CUTOFF_SURFACE = 22050;
 
-const SURFACE_MUSIC_VOLUME = 0.25;
-const SURFACE_END_DEPTH = 15;
-const SURFACE_RAMP = 50;
+const WAVES_VOLUME_SURFACE = 0.05;
+const WAVES_VOLUME_SUBMERGED = 0.18;
 
-const SPOOKY_MUSIC_VOLUME = 0.4;
-const SPOOKY_START_DEPTH = 20;
+const SURFACE_MUSIC_VOLUME = 0.15;
+const SURFACE_END_DEPTH = 30;
+const SURFACE_RAMP = 40;
+
+const SPOOKY_MUSIC_VOLUME = 0.35;
+const SPOOKY_START_DEPTH = 60;
 const SPOOKY_RAMP = 30;
 
 // This is the manager for all the long-running sounds
@@ -117,7 +120,11 @@ export class OceanAmbience extends BaseEntity implements Entity {
     if (isAboveWater) {
       // above water
       this.filter.frequency.setTargetAtTime(CUTOFF_SURFACE, t, speed * 20);
-      this.waveSounds.gainNode.gain.setTargetAtTime(0.07, t, speed);
+      this.waveSounds.gainNode.gain.setTargetAtTime(
+        WAVES_VOLUME_SURFACE,
+        t,
+        speed
+      );
     } else {
       // below water
       const target = lerp(
@@ -126,7 +133,11 @@ export class OceanAmbience extends BaseEntity implements Entity {
         smoothStep(clamp(depth / 80))
       );
       this.filter.frequency.setTargetAtTime(target, t, speed);
-      this.waveSounds.gainNode.gain.setTargetAtTime(0.2, t, speed);
+      this.waveSounds.gainNode.gain.setTargetAtTime(
+        WAVES_VOLUME_SUBMERGED,
+        t,
+        speed
+      );
     }
 
     this.spookySinking.gain = lerp(

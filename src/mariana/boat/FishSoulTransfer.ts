@@ -12,7 +12,7 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { smoothStep } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
-import { Boat } from "../Boat";
+import { Boat } from "./Boat";
 import { Layer } from "../config/layers";
 
 export class FishSoulTransfer extends BaseEntity implements Entity {

@@ -1,3 +1,7 @@
+import snd_smallweapon1 from "../../../resources/audio/weapons/smallweapon1.flac";
+import snd_smallweapon2 from "../../../resources/audio/weapons/smallweapon2.flac";
+import snd_smallweapon3 from "../../../resources/audio/weapons/smallweapon3.flac";
+import snd_smallweapon4 from "../../../resources/audio/weapons/smallweapon4.flac";
 import snd_smallweaponalt1 from "../../../resources/audio/weapons/smallweaponalt_1.flac";
 import snd_smallweaponalt2 from "../../../resources/audio/weapons/smallweaponalt_2.flac";
 import snd_smallweaponalt3 from "../../../resources/audio/weapons/smallweaponalt_3.flac";
@@ -23,6 +27,13 @@ const HARPOON_SOUNDS = new ShuffleRing([
   snd_smallweaponalt2,
   snd_smallweaponalt3,
   snd_smallweaponalt4,
+]);
+
+const HARPOON_SURFACE_SOUNDS = new ShuffleRing([
+  snd_smallweapon1,
+  snd_smallweapon2,
+  snd_smallweapon3,
+  snd_smallweapon4,
 ]);
 
 export class HarpoonGun extends BaseEntity implements Entity {
@@ -51,14 +62,14 @@ export class HarpoonGun extends BaseEntity implements Entity {
       this.harpoon = this.addChild(
         new Harpoon(
           this.diver.getPosition(),
-          velocity.add(this.diver.body.velocity)
+          velocity.add(this.diver.body.velocity),
+          this
         )
       );
-      this.game?.addEntity(
-        new SoundInstance(HARPOON_SOUNDS.getNext(), {
-          gain: 0.3,
-        })
-      );
+      const sound = this.diver.isSubmerged()
+        ? HARPOON_SOUNDS.getNext()
+        : HARPOON_SURFACE_SOUNDS.getNext();
+      this.game?.addEntity(new SoundInstance(sound, { gain: 0.3 }));
       this.diver.body.applyImpulse(velocity.mul(-this.harpoon.body.mass));
       this.tether = this.addChild(new Tether(this.diver, this.harpoon));
 

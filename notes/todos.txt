@@ -2,7 +2,8 @@
 
 General TODOs:
 
- [√] Make fish avoid walls
+
+ [ ] Refactor getPosition() globally
  [ ] Global audio mixer
  [ ] Volume control
  [ ] Positional sounds

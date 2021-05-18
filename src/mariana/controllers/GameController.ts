@@ -4,7 +4,7 @@ import Entity from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { V } from "../../core/Vector";
 import { OceanAmbience } from "../audio/OceanAmbience";
-import { Boat } from "../Boat";
+import { Boat } from "../boat/Boat";
 import { Diver, getDiver } from "../diver/Diver";
 import { Water } from "../environment/Background";
 import { Sky } from "../environment/Sky";

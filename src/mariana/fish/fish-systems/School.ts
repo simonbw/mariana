@@ -74,6 +74,7 @@ export class School extends BaseEntity implements Entity {
       this.center.ilerp(this.home, dt * 0.1);
     }
 
+    // TODO: Don't allocate?
     const diver = getDiver(this.game);
     if (diver && diver.isSubmerged()) {
       this.attractors = [

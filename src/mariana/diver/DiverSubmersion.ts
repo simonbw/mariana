@@ -5,10 +5,14 @@ import { Diver } from "./Diver";
 
 /** Keeps track of whether or not the diver is submerged */
 export class DiverSubmersion extends BaseEntity implements Entity {
-  wasAboveWater: boolean = false;
+  wasAboveWater: boolean = true;
 
   constructor(public diver: Diver) {
     super();
+  }
+
+  onAdd() {
+    this.wasAboveWater = this.diver.isSurfaced();
   }
 
   onTick() {

@@ -10,10 +10,17 @@ Sprites
    - I'm gonna deform it with a mesh to make it wiggle
    - Various types is good
 
+ - Jellyfish
+   - Animated movement, see my crappy programmer art for keyframes
+   - At least the frames that exist in the example now, more in between would be better
+   - Glow layers and transparency would be cool
+
  - Shark
    - Remove/change blood dripping (The dripping is cool but doesn't work well at a low frame rate)
    - Separate frames/animation for idle vs aggroed
    - A couple frames for a biting animation
+
+ - Oxygen buoy thing
 
  - Coral reef fauna
    - acropora humilis
@@ -63,13 +70,17 @@ Audio
    - Combat Music
    - More musics per depth level
  
- - Sounds Effects
+ - General Sounds Effects
    - Different harpoon reeling speeds
-     - Manual
-     - Auto (we can use the existing one)
-     - Turbo
+     - Manual (slow)
+     - Auto 
+     - Turbo (I think the existing one fits this level)
    - Flashlight click on
    - Flashlight click off
+   - Air tank filling up
+   - Bubbles blowing
+   - Swimming noises
+
 
  - Fish Sounds
    - Jellyfish
@@ -79,5 +90,6 @@ Audio
      - Aggro
      - Bite miss
    - Eel
+     - Attack sound
  
  - Dialogue 

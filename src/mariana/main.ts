@@ -3,17 +3,17 @@ import AutoPauser from "../core/AutoPauser";
 import Game from "../core/Game";
 import CustomWorld from "../core/physics/CustomWorld";
 import SpatialHashingBroadphase from "../core/physics/SpatialHashingBroadphase";
+import Preloader from "../core/resources/Preloader";
 import PositionalSoundListener from "../core/sound/PositionalSoundListener";
 import FPSMeter from "../core/util/FPSMeter";
+import { AudioMixer } from "./audio/AudioMixer";
+import { getFontsToPreload } from "./config/fonts";
 import { initLayers, Layer } from "./config/layers";
 import { initContactMaterials } from "./config/PhysicsMaterials";
 import { GameController } from "./controllers/GameController";
 import { GraphicsQualityController } from "./controllers/GraphicsQualityController";
 import VolumeController from "./controllers/VolumeController";
 import { isFish } from "./fish/BaseFish";
-import Preloader from "../core/resources/Preloader";
-import { getFontsToPreload } from "./fonts";
-import { AudioMixer } from "./audio/AudioMixer";
 
 // So we can attach stuff to the window
 declare global {

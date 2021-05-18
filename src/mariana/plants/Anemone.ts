@@ -18,7 +18,8 @@ import { getWorldMap } from "../world/WorldMap";
 
 const SIZE = 1.5;
 const SPAWN_RATE = 0.2; // per second
-const MAX_FISH = 7;
+const MAX_SCHOOL_SIZE = 7;
+const MAX_FISH = 20;
 
 /** Spawns clownfish */
 export class Anemone extends BaseEntity implements Entity {
@@ -79,7 +80,11 @@ export class Anemone extends BaseEntity implements Entity {
   }
 
   onSlowTick(dt: number) {
-    if (this.school.getNumFish() < MAX_FISH && rBool(dt * SPAWN_RATE)) {
+    if (
+      rBool(dt * SPAWN_RATE) &&
+      this.school.getNumFish() < MAX_SCHOOL_SIZE &&
+      this.game!.entities.getTagged("clownfish").length < MAX_FISH
+    ) {
       this.spawnFish();
     }
   }

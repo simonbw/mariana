@@ -4,7 +4,7 @@ import Entity, { GameSprite } from "../../core/entity/Entity";
 import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { Diver } from "../diver/Diver";
-import { FONT_ALTERNATE } from "../fonts";
+import { FONT_ALTERNATE } from "../config/fonts";
 import { DIVE_WATCH_HEIGHT, DIVE_WATCH_WIDTH } from "./DiveWatch";
 
 const TEXT_STYLE: Partial<TextStyle> = {
