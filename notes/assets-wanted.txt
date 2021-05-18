@@ -1,16 +1,22 @@
 
 Sprites
+
  - Ground tilesets
    - Finish the existing rock tileset with the new corners
    - More tilesets for more biomes would be cool
    - Tiles can have an emmissive layer if you want
 
  - Seaweed
-   - Should be straight up-and-down to be bendable
+   - Should be straight up-and-down, the engine will do the bending
    - I'm gonna deform it with a mesh to make it wiggle
-   - Various types is good
+   - Multiple variants could be good
+   - Can have extra sprites for leaves at the base or along it
 
- - Jellyfish
+ - Soul Plant
+   - The plant that grows fish souls, could use a Redesign
+   - Could also use a few variants
+
+ - Redesign Jellyfish
    - Animated movement, see my crappy programmer art for keyframes
    - At least the frames that exist in the example now, more in between would be better
    - Glow layers and transparency would be cool
@@ -20,7 +26,7 @@ Sprites
    - Separate frames/animation for idle vs aggroed
    - A couple frames for a biting animation
 
- - Oxygen buoy thing
+ - Dive bell
 
  - Coral reef fauna
    - acropora humilis
@@ -46,22 +52,25 @@ Sprites
      - Seahorse
      - Surgeonfish
      - Yellow Tang
-  
- - Moving squidger thing
  
  - Upgrade icons
 
- - New Boat
+ - Bigger boat
    - Needs more pixels
-   - Should have a hanging lamp that swings with the motion of the ocean
+   - Could have a hanging lamp (or multiple) that swings with the motion of the ocean <- just seems like it would be a cool effect.
+   - Can have glow layer for turning on the lights inside at night
+   - Maybe 
  
  - Redesign diver
    - Separate layers for arms to be able to aim with harpoon
    - Maybe some animations
    - Have lights on him
+   - Separate out the harpoon gun
  
  - Harpoon
-   - 
+   - Separate sprite for the harpoon and the harpoon gun
+   - Maybe a loaded and unloaded harpoon gun sprite
+   - Maybe different harpoon images based on upgrades
 
 
 Audio
