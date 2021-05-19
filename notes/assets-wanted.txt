@@ -27,6 +27,9 @@ Sprites
    - A couple frames for a biting animation
 
  - Dive bell
+   - Maybe an attachment point for a rope/hose thing
+   - Spots for lights/leds
+   
 
  - Coral reef fauna
    - acropora humilis
