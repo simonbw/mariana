@@ -1,3 +1,4 @@
+import bspline from "b-spline";
 import { Body, DistanceConstraint, Particle } from "p2";
 import { Graphics } from "pixi.js";
 import snd_reelInHarpoon from "../../../../resources/audio/weapons/reel_in_harpoon.flac";
@@ -7,12 +8,13 @@ import { SoundName } from "../../../core/resources/sounds";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
 import { V } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
-import { Diver } from "../Diver";
 import { getUpgradeManager } from "../../upgrade/UpgradeManager";
+import { Diver } from "../Diver";
 import { Harpoon } from "./Harpoon";
 
 const TETHER_LENGTH = 13.0; // meters
-const NUM_SEGMENTS = 40; // segments in the rope
+const NUM_SEGMENTS = 20; // physics segments in the rope
+const NUM_SPLINE_STEPS = 100; // interpolated rendering points
 const TURBO_RETRACT_TIME = 0.5; // seconds
 const AUTO_RETRACT_TIME = 1; // seconds
 const MANUAL_RETRACT_TIME = 3; // seconds
@@ -25,6 +27,7 @@ const HARPOON_TETHER_OFFSET = V(-0.45, 0);
 export class Tether extends BaseEntity implements Entity {
   sprite: Graphics;
   constraints: DistanceConstraint[];
+  bodies: Body[];
 
   retracting = false;
   retractPercent: number = 0.0;
@@ -174,10 +177,18 @@ export class Tether extends BaseEntity implements Entity {
 
     this.sprite.moveTo(diverX, diverY);
 
-    for (const body of this.bodies!) {
-      this.sprite.lineTo(body.position[0], body.position[1]);
+    const points = [];
+    points.push([diverX, diverY]);
+    for (const body of this.bodies) {
+      points.push(body.position);
     }
+    points.push([harpoonX, harpoonY]);
 
+    const stepSize = 1.0 / NUM_SPLINE_STEPS;
+    for (let t = stepSize; t < 1; t += stepSize) {
+      const [x, y] = bspline(t, 2, points);
+      this.sprite.lineTo(x, y);
+    }
     this.sprite.lineTo(harpoonX, harpoonY);
   }
 }

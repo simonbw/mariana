@@ -22,9 +22,6 @@ export class Wind extends BaseEntity implements Entity {
   onTick(dt: number) {
     this.wind = stepToward(this.wind, this.targetWind, dt * 0.1);
 
-    if (this.game!.ticknumber % 100 == 0) {
-      console.log(this.wind.toFixed(2), this.targetWind.toFixed(2));
-    }
     if (this.wind == this.targetWind) {
       this.targetWind = lerp(LOW_WIND, HIGH_WIND, Math.random() ** 2);
       console.log(`new target wind: ${this.targetWind}`);
