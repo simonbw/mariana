@@ -71,8 +71,8 @@ export class Eel extends BaseFish {
         distance: SEGMENT_LENGTH,
         collideConnected: false,
       });
-      constraint.setStiffness(40);
-      constraint.setRelaxation(8);
+      constraint.setStiffness(200);
+      constraint.setRelaxation(5);
       this.constraints.push(constraint);
 
       if (i >= 2) {

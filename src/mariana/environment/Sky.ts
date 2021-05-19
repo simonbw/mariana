@@ -16,8 +16,9 @@ import { Daylight } from "./Daylight";
 import frag_sky from "./sky.frag";
 import { Stars } from "./Stars";
 import { getTimeOfDay, TIME_UNIFORMS } from "./TimeOfDay";
+import { Wind } from "./Wind";
 
-const NUM_CLOUDS = 0;
+const NUM_CLOUDS = 60;
 
 export class Sky extends BaseEntity implements Entity {
   id = "sky";
@@ -46,6 +47,7 @@ export class Sky extends BaseEntity implements Entity {
 
     this.addChild(new Daylight());
     this.addChild(new Stars());
+    this.addChild(new Wind());
   }
 
   getUniforms() {
@@ -69,8 +71,4 @@ export class Sky extends BaseEntity implements Entity {
       this.filter.uniforms[uniform] = value;
     }
   }
-}
-
-export function getWind(game: Game): number {
-  return 20 * (1000 / 3600); // 20 km/h
 }

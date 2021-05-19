@@ -1,4 +1,4 @@
-import Entity from "../../core/entity/Entity";
+import Entity from "../../../core/entity/Entity";
 import { Harpoon } from "./Harpoon";
 
 export interface Harpoonable {

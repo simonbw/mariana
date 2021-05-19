@@ -34,11 +34,11 @@ export class Bubble extends BaseEntity implements Entity {
   }
 
   onSlowTick(dt: number) {
+    const worldMap = getWorldMap(this.game!)!;
+    const tilePos = worldMap.worldToTile([this.sprite.x, this.sprite.y]);
     if (
-      !getWorldMap(this.game!)!.worldPointIsLoaded([
-        this.sprite.x,
-        this.sprite.y,
-      ])
+      worldMap.groundMap.tileIsSolid(tilePos) ||
+      !worldMap.tileIsLoaded(tilePos)
     ) {
       this.destroy();
       return;
@@ -55,16 +55,6 @@ export class Bubble extends BaseEntity implements Entity {
     sprite.y += dt * this.velocity[1];
 
     sprite.scale.set(this.size / sprite.texture.width);
-
-    // if (this.size > MINIMUM_BREATHING_SIZE) {
-    //   const diver = getDiver(this.game);
-    //   if (diver) {
-    //     const dist = diver?.getPosition().isub(this.getPosition()).magnitude;
-    //     if (dist < this.size + 0.5) {
-    //       diver.air.giveOxygen(dt);
-    //     }
-    //   }
-    // }
 
     const waves = getWaves(this.game!);
     if (waves.isAbovewater([sprite.x, sprite.y])) {

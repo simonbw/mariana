@@ -1,18 +1,18 @@
 import { Body, DistanceConstraint, Particle } from "p2";
 import { Graphics } from "pixi.js";
-import snd_reelInHarpoon from "../../../resources/audio/weapons/reel_in_harpoon.flac";
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity from "../../core/entity/Entity";
-import { SoundName } from "../../core/resources/sounds";
-import { SoundInstance } from "../../core/sound/SoundInstance";
-import { V } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
-import { Diver } from "../diver/Diver";
-import { getUpgradeManager } from "../upgrade/UpgradeManager";
+import snd_reelInHarpoon from "../../../../resources/audio/weapons/reel_in_harpoon.flac";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity from "../../../core/entity/Entity";
+import { SoundName } from "../../../core/resources/sounds";
+import { SoundInstance } from "../../../core/sound/SoundInstance";
+import { V } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
+import { Diver } from "../Diver";
+import { getUpgradeManager } from "../../upgrade/UpgradeManager";
 import { Harpoon } from "./Harpoon";
 
 const TETHER_LENGTH = 13.0; // meters
-const NUM_SEGMENTS = 25; // segments in the rope
+const NUM_SEGMENTS = 40; // segments in the rope
 const TURBO_RETRACT_TIME = 0.5; // seconds
 const AUTO_RETRACT_TIME = 1; // seconds
 const MANUAL_RETRACT_TIME = 3; // seconds

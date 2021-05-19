@@ -14,6 +14,8 @@ export enum Layer {
   /** The clouds, for parallax, again */
   CLOUDS2 = "clouds2",
   /** Stuff that renders behind the normal stuff */
+  BOAT = "boat",
+  /** Stuff that renders behind the normal stuff */
   WORLD_BACK = "world_back",
   /** The main layer where most stuff is */
   WORLD = "world",

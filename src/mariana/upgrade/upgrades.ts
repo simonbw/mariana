@@ -1,9 +1,11 @@
+import { MilestoneId } from "./milestones";
+
 /** */
 interface Upgrade {
   name: string;
   description: string;
   cost: number;
-  prerequisites: UpgradeId[];
+  prerequisites: PrerequisiteId[];
   thumbnailUrl?: string;
 }
 
@@ -21,6 +23,8 @@ export type UpgradeId =
   | "doubleEndedPoon"
   | "soulMagnet"
   | "diveBell";
+
+export type PrerequisiteId = UpgradeId | MilestoneId;
 
 /** All the upgrades */
 const UPGRADES: Record<UpgradeId, Upgrade> = {
@@ -100,7 +104,7 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     name: "Dive Bell",
     description: "Provides air under water",
     cost: 100,
-    prerequisites: ["air1"],
+    prerequisites: ["100m"],
   },
 };
 

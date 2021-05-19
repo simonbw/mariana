@@ -109,3 +109,13 @@ export class EelSprite extends BaseEntity implements Entity {
     }
   }
 }
+
+export class EelZap extends BaseEntity implements Entity {
+  sprite: Graphics & GameSprite;
+
+  constructor() {
+    super();
+
+    this.sprite = new Graphics();
+  }
+}

@@ -1,17 +1,22 @@
 import { Body, Box, vec2 } from "p2";
 import { Sprite } from "pixi.js";
-import img_harpoon from "../../../resources/images/diver/harpoon.png";
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
-import Game from "../../core/Game";
-import { clamp, polarToVec } from "../../core/util/MathUtil";
-import { rBool, rDirection, rNormal, rUniform } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
-import { Bubble } from "../effects/Bubble";
-import { SurfaceSplash } from "../effects/SurfaceSplash";
-import { getWaves } from "../environment/Waves";
-import { getUpgradeManager } from "../upgrade/UpgradeManager";
+import img_harpoon from "../../../../resources/images/diver/harpoon.png";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity, { GameSprite } from "../../../core/entity/Entity";
+import Game from "../../../core/Game";
+import { clamp, polarToVec } from "../../../core/util/MathUtil";
+import {
+  rBool,
+  rDirection,
+  rNormal,
+  rUniform,
+} from "../../../core/util/Random";
+import { V, V2d } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
+import { Bubble } from "../../effects/Bubble";
+import { SurfaceSplash } from "../../effects/SurfaceSplash";
+import { getWaves } from "../../environment/Waves";
+import { getUpgradeManager } from "../../upgrade/UpgradeManager";
 import { isHarpoonable } from "./Harpoonable";
 import { HarpoonGun, SIZE } from "./HarpoonGun";
 

@@ -48,14 +48,14 @@ export class BreatheEffect extends BaseEntity implements Entity {
     if (!this.diver.isSurfaced()) {
       this.addChild(new SoundInstance(EXHALE_SOUNDS.getNext(), { gain: 0.1 }));
       await this.wait(0.8 / pace, () => {
-        if (rBool(0.4 * pace)) {
+        if (rBool(0.15 * pace)) {
           this.game!.addEntity(
             new Bubble(
               this.diver
                 .getPosition()
                 .iadd([rUniform(-0.5, 0.5), rUniform(-0.5, -0.9)]),
               V(this.diver.body.velocity).iadd([rNormal(0, 3), rNormal(0, 3)]),
-              rUniform(0.1, 0.5) * amount * pace
+              rUniform(0.12, 0.6) * amount * pace
             )
           );
         }

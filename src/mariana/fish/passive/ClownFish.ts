@@ -16,8 +16,8 @@ import { StreamlineMovement } from "../fish-systems/StreamlineMovement";
 
 const DRAG = 0.18;
 const LIFT = 1.8;
-const AIM_STIFFNESS = 15;
-const AIM_DAMPING = 4;
+const AIM_STIFFNESS = 4;
+const AIM_DAMPING = 1;
 const MIN_THRUST = 2.0;
 const MAX_THRUST = 5.0;
 
@@ -26,6 +26,8 @@ const ALIGNMENT = 0.2;
 const COHESION = 0.7;
 const SEPARATION = 1.0;
 const SEPARATION_DISTANCE = 1.5; // the distance fish try to stay from each other in meters
+const AVOIDANCE = 1.0; // the distance fish try to stay from each other in meters
+const ATTRACTION = 0.3; // the distance fish try to stay from each other in meters
 
 export class ClownFish extends BaseFish implements Entity, FlockingFish {
   baseScale: number;
@@ -82,7 +84,8 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
         alignment: ALIGNMENT,
         separation: SEPARATION,
         separationDistance: SEPARATION_DISTANCE,
-        avoidance: 0,
+        avoidance: AVOIDANCE,
+        attraction: ATTRACTION,
       })
     );
   }

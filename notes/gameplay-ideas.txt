@@ -4,11 +4,12 @@
 
 Train the player to look for glowing green stuff 
 
-Purchasable oxygen hose
- - Thing the player can drag
- - Provides oxygen while down lower
- - Upgrades to allow longer tether
- - Upgrade to allow shop
+Dive Bell
+ [√] Player can drag it around
+ [√] Provides oxygen
+ [ ] Implement a tether
+ [ ] Upgrades to increase tether length
+ [ ] Upgrades 
 
 More resources
  - Basically souls, but different colors
@@ -100,9 +101,12 @@ Bosses
 
 Separate into multiple sprites for arms
 
-——————————————————
-||   Ambience   ||
-——————————————————
+—————————————————————————
+||   Ambience/Polish   ||
+—————————————————————————
 
 Some sort of plankton overlay
 
+Electric eel effect
+
+Smooth harpoon tether rendering

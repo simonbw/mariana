@@ -8,8 +8,8 @@ import { rUniform } from "../../core/util/Random";
 import { V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { TILE_SIZE_METERS } from "../constants";
-import { Harpoon } from "../weapons/Harpoon";
-import { Harpoonable } from "../weapons/Harpoonable";
+import { Harpoon } from "../diver/weapons/Harpoon";
+import { Harpoonable } from "../diver/weapons/Harpoonable";
 
 export class GroundTile extends BaseEntity implements Entity, Harpoonable {
   persistenceLevel = 1;

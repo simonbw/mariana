@@ -8,7 +8,7 @@ import { rUniform } from "../../core/util/Random";
 const SECONDS_PER_HOUR = 20;
 
 export const SUNRISE_START = 4.3;
-export const SUNRISE_MID = 6.3;
+export const SUNRISE_MID = 5.7;
 export const SUNRISE_END = 7.5;
 export const SUNSET_START = 17.0;
 export const SUNSET_MID = 19.0;

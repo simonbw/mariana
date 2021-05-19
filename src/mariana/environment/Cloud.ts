@@ -1,11 +1,14 @@
 import { Graphics } from "@pixi/graphics";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
+import { colorLerp } from "../../core/util/ColorUtils";
 import { rUniform } from "../../core/util/Random";
 import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { WORLD_LEFT_EDGE, WORLD_RIGHT_EDGE } from "../constants";
-import { getWind } from "./Sky";
+import { getSkyColor } from "./Daylight";
+import { getTimeOfDay } from "./TimeOfDay";
+import { getWind } from "./Wind";
 
 const UPSCALE = 8;
 
@@ -28,8 +31,8 @@ export class Cloud extends BaseEntity implements Entity {
       graphics.endFill();
     }
     graphics.scale.set(1 / UPSCALE);
-    graphics.cacheAsBitmap = true;
-    graphics.cacheAsBitmapResolution = 8;
+    // graphics.cacheAsBitmap = true;
+    // graphics.cacheAsBitmapResolution = 8;
 
     this.sprite = graphics;
     this.sprite.position.set(...position);
@@ -37,8 +40,12 @@ export class Cloud extends BaseEntity implements Entity {
   }
 
   onRender(dt: number) {
-    const wind = getWind(this.game!);
+    const wind = getWind(this.game!).wind;
     this.sprite.x += dt * wind * this.windEffect;
+
+    const timeOfDay = getTimeOfDay(this.game!);
+
+    this.sprite.tint = getSkyColor(timeOfDay.hour);
 
     if (this.sprite.x > WORLD_RIGHT_EDGE + 20) {
       this.sprite.x = WORLD_LEFT_EDGE - 20;

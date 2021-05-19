@@ -18,8 +18,8 @@ import { FishAim } from "../fish-systems/FishAim";
 import { FishSubmersion } from "../fish-systems/FishSubmersion";
 import { School } from "../fish-systems/School";
 
-const AIM_STIFFNESS = 100;
-const AIM_DAMPING = 100;
+const AIM_STIFFNESS = 10;
+const AIM_DAMPING = 5;
 const DRAG = 0.8;
 const THRUST = 8;
 const ATTACK_RANGE = 10;

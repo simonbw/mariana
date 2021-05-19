@@ -3,6 +3,8 @@ import React from "react";
 import snd_boughtUpgrade from "../../../resources/audio/ui/bought_upgrade.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
+import { ControllerButton } from "../../core/io/Gamepad";
+import { KeyCode } from "../../core/io/Keys";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { ReactEntity } from "../menu/ReactEntity";
 import { getUpgradeManager, UpgradeManager } from "./UpgradeManager";
@@ -14,12 +16,18 @@ export class UpgradeShop extends BaseEntity implements Entity {
   id = "upgradeShop";
   reactView: ReactEntity<unknown>;
 
+  canBeClosed = false;
+
   constructor() {
     super();
 
     this.reactView = this.addChild(
       new ReactEntity(() => <UpgradeShopView {...this.getProps()} />)
     );
+  }
+
+  onAdd() {
+    this.wait().then(() => (this.canBeClosed = true));
   }
 
   getProps(): Props {
@@ -32,6 +40,26 @@ export class UpgradeShop extends BaseEntity implements Entity {
       buyUpgrade: (upgradeId: UpgradeId) =>
         upgradeManager.buyUpgrade(upgradeId),
     };
+  }
+
+  close() {
+    if (this.canBeClosed) {
+      this.destroy();
+    }
+  }
+
+  onKeyDown(key: KeyCode) {
+    if (key === "KeyE") {
+      if (this.canBeClosed) {
+        this.close();
+      }
+    }
+  }
+
+  onButtonDown(button: ControllerButton) {
+    if (button === ControllerButton.Y) {
+      this.close();
+    }
   }
 
   handlers = {

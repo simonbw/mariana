@@ -1,31 +1,29 @@
-import { Graphics } from "@pixi/graphics";
-import { Sprite } from "@pixi/sprite";
 import { Body, Circle, LockConstraint, vec2 } from "p2";
-import snd_metalHittingRock from "../../../resources/audio/impacts/metal_hitting_rock.flac";
-import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
-import { SoundInstance } from "../../core/sound/SoundInstance";
-import { angleDelta, clamp, invLerp, lerp } from "../../core/util/MathUtil";
-import { rBool, rNormal, rUniform } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
-import { CollisionGroups } from "../config/CollisionGroups";
-import { Layer } from "../config/layers";
-import { getDiver } from "../diver/Diver";
-import { Bubble } from "../effects/Bubble";
-import { getWaves } from "../environment/Waves";
-import { PointLight } from "../lighting/PointLight";
-import { GroundTile } from "../plants/GroundTile";
-import { Harpoon } from "../weapons/Harpoon";
-import { Harpoonable } from "../weapons/Harpoonable";
+import snd_metalHittingRock from "../../../../resources/audio/impacts/metal_hitting_rock.flac";
+import BaseEntity from "../../../core/entity/BaseEntity";
+import Entity from "../../../core/entity/Entity";
+import { SoundInstance } from "../../../core/sound/SoundInstance";
+import { angleDelta, clamp, invLerp, lerp } from "../../../core/util/MathUtil";
+import { rBool, rNormal, rUniform } from "../../../core/util/Random";
+import { V, V2d } from "../../../core/Vector";
+import { CollisionGroups } from "../../config/CollisionGroups";
+import { getDiver } from "../../diver/Diver";
+import { Harpoon } from "../../diver/weapons/Harpoon";
+import { Harpoonable } from "../../diver/weapons/Harpoonable";
+import { Bubble } from "../../effects/Bubble";
+import { getWaves } from "../../environment/Waves";
+import { GroundTile } from "../../plants/GroundTile";
+import { DiveBellSprite } from "./DiveBellSprite";
 
-const RADIUS = 1;
+export const DIVE_BELL_RADIUS = 1;
+const WAVE_DEPTH_FACTOR = 0.95; // multiplier of wave velocity
+const MAX_WAVE_FORCE = 3; // multiplier of wave velocity
 const DRAG = 10.0;
 
+/** Provides the diver with oxygen */
 export class DiveBell extends BaseEntity implements Entity, Harpoonable {
   id = "diveBell";
-  sprite: Sprite & GameSprite;
   body: Body;
-  lights: PointLight[];
 
   constructor(position: V2d) {
     super();
@@ -36,49 +34,21 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     });
     this.body.addShape(
       new Circle({
-        radius: RADIUS,
+        radius: DIVE_BELL_RADIUS,
         collisionGroup: CollisionGroups.World,
         collisionMask: CollisionGroups.World,
       })
     );
     this.body.addShape(
       new Circle({
-        radius: RADIUS * 0.6,
+        radius: DIVE_BELL_RADIUS * 0.6,
         collisionGroup: CollisionGroups.World,
         collisionMask: CollisionGroups.Harpoon,
         collisionResponse: false,
       })
     );
 
-    const upscale = 4;
-    const graphics = new Graphics();
-    graphics.lineStyle({ width: 0.1 * upscale, color: 0x444400 });
-    graphics.beginFill(0xffff00);
-    graphics.drawCircle(0, 0, RADIUS * upscale);
-    graphics.endFill();
-    graphics.lineStyle();
-    graphics.beginFill(0x444400);
-    graphics.drawCircle(0, 0, (RADIUS / 2) * upscale);
-    graphics.endFill();
-    graphics.beginFill(0x444400);
-    graphics.drawCircle(0, -(RADIUS / 2) * upscale, (RADIUS / 8) * upscale);
-    graphics.endFill();
-    graphics.beginFill(0x444400);
-    graphics.drawCircle(0, (RADIUS / 2) * upscale, (RADIUS / 8) * upscale);
-    graphics.endFill();
-    graphics.beginFill(0x444400);
-    graphics.drawCircle(-(RADIUS / 2) * upscale, 0, (RADIUS / 8) * upscale);
-    graphics.endFill();
-    graphics.beginFill(0x444400);
-    graphics.drawCircle((RADIUS / 2) * upscale, 0, (RADIUS / 8) * upscale);
-    graphics.endFill();
-    graphics.scale.set(1 / upscale);
-
-    this.sprite = new Sprite();
-    this.sprite.addChild(graphics);
-    this.sprite.layerName = Layer.WORLD_BACK;
-
-    this.lights = [new PointLight({ size: 2, intensity: 3 })];
+    this.addChild(new DiveBellSprite(this));
   }
 
   getFillRate() {
@@ -91,7 +61,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     if (diver) {
       // TODO: Check distance to head
       const direction = diver.getPosition().sub(this.getPosition());
-      if (direction.magnitude < RADIUS + 2) {
+      if (direction.magnitude < DIVE_BELL_RADIUS + 2) {
         diver.air.giveOxygen(dt * this.getFillRate());
       }
     }
@@ -110,12 +80,14 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
   getPercentSubmerged(): number {
     const depth = this.getDepth();
-    return clamp(invLerp(-RADIUS, RADIUS, depth));
+    return clamp(invLerp(-DIVE_BELL_RADIUS, DIVE_BELL_RADIUS, depth));
   }
 
   private _physics = V(0, 0);
+  private _waveForce = V(0, 0);
   applyPhysics(dt: number) {
     const percentSubmerged = this.getPercentSubmerged();
+    const depth = this.getDepth();
 
     // drag
     const drag = lerp(DRAG, DRAG * 0.1, percentSubmerged);
@@ -125,18 +97,25 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     const g = lerp(9.8, 0, percentSubmerged);
     this._physics.iadd([0, g * this.body.mass]);
 
+    // waves
+    const waves = getWaves(this.game!);
+    const x = this.body.position[0];
+    waves.getSurfaceVelocity(x, this._waveForce);
+    const depthFactor = WAVE_DEPTH_FACTOR ** depth;
+    const waveFactor = MAX_WAVE_FORCE * depthFactor * percentSubmerged;
+    this._physics.iadd(this._waveForce.imul(waveFactor));
+
     this.body.applyForce(this._physics);
 
+    // Angular damping
     this.body.angularVelocity *= Math.exp(-dt * 0.3);
 
+    // Roll towards right-side-up
     this.body.angularVelocity += -0.1 * angleDelta(this.body.angle, 0) * dt;
   }
 
   // TODO: Tether to boat
   onRender(dt: number) {
-    this.sprite.position.set(...this.body.position);
-    this.sprite.rotation = this.body.angle;
-
     if (rBool(dt * 10)) {
       this.game!.addEntity(
         new Bubble(

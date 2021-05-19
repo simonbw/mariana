@@ -12,7 +12,7 @@ export const SUFFOCATION_TIME = 10; // seconds without breathing to die
 export const DEPTH_BREATH_FACTOR = 0.01; // extra oxygen per meter
 export const BASE_OXYGEN = 100;
 
-// Keeps track of how much oxygen there is, and kills the player when there's not enough
+/** Keeps track of how much oxygen there is, and kills the player when there's not enough */
 export class OxygenManager extends BaseEntity implements Entity {
   currentOxygen = 100;
   suffocationPercent = 0;

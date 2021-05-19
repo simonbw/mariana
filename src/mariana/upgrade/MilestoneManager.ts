@@ -1,0 +1,40 @@
+import BaseEntity from "../../core/entity/BaseEntity";
+import Entity from "../../core/entity/Entity";
+import { getDiver } from "../diver/Diver";
+import { milestoneEvent, MilestoneId } from "./milestones";
+
+/** Listens for milestones to happen */
+export class MilestoneManager extends BaseEntity implements Entity {
+  milestonesMet = new Set<MilestoneId>();
+
+  constructor() {
+    super();
+  }
+
+  onAdd() {
+    console.log("milestonemanager added");
+  }
+
+  onSlowTick() {
+    const diver = getDiver(this.game!);
+    const depth = diver?.getDepth() ?? 0;
+
+    if (depth > 10) {
+      this.meetMilestone("100m");
+    }
+    if (depth > 20) {
+      this.meetMilestone("200m");
+    }
+    if (depth > 300) {
+      this.meetMilestone("300m");
+    }
+  }
+
+  meetMilestone(milestoneId: MilestoneId) {
+    if (!this.milestonesMet.has(milestoneId)) {
+      console.log(`milestone get: ${milestoneId}`);
+      this.milestonesMet.add(milestoneId);
+      this.game!.dispatch(milestoneEvent(milestoneId));
+    }
+  }
+}

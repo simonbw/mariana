@@ -12,8 +12,9 @@ import { getDiver } from "../diver/Diver";
 import { getWaves } from "../environment/Waves";
 import { FONT_HEADING } from "../config/fonts";
 import { PointLight } from "../lighting/PointLight";
-import { DiveBell } from "./DiveBell";
-import { UpgradeId } from "../upgrade/upgrades";
+import { DiveBell } from "./dive-bell/DiveBell";
+import { getUpgrade, UpgradeId } from "../upgrade/upgrades";
+import { getUpgradeManager } from "../upgrade/UpgradeManager";
 
 const BOAT_X = 0;
 const BOAT_WIDTH = 8; // meters
@@ -26,7 +27,9 @@ const TOOLTIP_SPEED = 5;
 const WAVE_FREQUENCY = 0.3; // Hz
 const WAVE_AMPLITUDE = 0.23; // meters
 
-// The boat on the surface
+// TODO: Break this into more components
+
+/** The boat on the surface */
 export class Boat extends BaseEntity implements Entity {
   persistenceLevel = 1;
   id = "boat";
@@ -41,7 +44,7 @@ export class Boat extends BaseEntity implements Entity {
     super();
 
     this.sprite = Sprite.from(img_boat, { scaleMode: SCALE_MODES.NEAREST });
-    this.sprite.layerName = Layer.WORLD_BACK;
+    this.sprite.layerName = Layer.BOAT;
     this.sprite.x = 0;
     this.sprite.y = 0;
     this.sprite.anchor.set(0.5, 0.55);
@@ -62,6 +65,12 @@ export class Boat extends BaseEntity implements Entity {
     this.light = this.addChild(
       new PointLight({ size: 20, intensity: 0.2, color: 0xffeedd })
     );
+  }
+
+  onAdd(game: Game) {
+    if (getUpgradeManager(game).hasUpgrade("diveBell")) {
+      this.addChild(new DiveBell(V(6, -1)));
+    }
   }
 
   diverIsPresent() {
@@ -146,7 +155,7 @@ export class Boat extends BaseEntity implements Entity {
   handlers = {
     upgradeBought: ({ upgradeId }: { upgradeId: UpgradeId }) => {
       if (upgradeId === "diveBell") {
-        this.addChild(new DiveBell(V(3, -1)));
+        this.addChild(new DiveBell(V(6, -1)));
       }
     },
   };

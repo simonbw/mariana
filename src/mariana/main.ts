@@ -14,6 +14,7 @@ import { GameController } from "./controllers/GameController";
 import { GraphicsQualityController } from "./controllers/GraphicsQualityController";
 import VolumeController from "./controllers/VolumeController";
 import { isFish } from "./fish/BaseFish";
+import { resetUpgradesAndMoney } from "./upgrade/persistence";
 
 // So we can attach stuff to the window
 declare global {
@@ -30,7 +31,7 @@ export async function main() {
   const game = new Game({
     // how many times tick is called per render.
     // higher improves physics fidelity at the possible cost of performance
-    tickIterations: 12,
+    tickIterations: 8,
 
     // Parameters for the physics engine
     world: new CustomWorld({

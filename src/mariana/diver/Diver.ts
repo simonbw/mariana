@@ -7,7 +7,7 @@ import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { getWaves } from "../environment/Waves";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
-import { HarpoonGun } from "../weapons/HarpoonGun";
+import { HarpoonGun } from "./weapons/HarpoonGun";
 import { WorldAnchor } from "../world/loading/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
 import { DiverPhysics } from "./DiverPhysics";
@@ -154,6 +154,6 @@ export class Diver extends BaseEntity implements Entity {
   };
 }
 
-export function getDiver(game?: Game): Diver | undefined {
+export function getDiver(game: Game | undefined): Diver | undefined {
   return game?.entities.getById("diver") as Diver;
 }

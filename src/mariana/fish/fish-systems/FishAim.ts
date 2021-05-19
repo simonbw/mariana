@@ -3,6 +3,7 @@ import Entity from "../../../core/entity/Entity";
 import AimSpring from "../../../core/physics/AimSpring";
 import { BaseFish } from "../BaseFish";
 
+// TODO: Redo this without springs. Just step have a maximum turning speed or something
 export class FishAim extends BaseEntity implements Entity {
   aimSpring: AimSpring;
   enabled: boolean = true;

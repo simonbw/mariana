@@ -1,8 +1,21 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { loadMoney, loadUpgrades, saveUpgrades } from "./persistence";
-import { getUpgrade, UpgradeId, UPGRADE_IDS } from "./upgrades";
+import { MilestoneEvent } from "./milestones";
+import {
+  loadMoney,
+  loadPrerequisites,
+  resetUpgradesAndMoney,
+  saveMoney,
+  savePrerequisites,
+} from "./persistence";
+import {
+  getUpgrade,
+  isUpgradeId,
+  PrerequisiteId,
+  UpgradeId,
+  UPGRADE_IDS,
+} from "./upgrades";
 
 // This keeps track of all our upgrades and money and stuff
 export class UpgradeManager extends BaseEntity implements Entity {
@@ -10,17 +23,21 @@ export class UpgradeManager extends BaseEntity implements Entity {
   id = "upgradeManager";
 
   money: number = 0;
-  private upgradesPurchased: Set<UpgradeId>;
+  private prerequisites: Set<PrerequisiteId>;
 
   constructor() {
     super();
 
     this.money = loadMoney();
-    this.upgradesPurchased = loadUpgrades();
+    this.prerequisites = loadPrerequisites();
   }
 
   hasUpgrade(upgradeId: UpgradeId): boolean {
-    return this.upgradesPurchased.has(upgradeId);
+    return this.prerequisites.has(upgradeId);
+  }
+
+  hasPrerequisite(prerequisiteId: PrerequisiteId): boolean {
+    return this.prerequisites.has(prerequisiteId);
   }
 
   canBuyUpgrade(upgradeId: UpgradeId): boolean {
@@ -37,7 +54,7 @@ export class UpgradeManager extends BaseEntity implements Entity {
 
   hasPrerequisites(upgradeId: UpgradeId): boolean {
     for (const prerequisite of getUpgrade(upgradeId).prerequisites) {
-      if (!this.hasUpgrade(prerequisite)) {
+      if (!this.hasPrerequisite(prerequisite)) {
         return false;
       }
     }
@@ -53,11 +70,20 @@ export class UpgradeManager extends BaseEntity implements Entity {
     const upgrade = getUpgrade(upgradeId);
 
     this.money -= upgrade.cost;
-    this.upgradesPurchased.add(upgradeId);
-
-    saveUpgrades(this.upgradesPurchased);
+    this.addPrerequisite(upgradeId);
+    saveMoney(this.money);
 
     this.game?.dispatch({ type: "upgradeBought", upgradeId });
+  }
+
+  giveMoney(amount: number) {
+    this.money += amount;
+    saveMoney(this.money);
+  }
+
+  addPrerequisite(prerequisiteId: PrerequisiteId) {
+    this.prerequisites.add(prerequisiteId);
+    savePrerequisites(this.prerequisites);
   }
 
   getAvailableUpgrades(): UpgradeId[] {
@@ -67,12 +93,20 @@ export class UpgradeManager extends BaseEntity implements Entity {
   }
 
   getPurchasedUpgrades(): UpgradeId[] {
-    return [...this.upgradesPurchased];
+    return [...this.prerequisites].filter(isUpgradeId);
   }
 
   handlers = {
     depositSouls: (event: { amount: number }) => {
-      this.money += event.amount;
+      this.giveMoney(event.amount);
+    },
+
+    resetUpgrades: () => {
+      resetUpgradesAndMoney();
+    },
+
+    milestoneReached: ({ id }: MilestoneEvent) => {
+      this.addPrerequisite(id);
     },
   };
 }

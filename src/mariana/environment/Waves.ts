@@ -12,9 +12,9 @@ import {
   WORLD_RIGHT_EDGE,
   WORLD_SIZE_METERS,
 } from "../constants";
-import { getWind } from "../environment/Sky";
 import frag_waves from "./waves.frag";
 import vert_waves from "./waves.vert";
+import { getWind } from "./Wind";
 
 export const MAX_WAVE_HEIGHT = 10;
 export const WATER_COLOR = 0x0099ff;
@@ -48,7 +48,7 @@ export class Waves extends BaseEntity implements Entity {
 
   onTick(dt: number) {
     this.t += dt;
-    this.w = getWind(this.game!);
+    this.w = getWind(this.game!).wind;
   }
 
   getSurfaceHeight(x: number) {
@@ -95,17 +95,40 @@ export class Waves extends BaseEntity implements Entity {
   }
 
   getWaveStats() {
+    // https://en.wikipedia.org/wiki/Wind_wave#Physics_of_waves
+    // https://opentextbc.ca/geology/chapter/17-1-waves/
+    //
+    // c = 1.25 sqrt(lambda)
+    // lambda = (c/1.25) ** 2
+    // lambda / T = 1.25 sqrt(lambda)
+    // T = lambda / sqrt(lambda)
+    // T = sqrt(lambda) / 1.25
+
+    // wind strengths
     const w1 = this.w;
-    const w2 = 1.37 * this.w;
+    const w2 = 0.463 * this.w;
+
+    const t1 = this.t;
+    const c1 = Math.abs(w1 / 2) + 3;
+    const lambda1 = ((c1 + 1) / 1.25) ** 2;
+    const T1 = Math.sqrt(lambda1) / 1.25;
+    const a1 = (w1 / 10) ** 2;
+
+    const t2 = this.t + degToRad(43); // some phase offset
+    const c2 = Math.abs(w2 / 2) + 5;
+    const lambda2 = ((c2 + 1) / 1.25) ** 2;
+    const T2 = Math.sqrt(lambda2) / 1.25;
+    const a2 = (w1 / 10) ** 2;
+
     return {
-      t: this.t,
-      t2: this.t + degToRad(43),
-      a: (1.039702 - 0.08155357 * w1 + 0.002481548 * w1 ** 2) / 2,
-      a2: (1.039702 - 0.08155357 * w2 + 0.002481548 * w2 ** 2) / 2,
-      lambda: -738512.1 + 738525.2 * Math.exp(0.00001895026 * w1),
-      lambda2: -738512.1 + 738525.2 * Math.exp(0.00001895026 * w2),
-      T: 17.91851 - 15.52928 * Math.exp(-0.006572834 * w1),
-      T2: 17.91851 - 15.52928 * Math.exp(-0.006572834 * w2),
+      t: t1,
+      lambda: lambda1,
+      T: T1,
+      a: a1,
+      t2,
+      a2,
+      lambda2,
+      T2,
     };
   }
 

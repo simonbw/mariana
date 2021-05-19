@@ -50,12 +50,12 @@ export class Daylight extends BaseEntity implements Entity {
 }
 
 const NIGHT_COLOR = 0xaaaaff;
-const SUNRISE_COLOR = 0xffaaff;
+const SUNRISE_COLOR = 0xffcccc;
 const DAY_COLOR = 0xffffff;
 const SUNSET_COLOR = 0xffccaa;
 
 /**  */
-function getSkyColor(hour: number): number {
+export function getSkyColor(hour: number): number {
   if (hour < SUNRISE_START) {
     return NIGHT_COLOR;
   } else if (hour < SUNRISE_MID) {
