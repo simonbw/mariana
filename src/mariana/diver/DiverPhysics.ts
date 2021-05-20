@@ -87,6 +87,10 @@ export class DiverPhysics extends BaseEntity implements Entity {
   }
 
   getMaxSpeed(): number {
+    if (this.diver.isDead) {
+      return 0;
+    }
+
     const upgradeManager = getUpgradeManager(this.game!)!;
 
     let speed = BASE_SPEED;

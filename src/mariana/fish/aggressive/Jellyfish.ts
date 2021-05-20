@@ -8,10 +8,11 @@ import img_squid3 from "../../../../resources/images/fish/squid-3.png";
 import Entity from "../../../core/entity/Entity";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
 import { degToRad, lerp } from "../../../core/util/MathUtil";
-import { rNormal, rUniform } from "../../../core/util/Random";
+import { rBool, rNormal, rUniform } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { Diver, getDiver } from "../../diver/Diver";
+import { Bubble } from "../../effects/Bubble";
 import { PointLight } from "../../lighting/PointLight";
 import { BaseFish } from "../BaseFish";
 import { FishAim } from "../fish-systems/FishAim";
@@ -126,6 +127,16 @@ export default class Jellyfish extends BaseFish implements Entity {
       this._thrust.set(THRUST * (1 - t), 0);
       this._thrust.angle = this.body.angle;
       this.body.applyForce(this._thrust);
+
+      if (rBool((1 - t) * 0.2)) {
+        this.game!.addEntity(
+          new Bubble(
+            this.localToWorld([-rUniform(-0.2, -0.8), rNormal()]),
+            this.getVelocity().mul(-1),
+            rUniform(0.05, 0.1)
+          )
+        );
+      }
     });
 
     this.aim.enable();

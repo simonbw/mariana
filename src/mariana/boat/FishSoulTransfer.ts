@@ -47,6 +47,7 @@ export class FishSoulTransfer extends BaseEntity implements Entity {
   async onAdd() {
     const boat = this.game?.entities.getById("boat") as Boat;
 
+    // TODO: Don't allocate
     await this.wait(1.0, (dt, t) => {
       const p = this.startPosition.lerp(
         boat.getDropoffPosition(),

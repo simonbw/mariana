@@ -18,6 +18,7 @@ export class FishAim extends BaseEntity implements Entity {
     this.aimSpring = new AimSpring(this.fish.body);
     this.aimSpring.stiffness = stiffness;
     this.aimSpring.damping = damping;
+    this.aimSpring.restAngle = fish.body.angle;
     this.springs = [this.aimSpring];
   }
 

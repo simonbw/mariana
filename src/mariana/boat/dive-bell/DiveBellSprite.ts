@@ -40,7 +40,7 @@ export class DiveBellSprite extends BaseEntity implements Entity {
     this.sprite.addChild(graphics);
     this.sprite.layerName = Layer.WORLD_BACK;
 
-    this.lights = [new PointLight({ size: 2, intensity: 3 })];
+    this.lights = [this.addChild(new PointLight({ size: 10, intensity: 1.0 }))];
   }
 
   onRender(dt: number) {

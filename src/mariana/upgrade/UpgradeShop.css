@@ -45,11 +45,17 @@
 
 .UpgradeShop .UpgradeButton.affordable {
   cursor: pointer;
+  transition: background-color 0.1s ease;
 }
 
 .UpgradeShop .UpgradeButton.affordable:hover {
+  border-left-color: #fafa00;
+  background-color: #ffd7;
+}
+
+.UpgradeShop .UpgradeButton.affordable:active {
   border-left-color: #ff0;
-  background-color: #fff3;
+  background-color: #ffb8;
 }
 
 .UpgradeShop .UpgradeButton:not(.affordable) {
@@ -91,4 +97,23 @@
   border-radius: 4px;
   padding: 2px 4px;
   margin: 2px;
+}
+
+.UpgradeShop button {
+  background-color: #fff;
+  border: none;
+  float: right;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: #d00;
+  margin: 4px;
+}
+
+.UpgradeShop button:hover {
+  background-color: #fee;
+}
+
+.UpgradeShop button:active {
+  background-color: #fdd;
 }

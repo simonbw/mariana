@@ -19,10 +19,10 @@ export class MilestoneManager extends BaseEntity implements Entity {
     const diver = getDiver(this.game!);
     const depth = diver?.getDepth() ?? 0;
 
-    if (depth > 10) {
+    if (depth > 100) {
       this.meetMilestone("100m");
     }
-    if (depth > 20) {
+    if (depth > 200) {
       this.meetMilestone("200m");
     }
     if (depth > 300) {

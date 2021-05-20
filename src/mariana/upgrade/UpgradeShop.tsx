@@ -7,6 +7,7 @@ import { ControllerButton } from "../../core/io/Gamepad";
 import { KeyCode } from "../../core/io/Keys";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { ReactEntity } from "../menu/ReactEntity";
+import { resetUpgradesAndMoney } from "./persistence";
 import { getUpgradeManager, UpgradeManager } from "./UpgradeManager";
 import { getUpgrade, UpgradeId } from "./upgrades";
 import "./UpgradeShop.css";
@@ -127,6 +128,14 @@ function UpgradeShopView({
           ))}
         </div>
       )}
+
+      <button
+        onClick={() => {
+          resetUpgradesAndMoney();
+        }}
+      >
+        Reset
+      </button>
     </div>
   );
 }

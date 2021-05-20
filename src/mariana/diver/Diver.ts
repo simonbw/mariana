@@ -6,10 +6,9 @@ import { clamp, invLerp } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { getWaves } from "../environment/Waves";
-import { getUpgradeManager } from "../upgrade/UpgradeManager";
-import { HarpoonGun } from "./weapons/HarpoonGun";
 import { WorldAnchor } from "../world/loading/WorldAnchor";
 import { BreatheEffect } from "./Breathing";
+import { DiverHealth, diverHurtEvent } from "./DiverHealth";
 import { DiverPhysics } from "./DiverPhysics";
 import { DiverSprite } from "./DiverSprite";
 import { DiverSubmersion } from "./DiverSubmersion";
@@ -18,12 +17,12 @@ import { Flashlight } from "./Flashlight";
 import GlowStick from "./Glowstick";
 import { Inventory } from "./Inventory";
 import { HARPOON_OXYGEN_COST, OxygenManager } from "./OxygenManager";
+import { HarpoonGun } from "./weapons/HarpoonGun";
 
 export const DIVER_HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
-const BASE_SPEED = 12.0; // Newtons?
-const SPEED_PER_UPGRADE = 4.0; // Newtons?
 
+/** The diver */
 export class Diver extends BaseEntity implements Entity {
   persistenceLevel = 1;
   id = "diver";
@@ -42,17 +41,6 @@ export class Diver extends BaseEntity implements Entity {
   constructor(position: V2d = V(0, 0)) {
     super();
 
-    this.harpoonGun = this.addChild(new HarpoonGun(this));
-    this.air = this.addChild(new OxygenManager(this));
-    this.inventory = this.addChild(new Inventory(this));
-    this.addChild(new BreatheEffect(this));
-    this.addChild(new DiverSubmersion(this));
-    this.addChild(new Flashlight(this));
-    this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
-    this.addChild(new DiverSprite(this));
-    this.addChild(new DiverVoice(this));
-    this.addChild(new DiverPhysics(this));
-
     this.body = new Body({
       mass: 1,
       position: position.clone(),
@@ -68,29 +56,27 @@ export class Diver extends BaseEntity implements Entity {
       [0, 0],
       Math.PI / 2
     );
-  }
 
-  getMaxSpeed(): number {
-    const upgradeManager = getUpgradeManager(this.game!)!;
-
-    let speed = BASE_SPEED;
-    if (upgradeManager.hasUpgrade("flippers1")) {
-      speed += SPEED_PER_UPGRADE;
-    }
-    if (upgradeManager.hasUpgrade("flippers2")) {
-      speed += SPEED_PER_UPGRADE;
-    }
-
-    return speed;
+    this.harpoonGun = this.addChild(new HarpoonGun(this));
+    this.air = this.addChild(new OxygenManager(this));
+    this.inventory = this.addChild(new Inventory(this));
+    this.addChild(new BreatheEffect(this));
+    this.addChild(new DiverSubmersion(this));
+    this.addChild(new Flashlight(this));
+    this.addChild(new WorldAnchor(() => this.getPosition(), 80, 80));
+    this.addChild(new DiverSprite(this));
+    this.addChild(new DiverVoice(this));
+    this.addChild(new DiverPhysics(this));
+    this.addChild(new DiverHealth(this));
   }
 
   /** Return the current depth in meters under the surface */
   getDepth() {
     const waves = getWaves(this.game!);
-    const x = this.body.position[1];
+    const [x, y] = this.body.position;
     const surfaceHeight = waves.getSurfaceHeight(x);
 
-    return this.body.position[1] - surfaceHeight;
+    return y - surfaceHeight;
   }
 
   getPercentSubmerged(): number {
@@ -106,8 +92,6 @@ export class Diver extends BaseEntity implements Entity {
     return !this.isSurfaced();
   }
 
-  onTick(dt: number) {}
-
   jump() {
     if (this.onBoat) {
       this.onBoat = false;
@@ -118,7 +102,7 @@ export class Diver extends BaseEntity implements Entity {
   }
 
   damage(amount: number) {
-    this.game?.dispatch({ type: "diverHurt", amount });
+    this.game?.dispatch(diverHurtEvent(amount));
   }
 
   shoot() {

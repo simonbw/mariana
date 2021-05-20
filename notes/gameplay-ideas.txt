@@ -25,6 +25,9 @@ BCD
  - Control your buoyancy
  - Upgradable
 
+Sonar
+ - Like a minimap that only shows you land but also it flood fills
+
 ——————————————————
 ||     Fish     ||
 ——————————————————

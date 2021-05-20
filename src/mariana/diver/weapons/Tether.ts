@@ -177,7 +177,7 @@ export class Tether extends BaseEntity implements Entity {
 
     this.sprite.moveTo(diverX, diverY);
 
-    const points = [];
+    const points: [number, number][] = [];
     points.push([diverX, diverY]);
     for (const body of this.bodies) {
       points.push(body.position);

@@ -85,8 +85,6 @@ export class Waves extends BaseEntity implements Entity {
   }
 
   getSurfaceAngle(x: number): number {
-    const { t, t2, a, a2, lambda, lambda2, T, T2 } = this.getWaveStats();
-    // TODO: I think we can get this exact rather than approximate
     const h1 = this.getSurfaceHeight(x - 0.1);
     const h2 = this.getSurfaceHeight(x + 0.1);
 

@@ -1,4 +1,4 @@
-import { Texture, SCALE_MODES, Sprite } from "pixi.js";
+import { SCALE_MODES, Sprite, Texture } from "pixi.js";
 import img_diver from "../../../resources/images/diver/diver.png";
 import img_diverLeft from "../../../resources/images/diver/diver_left.png";
 import img_diverRight from "../../../resources/images/diver/diver_right.png";
@@ -26,13 +26,17 @@ export class DiverSprite extends BaseEntity implements Entity {
   onRender() {
     this.sprite.position.set(...this.diver.body.position);
 
-    const xMove = this.diver.moveDirection[0];
-    if (xMove > 0.1) {
-      this.sprite.texture = this.textures.right;
-    } else if (xMove < -0.1) {
-      this.sprite.texture = this.textures.left;
-    } else {
+    if (this.diver.isDead) {
       this.sprite.texture = this.textures.forward;
+    } else {
+      const xMove = this.diver.moveDirection[0];
+      if (xMove > 0.1) {
+        this.sprite.texture = this.textures.right;
+      } else if (xMove < -0.1) {
+        this.sprite.texture = this.textures.left;
+      } else {
+        this.sprite.texture = this.textures.forward;
+      }
     }
   }
 }
