@@ -1,4 +1,4 @@
-import { Graphics, Sprite } from "pixi.js";
+import { BLEND_MODES, Graphics, Sprite } from "pixi.js";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../../core/entity/Entity";
 import { Layer } from "../../config/layers";
@@ -7,7 +7,9 @@ import { DiveBell, DIVE_BELL_RADIUS } from "./DiveBell";
 
 export class DiveBellSprite extends BaseEntity implements Entity {
   sprite: GameSprite & Sprite;
+  lightSprite: Graphics;
   lights: PointLight[];
+
   constructor(public diveBell: DiveBell) {
     super();
 
@@ -36,8 +38,25 @@ export class DiveBellSprite extends BaseEntity implements Entity {
     graphics.endFill();
     graphics.scale.set(1 / upscale);
 
+    this.lightSprite = new Graphics();
+    this.lightSprite.beginFill(0xffffff);
+    this.lightSprite.drawCircle(0, -(r / 2), r / 12);
+    this.lightSprite.endFill();
+    this.lightSprite.beginFill(0xffffff);
+    this.lightSprite.drawCircle(0, r / 2, r / 12);
+    this.lightSprite.endFill();
+    this.lightSprite.beginFill(0xffffff);
+    this.lightSprite.drawCircle(-(r / 2), 0, r / 12);
+    this.lightSprite.endFill();
+    this.lightSprite.beginFill(0xffffff);
+    this.lightSprite.drawCircle(r / 2, 0, r / 12);
+    this.lightSprite.endFill();
+    this.lightSprite.blendMode = BLEND_MODES.ADD;
+    this.lightSprite.scale.set(1 / upscale);
+
     this.sprite = new Sprite();
     this.sprite.addChild(graphics);
+    this.sprite.addChild(this.lightSprite);
     this.sprite.layerName = Layer.WORLD_BACK;
 
     this.lights = [this.addChild(new PointLight({ size: 10, intensity: 1.0 }))];
@@ -46,6 +65,8 @@ export class DiveBellSprite extends BaseEntity implements Entity {
   onRender(dt: number) {
     this.sprite.position.set(...this.diveBell.body.position);
     this.sprite.rotation = this.diveBell.body.angle;
+
+    this.lightSprite.tint = this.diveBell.isActive() ? 0x00ff00 : 0xff0000;
 
     const p = this.diveBell.getPosition();
     for (const [i, light] of this.lights.entries()) {

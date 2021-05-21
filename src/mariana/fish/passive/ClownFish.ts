@@ -44,7 +44,7 @@ export class ClownFish extends BaseFish implements Entity, FlockingFish {
   constructor(position: V2d) {
     super();
     const height = this.width * 0.5;
-    this.dropValue = this.width * 10;
+    this.dropValue = this.width * 3;
 
     this.sprite = Sprite.from(img_clownfish, {
       scaleMode: SCALE_MODES.NEAREST,

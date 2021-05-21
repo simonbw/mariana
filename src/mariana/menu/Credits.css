@@ -1,0 +1,62 @@
+.Credits {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 110;
+  background: rgba(2, 15, 40, 1);
+
+  user-select: none;
+  cursor: default;
+
+  color: #fff;
+  text-align: center;
+  font-family: "Montserrat Black";
+
+  max-height: 100vh;
+  overflow: auto;
+}
+
+.Credits > div {
+  padding: 4em;
+
+  min-height: 200vh;
+
+  background: linear-gradient(
+    0deg,
+    rgba(2, 15, 40, 1) 0%,
+    rgba(9, 32, 121, 1) 35%,
+    rgba(20, 120, 200, 1) 100%
+  );
+}
+
+.Credits h1 {
+  font-family: "Montserrat Black";
+  font-size: 4em;
+  margin: 0;
+
+  text-shadow: 5px 5px 5px #0003;
+}
+
+.Credits h2 {
+  font-family: "Montserrat Light";
+  font-size: 1em;
+  margin-top: 6em;
+  margin-bottom: 6px;
+
+  border-bottom: 1px solid #fff;
+
+  padding: 6px 1em;
+  display: inline-block;
+  min-width: 12em;
+}
+
+.Credits span {
+  font-family: "Montserrat Alternates Black";
+  font-variant: small-caps;
+  display: block;
+  font-size: 1.75em;
+  padding-bottom: 0.25em;
+  text-shadow: 3px 3px 3px #0003;
+}

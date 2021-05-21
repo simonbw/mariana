@@ -49,7 +49,7 @@ export class Daylight extends BaseEntity implements Entity {
   }
 }
 
-const NIGHT_COLOR = 0xaaaaff;
+const NIGHT_COLOR = 0x4444aa;
 const SUNRISE_COLOR = 0xffcccc;
 const DAY_COLOR = 0xffffff;
 const SUNSET_COLOR = 0xffccaa;

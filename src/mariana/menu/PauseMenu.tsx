@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, { useState } from "react";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -8,6 +8,7 @@ import { KeyCode } from "../../core/io/Keys";
 import { Persistence } from "../config/Persistence";
 import { getCurrentGraphicsQuality } from "../controllers/GraphicsQualityController";
 import { getVolumeController } from "../controllers/VolumeController";
+import { Credits } from "./Credits";
 import "./PauseMenu.css";
 import { ReactEntity } from "./ReactEntity";
 
@@ -80,24 +81,34 @@ interface Props {
 function PauseMenuView({ game }: Props) {
   const graphicsQuality = getCurrentGraphicsQuality(game);
   const muted = getVolumeController(game).muted;
-  return (
-    <div className={classNames("PauseMenu", { paused: game.paused })}>
-      <div className="TopLeft">
-        <div
-          className="GraphicsButton button"
-          onClick={() => game.dispatch({ type: "toggleGraphicsQuality" })}
-        >
-          Graphics: {graphicsQuality}
+
+  const [creditsOpen, setCreditsOpen] = useState(false);
+
+  if (creditsOpen) {
+    return <Credits />;
+  } else {
+    return (
+      <div className={classNames("PauseMenu", { paused: game.paused })}>
+        <div className="TopLeft">
+          <div
+            className="GraphicsButton button"
+            onClick={() => game.dispatch({ type: "toggleGraphicsQuality" })}
+          >
+            Graphics: {graphicsQuality}
+          </div>
+          <div
+            className="MuteButton button"
+            onClick={() => game.dispatch({ type: "toggleMute" })}
+          >
+            {muted ? "Unmute" : "Mute"}
+          </div>
+          <div className="button" onClick={() => setCreditsOpen(!creditsOpen)}>
+            Credits
+          </div>
         </div>
-        <div
-          className="MuteButton button"
-          onClick={() => game.dispatch({ type: "toggleMute" })}
-        >
-          {muted ? "Unmute" : "Mute"}
-        </div>
+        <h1>Paused</h1>
+        <h2>Press {game.io.usingGamepad ? "START" : "P"} to unpause</h2>
       </div>
-      <h1>Paused</h1>
-      <h2>Press {game.io.usingGamepad ? "START" : "P"} to unpause</h2>
-    </div>
-  );
+    );
+  }
 }

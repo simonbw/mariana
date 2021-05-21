@@ -50,7 +50,11 @@ export class TimeOfDay extends BaseEntity implements Entity {
 
   onTick(dt: number) {
     if (this.game!.io.keyIsDown("Quote")) {
-      this.hour += (30 * dt) / SECONDS_PER_HOUR;
+      if (this.game!.io.keyIsDown("ShiftRight")) {
+        this.hour += (150 * dt) / SECONDS_PER_HOUR;
+      } else {
+        this.hour += (30 * dt) / SECONDS_PER_HOUR;
+      }
     } else {
       this.hour += dt / SECONDS_PER_HOUR;
     }

@@ -154,6 +154,7 @@ export default class Jellyfish extends BaseFish implements Entity {
     this.light.setPosition(this.getPosition());
   }
 
+  // TODO: oncontacting is broken
   onContacting(other: Entity) {
     if (other instanceof Diver) {
       if (!this.stinging) {

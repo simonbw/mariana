@@ -1,15 +1,9 @@
-import { Body, Circle, LockConstraint, vec2 } from "p2";
+import { Body, Circle, vec2 } from "p2";
 import snd_metalHittingRock from "../../../../resources/audio/impacts/metal_hitting_rock.flac";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity from "../../../core/entity/Entity";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
-import {
-  angleDelta,
-  clamp,
-  invLerp,
-  lerp,
-  smootherStep,
-} from "../../../core/util/MathUtil";
+import { clamp, invLerp } from "../../../core/util/MathUtil";
 import { rBool, rNormal, rUniform } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
@@ -19,14 +13,14 @@ import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
 import { getWaves } from "../../environment/Waves";
 import { GroundTile } from "../../plants/GroundTile";
+import { getUpgradeManager } from "../../upgrade/UpgradeManager";
 import { Boat } from "../Boat";
+import DiveBellHarpoonConnection from "./DiveBellHarpoonConnection";
+import { DiveBellPhysics } from "./DiveBellPhysics";
 import { DiveBellSprite } from "./DiveBellSprite";
 import { DiveBellTether } from "./DiveBellTether";
 
 export const DIVE_BELL_RADIUS = 1;
-const WAVE_DEPTH_FACTOR = 0.95; // multiplier of wave velocity
-const MAX_WAVE_FORCE = 3; // multiplier of wave velocity
-const DRAG = 1.0;
 
 /** Provides the diver with oxygen */
 export class DiveBell extends BaseEntity implements Entity, Harpoonable {
@@ -60,6 +54,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
     this.addChild(new DiveBellSprite(this));
     this.addChild(new DiveBellTether(this, boat));
+    this.addChild(new DiveBellPhysics(this));
   }
 
   getFillRate() {
@@ -76,8 +71,6 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
         diver.air.giveOxygen(dt * this.getFillRate());
       }
     }
-
-    this.applyPhysics(dt);
   }
 
   /** Return the current depth in meters under the surface */
@@ -96,36 +89,19 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     return clamp(percent);
   }
 
-  private _physics = V(0, 0);
-  private _waveForce = V(0, 0);
-  applyPhysics(dt: number) {
-    const percentSubmerged = this.getPercentSubmerged();
-    const depth = this.getDepth();
+  getMaxDepth(): number {
+    const upgradeManager = getUpgradeManager(this.game!)!;
+    if (upgradeManager.hasUpgrade("diveBellDepth2")) {
+      return 800;
+    } else if (upgradeManager.hasUpgrade("diveBellDepth1")) {
+      return 200;
+    } else {
+      return 100;
+    }
+  }
 
-    // drag
-    const drag = lerp(0.1 * DRAG, DRAG, percentSubmerged);
-    this._physics.set(this.body.velocity).imul(-drag);
-
-    // gravity
-    const g = lerp(9.8, 0, percentSubmerged);
-    this._physics.iadd([0, g * this.body.mass * 3]);
-
-    // waves
-    const waves = getWaves(this.game!);
-    const x = this.body.position[0];
-    waves.getSurfaceVelocity(x, this._waveForce);
-    const depthFactor = WAVE_DEPTH_FACTOR ** depth;
-    const waveFactor = MAX_WAVE_FORCE * depthFactor * percentSubmerged;
-    // this._physics.iadd(this._waveForce.imul(waveFactor));
-
-    this.body.applyForce(this._physics);
-
-    // Angular damping
-    this.body.angularVelocity *= Math.exp(-dt * 0.3 * percentSubmerged);
-
-    // Roll towards right-side-up
-    this.body.angularVelocity +=
-      -0.1 * angleDelta(this.body.angle, 0) * dt * percentSubmerged;
+  isActive() {
+    return this.getPosition()[1] < this.getMaxDepth();
   }
 
   onSlowTick(dt: number) {
@@ -142,7 +118,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
   onHarpooned(harpoon: Harpoon) {
     if (harpoon.getDamageAmount() > 0) {
-      this.addChild(new BellHarpoonConnection(this, harpoon));
+      this.addChild(new DiveBellHarpoonConnection(this, harpoon));
     }
   }
 
@@ -155,23 +131,6 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
           speed: rUniform(0.7, 0.9),
         })
       );
-    }
-  }
-}
-
-export class BellHarpoonConnection extends BaseEntity implements Entity {
-  constructor(bell: DiveBell, private harpoon: Harpoon) {
-    super();
-
-    this.constraints = [new LockConstraint(bell.body, harpoon.body)];
-  }
-
-  onTick() {
-    const gun = this.harpoon.harpoonGun;
-    if (gun.tether?.retracting && gun.tether.retractPercent >= 1.0) {
-      this.destroy();
-    } else {
-      // ?
     }
   }
 }
