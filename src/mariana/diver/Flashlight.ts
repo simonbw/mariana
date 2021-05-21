@@ -11,6 +11,7 @@ import { Diver } from "./Diver";
 const ACTIVATION_DEPTH = 80; // meters
 const INTENSITY = 0.6;
 
+/** Shines a light in the dark */
 export class Flashlight extends BaseEntity implements Entity {
   light: DirectionalLight;
 

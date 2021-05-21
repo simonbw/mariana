@@ -23,6 +23,8 @@ export type UpgradeId =
   | "doubleEndedPoon"
   | "soulMagnet"
   | "diveBell"
+  | "diveBellDepth1"
+  | "diveBellDepth2"
   | "flashlight";
 
 export type PrerequisiteId = UpgradeId | MilestoneId;
@@ -112,6 +114,18 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     description: "Allows you to see in the dark",
     cost: 100,
     prerequisites: [],
+  },
+  diveBellDepth1: {
+    name: "Reinforced Dive Bell",
+    description: "Allows dive bell to go down to 200m",
+    cost: 500,
+    prerequisites: ["diveBell"],
+  },
+  diveBellDepth2: {
+    name: "Double-Reinforced Dive Bell",
+    description: "Allows dive bell to go down to 800m",
+    cost: 2000,
+    prerequisites: ["diveBell"],
   },
 };
 

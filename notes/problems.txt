@@ -44,4 +44,3 @@ Can't navigate menus with a gamepad
 |     Bugs      |
 ⌞———————————————⌟
 
-Harpoon/tether doesn't despawn when you die

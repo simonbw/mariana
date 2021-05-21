@@ -1,101 +1,54 @@
 import { Graphics } from "@pixi/graphics";
-import bspline from "b-spline";
-import { Body, DistanceConstraint, Particle } from "p2";
+import type BezierClass from "bezier-js";
+import { Body, DistanceConstraint } from "p2";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../../core/entity/Entity";
 import Game from "../../../core/Game";
-import { CollisionGroups } from "../../config/CollisionGroups";
+import { clamp } from "../../../core/util/MathUtil";
+import { V } from "../../../core/Vector";
 import { Layer } from "../../config/layers";
+import { Boat, getBoat } from "../Boat";
 import { DiveBell } from "./DiveBell";
-
-const NUM_SEGMENTS = 50;
-const NUM_SPLINE_STEPS = 400;
-const SEGMENT_LENGTH = 1;
-const FRICTION = 0.001;
+const Bezier = require("bezier-js") as typeof BezierClass;
 
 export class DiveBellTether extends BaseEntity implements Entity {
   sprite: Graphics & GameSprite;
   constraints: DistanceConstraint[] = [];
   bodies: Body[] = [];
+  private controlPoint = V(0, 0);
 
-  constructor(private diveBell: DiveBell) {
+  constructor(private diveBell: DiveBell, private boat: Boat) {
     super();
 
     this.sprite = new Graphics();
     this.sprite.layerName = Layer.WORLD_BACK;
-
-    for (let i = 0; i < NUM_SEGMENTS; i++) {
-      const body = new Body({
-        mass: 0.002,
-        position: diveBell.getPosition().clone(),
-        velocity: [...diveBell.body.velocity],
-        collisionResponse: true,
-        fixedRotation: true,
-      });
-      body.addShape(
-        new Particle({
-          collisionGroup: CollisionGroups.Harpoon,
-          collisionMask: CollisionGroups.World,
-        })
-      );
-      this.bodies.push(body);
-    }
-    this.constraints.push(
-      new DistanceConstraint(diveBell.body, this.bodies[0])
-    );
-
-    for (let i = 0; i < NUM_SEGMENTS - 1; i++) {
-      const bodyA = this.bodies[i];
-      const bodyB = this.bodies[i + 1];
-      const constraint = new DistanceConstraint(bodyA, bodyB);
-      this.constraints.push(constraint);
-    }
-
-    for (const constraint of this.constraints) {
-      constraint.lowerLimitEnabled = false;
-      constraint.upperLimitEnabled = true;
-      constraint.upperLimit = SEGMENT_LENGTH;
-      constraint.setStiffness(10 ** 9);
-      constraint.setRelaxation(2);
-    }
   }
 
   onAdd(game: Game) {
-    this.constraints.push(
-      new DistanceConstraint(game.ground!, this.bodies[NUM_SEGMENTS - 1], {
-        localAnchorA: [0, 0],
-      })
-    );
+    const [bellX, bellY] = this.diveBell.getPosition();
+    const [boatX, boatY] = this.boat.getPosition();
+    this.controlPoint.set((bellX + boatX) / 2, (bellY + boatY) / 2);
   }
 
-  onTick(dt: number) {
-    for (const body of this.bodies!) {
-      const f = -1 * FRICTION;
-      body.applyForce([body.velocity[0] * f, body.velocity[1] * f]);
-      body.applyForce([0, body.mass * 9.8]);
-    }
-  }
+  onTick(dt: number) {}
 
-  onRender() {
+  onRender(dt: number) {
     this.sprite.clear();
     this.sprite.lineStyle({ width: 0.2, color: 0x004400 });
     const [bellX, bellY] = this.diveBell.getPosition();
-    const [boatX, boatY] = [0, 0];
+    const [boatX, boatY] = getBoat(this.game)!.getPosition();
+
+    this.controlPoint.ilerp([(bellX + boatX) / 2, bellY], clamp(dt));
+
+    const [cx, cy] = this.controlPoint;
+
+    const curve = new Bezier([bellX, bellY, cx, cy, boatX, boatY]);
 
     this.sprite.moveTo(bellX, bellY);
-
-    const points: [number, number][] = [];
-    points.push([bellX, bellY]);
-    for (const body of this.bodies) {
-      points.push(body.position);
+    for (const point of curve.getLUT(100)) {
+      this.sprite.lineTo(point.x, point.y);
     }
-    points.push([boatX, boatY]);
 
-    const stepSize = 1.0 / NUM_SPLINE_STEPS;
-    for (let t = stepSize; t < 1; t += stepSize) {
-      const [x, y] = bspline(t, 2, points);
-      this.sprite.lineTo(x, y);
-    }
     this.sprite.lineTo(boatX, boatY);
   }
 }

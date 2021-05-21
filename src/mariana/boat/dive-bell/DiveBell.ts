@@ -19,6 +19,7 @@ import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
 import { getWaves } from "../../environment/Waves";
 import { GroundTile } from "../../plants/GroundTile";
+import { Boat } from "../Boat";
 import { DiveBellSprite } from "./DiveBellSprite";
 import { DiveBellTether } from "./DiveBellTether";
 
@@ -32,7 +33,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
   id = "diveBell";
   body: Body;
 
-  constructor(position: V2d) {
+  constructor(position: V2d, boat: Boat) {
     super();
 
     this.body = new Body({
@@ -58,7 +59,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     );
 
     this.addChild(new DiveBellSprite(this));
-    this.addChild(new DiveBellTether(this));
+    this.addChild(new DiveBellTether(this, boat));
   }
 
   getFillRate() {

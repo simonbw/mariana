@@ -31,13 +31,27 @@ export class Boat extends BaseEntity implements Entity {
 
   onAdd(game: Game) {
     if (getUpgradeManager(game).hasUpgrade("diveBell")) {
-      this.addChild(new DiveBell(V(6, -1)));
+      this.addChild(new DiveBell(V(6, -1), this));
     }
   }
 
   getPosition() {
     const y = getWaves(this.game!).getSurfaceHeight(this.x);
     return this._position.set(this.x, y);
+  }
+
+  private _launchPosition = V(0, 0);
+  getLaunchPosition() {
+    return polarToVec(
+      degToRad(-30) + this.boatSprite.sprite.rotation,
+      3,
+      this._launchPosition
+    ).iadd(this.getPosition());
+  }
+
+  private _dropoffPosition = V(0, 0);
+  getDropoffPosition() {
+    return this._dropoffPosition.set(this.getPosition()).iadd([0, -1]);
   }
 
   diverIsPresent() {
@@ -79,24 +93,10 @@ export class Boat extends BaseEntity implements Entity {
     }
   }
 
-  private _launchPosition = V(0, 0);
-  getLaunchPosition() {
-    return polarToVec(
-      degToRad(-30) + this.boatSprite.sprite.rotation,
-      3,
-      this._launchPosition
-    ).iadd(this.getPosition());
-  }
-
-  private _dropoffPosition = V(0, 0);
-  getDropoffPosition() {
-    return this._dropoffPosition.set(this.getPosition()).iadd([0, -1]);
-  }
-
   handlers = {
     upgradeBought: ({ upgradeId }: { upgradeId: UpgradeId }) => {
       if (upgradeId === "diveBell") {
-        this.addChild(new DiveBell(V(6, -1)));
+        this.addChild(new DiveBell(V(6, -1), this));
       }
     },
   };

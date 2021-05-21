@@ -53,6 +53,12 @@ export class HarpoonGun extends BaseEntity implements Entity {
     diverRetract: () => {
       this.retract();
     },
+    diverDied: () => {
+      this.harpoon?.destroy();
+      this.tether?.destroy();
+      this.harpoon = undefined;
+      this.tether = undefined;
+    },
   };
 
   async shoot(direction: V2d) {
