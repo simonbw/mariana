@@ -1,8 +1,11 @@
 import { vec2 } from "p2";
 import { Sprite } from "pixi.js";
+import snd_pop1 from "../../../resources/audio/misc/pop1.flac";
 import img_bubble from "../../../resources/images/particles/bubble.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
+import { SoundInstance } from "../../core/sound/SoundInstance";
+import { lerp } from "../../core/util/MathUtil";
 import { rNormal } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
@@ -10,8 +13,9 @@ import { getWaves } from "../environment/Waves";
 import { getWorldMap } from "../world/WorldMap";
 import { SurfaceSplash } from "./SurfaceSplash";
 
-const FRICTION = 1.5;
-const RISE_SPEED = 16; // meters / sec ^ 2
+const BUOYANCY = 100; // dunno the units, higher rises faster
+const FRICTION = 5.0; // again, dunno the units, higher lowers the max speed
+const LIFESPAN = 25; // seconds to stay around, so we don't end up with too many bubbles
 
 /** A bubble particle that floats to the surface or until it hit's land or is unloaded */
 export class Bubble extends BaseEntity implements Entity {
@@ -20,7 +24,8 @@ export class Bubble extends BaseEntity implements Entity {
   constructor(
     position: V2d,
     private velocity: V2d = V(0, 0),
-    private size: number = rNormal(0.22, 0.1)
+    private size: number = rNormal(0.22, 0.1),
+    layerName: Layer = Layer.WORLD_FRONT
   ) {
     super();
 
@@ -30,7 +35,14 @@ export class Bubble extends BaseEntity implements Entity {
     sprite.anchor.set(0.5);
     sprite.alpha = 0.7;
 
-    this.sprite.layerName = Layer.WORLD_FRONTER;
+    this.sprite.layerName = layerName;
+  }
+
+  async onAdd() {
+    await this.wait(LIFESPAN, (dt, t) => {
+      this.sprite.alpha = lerp(0.7, 0, t ** 2);
+    });
+    this.destroy();
   }
 
   onSlowTick(dt: number) {
@@ -45,9 +57,9 @@ export class Bubble extends BaseEntity implements Entity {
     }
 
     const sprite = this.sprite! as Sprite;
-    this.velocity[1] += dt * -RISE_SPEED;
+    this.velocity[1] += dt * -BUOYANCY * this.size ** 2;
 
-    this.velocity.imul(Math.exp(-dt * FRICTION));
+    this.velocity.imul(Math.exp(-dt * FRICTION * this.size));
 
     this.size *= Math.exp(dt * 0.01);
 

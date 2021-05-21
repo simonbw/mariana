@@ -54,6 +54,7 @@
   require("./audio/impacts/harpoon_hit_ground_1.flac"),
   require("./audio/impacts/metal_hitting_rock.flac"),
   require("./audio/impacts/splash.flac"),
+  require("./audio/misc/pop1.flac"),
   require("./audio/misc/ringring.flac"),
   require("./audio/misc/victory.flac"),
   require("./audio/music-and-ambience/above_water_music.flac"),

@@ -11,6 +11,7 @@ import { degToRad, lerp } from "../../../core/util/MathUtil";
 import { rBool, rNormal, rUniform } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
+import { Layer } from "../../config/layers";
 import { Diver, getDiver } from "../../diver/Diver";
 import { Bubble } from "../../effects/Bubble";
 import { PointLight } from "../../lighting/PointLight";
@@ -131,9 +132,10 @@ export default class Jellyfish extends BaseFish implements Entity {
       if (rBool((1 - t) * 0.2)) {
         this.game!.addEntity(
           new Bubble(
-            this.localToWorld([-rUniform(-0.2, -0.8), rNormal()]),
-            this.getVelocity().mul(-1),
-            rUniform(0.05, 0.1)
+            this.localToWorld([-0.3, rNormal()]),
+            this.getVelocity().mul(-rNormal(0.25, 0.1)),
+            rUniform(0.05, 0.1),
+            Layer.WORLD_BACK
           )
         );
       }
