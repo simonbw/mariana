@@ -11,10 +11,10 @@ import { rUniform } from "../../core/util/Random";
 import { V, V2d } from "../../core/Vector";
 import { BloodSplash } from "../effects/BloodSplash";
 import { getWaves } from "../environment/Waves";
-import { makeSoulDrops } from "../FishSoul";
+import { makeSoulDrops } from "../misc-stuff/FishSoul";
 import { ShuffleRing } from "../utils/ShuffleRing";
-import { Harpoon } from "../diver/weapons/Harpoon";
-import { Harpoonable } from "../diver/weapons/Harpoonable";
+import { Harpoon } from "../diver/harpoon/Harpoon";
+import { Harpoonable } from "../diver/harpoon/Harpoonable";
 import { getWorldMap } from "../world/WorldMap";
 
 interface Options {

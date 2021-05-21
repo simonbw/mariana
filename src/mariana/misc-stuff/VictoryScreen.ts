@@ -1,11 +1,11 @@
 import { Graphics, Sprite, Text, TextStyle } from "pixi.js";
-import snd_victory from "../../resources/audio/misc/victory.flac";
-import BaseEntity from "../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../core/entity/Entity";
-import { SoundInstance } from "../core/sound/SoundInstance";
-import { V2d } from "../core/Vector";
-import { Layer } from "./config/layers";
-import { FONT_HEADING } from "./config/fonts";
+import snd_victory from "../../../resources/audio/misc/victory.flac";
+import BaseEntity from "../../core/entity/BaseEntity";
+import Entity, { GameSprite } from "../../core/entity/Entity";
+import { SoundInstance } from "../../core/sound/SoundInstance";
+import { V2d } from "../../core/Vector";
+import { FONT_HEADING } from "../config/fonts";
+import { Layer } from "../config/layers";
 
 const LINES = [
   "Phew, I did it!",

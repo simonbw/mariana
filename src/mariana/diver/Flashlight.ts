@@ -5,6 +5,7 @@ import Entity from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { getTimeOfDay } from "../environment/TimeOfDay";
 import { DirectionalLight } from "../lighting/DirectionalLight";
+import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { Diver } from "./Diver";
 
 const ACTIVATION_DEPTH = 80; // meters
@@ -26,7 +27,8 @@ export class Flashlight extends BaseEntity implements Entity {
   onTick() {
     const isDeep = this.diver.getDepth() > ACTIVATION_DEPTH;
     const isNight = getTimeOfDay(this.game!).getNightPercent() > 0.5;
-    const shouldBeOn = isDeep || isNight;
+    const isPurchased = getUpgradeManager(this.game!).hasUpgrade("flashlight");
+    const shouldBeOn = isPurchased && (isDeep || isNight);
 
     if (!this.on && shouldBeOn) {
       this.turnOn();

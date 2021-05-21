@@ -66,8 +66,8 @@ export class Seaweed extends BaseEntity implements Entity {
   }
 
   onAdd(game: Game) {
-    const waves = getWaves(game);
-    waves.getSurfaceHeight(this.position[0]);
+    // const waves = getWaves(game);
+    // waves.getSurfaceHeight(this.position[0]);
     this.t = 0;
 
     const tilePos = getWorldMap(game)!.worldToTile(this.position);

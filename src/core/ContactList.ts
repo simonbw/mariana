@@ -26,7 +26,10 @@ export default class ContactList {
       const index = this.contacts.findIndex((info) =>
         contactsAreEqual(info, contactInfo)
       );
-      this.contacts.splice(index, 1);
+      // Dunno why this check is necessary but it is
+      if (index >= 0) {
+        this.contacts.splice(index, 1);
+      }
     }
   }
 
@@ -37,6 +40,8 @@ export default class ContactList {
 
 /** Whether or not this is a collision we need to keep track of */
 function shouldTrack({ shapeA, shapeB, bodyA, bodyB }: ContactInfo): boolean {
+  // TODO: We should only keep track of ones where at least one of the
+  // bodies/shapes has an owner with an onContacting method
   return true;
 }
 

@@ -11,7 +11,7 @@ import { SoundInstance } from "../../core/sound/SoundInstance";
 import { V, V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
 import { Diver, getDiver } from "../diver/Diver";
-import { Harpoon } from "../diver/weapons/Harpoon";
+import { Harpoon } from "../diver/harpoon/Harpoon";
 import { BaseFish } from "./BaseFish";
 
 const PATROL_SPEED = 15; // speed when patrolling

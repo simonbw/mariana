@@ -2,11 +2,15 @@
 
 General TODOs:
 
- [ ] Refactor getPosition() globally
- [ ] Global audio mixer
  [ ] Volume control
- [ ] Positional sounds
- [ ] Nicer damage overlay filter — bring back damage system
  [ ] Better death sound
  [ ] Shop thumbnails
  [ ] Credits screen
+
+ [ ] Shark
+ [ ] Current
+
+Easy Code Refactor-y Things
+ [ ] Refactor getPosition() globally
+ [ ] Global audio mixer
+ [ ] Positional sounds

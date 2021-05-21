@@ -3,14 +3,14 @@ import { Container, Graphics } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { smoothStep } from "../../core/util/MathUtil";
+import { clamp, invLerp, lerp, smoothStep } from "../../core/util/MathUtil";
 import { Layer } from "../config/layers";
 import {
   getCurrentGraphicsQuality,
   getResolutionForGraphicsQuality,
   GraphicsQuality,
 } from "../controllers/GraphicsQualityController";
-import { Diver } from "../diver/Diver";
+import { Diver, getDiver } from "../diver/Diver";
 import frag_damageFilter from "./damage-filter.frag";
 
 export class DamagedOverlay extends BaseEntity implements Entity {
@@ -18,7 +18,7 @@ export class DamagedOverlay extends BaseEntity implements Entity {
   sprite: Container & GameSprite;
   colorFilter: Pixi.Filter;
 
-  constructor(private getPlayer: () => Diver | undefined) {
+  constructor() {
     super();
 
     this.sprite = new Container();
@@ -50,10 +50,18 @@ export class DamagedOverlay extends BaseEntity implements Entity {
     },
   };
 
-  onRender() {
+  getPlayer() {
+    return getDiver(this.game);
+  }
+
+  onRender(dt: number) {
     const diver = this.getPlayer();
-    if (diver && !diver.isDestroyed) {
-      this.updateBaseline(1.0 - diver.air.suffocationPercent);
+    if (diver && !diver.isDead) {
+      const old: number = this.colorFilter.uniforms.healthPercent;
+      const s = 1.0 - diver.air.suffocationPercent;
+      const h = clamp(invLerp(0.0, 25.0, diver.health.hp));
+      const target = Math.min(s, h);
+      this.updateBaseline(lerp(old, target, clamp(dt * 5)));
     } else {
       this.updateBaseline(0.0);
     }

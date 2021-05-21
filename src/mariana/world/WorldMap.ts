@@ -30,6 +30,8 @@ export class WorldMap extends BaseEntity implements Entity {
     public seed = rInteger(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER)
   ) {
     super();
+
+    console.log("WORLD MAP CREATED");
     // Generators
     this.biomeMap = new BiomeMap(minX, maxX, maxY);
     this.groundMap = new GroundMap(this.seed, this.minX, this.maxX, this.maxY);
@@ -43,7 +45,10 @@ export class WorldMap extends BaseEntity implements Entity {
   onAdd(game: Game) {
     // Make sure we can find the WorldAnchors quickly
     game.entities.addFilter(isWorldAnchor);
+    console.log("WORLD MAP ON_ADD");
+  }
 
+  populateWorld() {
     this.addChildren(...populateWorld(this));
   }
 

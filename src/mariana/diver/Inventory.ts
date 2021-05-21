@@ -1,10 +1,9 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
-import { rBool } from "../../core/util/Random";
 import { Boat } from "../boat/Boat";
-import { makeSoulDrops } from "../FishSoul";
-import { Diver } from "./Diver";
 import { FishSoulTransfer } from "../boat/FishSoulTransfer";
+import { makeSoulDrops } from "../misc-stuff/FishSoul";
+import { Diver } from "./Diver";
 
 export class Inventory extends BaseEntity implements Entity {
   fishSouls: number = 0;

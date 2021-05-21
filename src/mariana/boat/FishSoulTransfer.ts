@@ -9,11 +9,12 @@ import img_pickup6 from "../../../resources/images/particles/pickup-6.png";
 import img_pickup7 from "../../../resources/images/particles/pickup-7.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
+import Game from "../../core/Game";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { smoothStep } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
-import { Boat } from "./Boat";
 import { Layer } from "../config/layers";
+import { Boat } from "./Boat";
 
 export class FishSoulTransfer extends BaseEntity implements Entity {
   persistenceLevel = 1; // so they stay even when the menu is opened
@@ -44,20 +45,20 @@ export class FishSoulTransfer extends BaseEntity implements Entity {
     this.sprite.play();
   }
 
-  async onAdd() {
-    const boat = this.game?.entities.getById("boat") as Boat;
+  async onAdd(game: Game) {
+    const boat = game.entities.getById("boat") as Boat;
 
-    // TODO: Don't allocate
+    const p = V(0, 0);
     await this.wait(1.0, (dt, t) => {
-      const p = this.startPosition.lerp(
+      p.set(this.startPosition).ilerp(
         boat.getDropoffPosition(),
         smoothStep(t ** 2)
       );
       this.sprite?.position.set(...p);
     });
 
-    this.game?.dispatch({ type: "depositSouls", amount: this.amount });
-    this.game?.addEntity(new SoundInstance(snd_bellPositive2, { gain: 0.05 }));
+    game.dispatch({ type: "depositSouls", amount: this.amount });
+    game.addEntity(new SoundInstance(snd_bellPositive2, { gain: 0.05 }));
     this.destroy();
   }
 

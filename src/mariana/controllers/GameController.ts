@@ -2,6 +2,7 @@ import snd_musicalNope from "../../../resources/audio/ui/musical_nope.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
+import { V } from "../../core/Vector";
 import { OceanAmbience } from "../audio/OceanAmbience";
 import { Boat } from "../boat/Boat";
 import { Diver, getDiver } from "../diver/Diver";
@@ -14,10 +15,11 @@ import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import LightingManager from "../lighting/LightingManager";
 import PauseMenu from "../menu/PauseMenu";
+import { UndertowLoader } from "../misc-stuff/undertow/UndertowLoader";
+import { VictoryScreen } from "../misc-stuff/VictoryScreen";
 import { MilestoneManager } from "../upgrade/MilestoneManager";
 import { UpgradeManager } from "../upgrade/UpgradeManager";
 import { UpgradeShop } from "../upgrade/UpgradeShop";
-import { VictoryScreen } from "../VictoryScreen";
 import { WorldMap } from "../world/WorldMap";
 import CameraController from "./CameraController";
 import { DiverController } from "./DiverController";
@@ -43,14 +45,15 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new MilestoneManager());
       game.addEntity(new Boat());
       game.addEntity(new CameraController(game.camera));
-      game.addEntity(new WorldMap());
-
+      game.addEntity(new DamagedOverlay());
+      const worldMap = game.addEntity(new WorldMap());
+      worldMap.populateWorld();
       const diver = this.game!.addEntity(new Diver());
-
-      game.addEntity(new DamagedOverlay(() => diver));
       game.addEntity(new DiverController(diver));
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
+
+      // HACKY STUFF GOES HERE
 
       game.dispatch({ type: "diveStart" });
     },

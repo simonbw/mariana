@@ -13,7 +13,7 @@ import { SurfaceSplash } from "./SurfaceSplash";
 const FRICTION = 1.5;
 const RISE_SPEED = 16; // meters / sec ^ 2
 
-const MINIMUM_BREATHING_SIZE = 1;
+/** A bubble particle that floats to the surface or until it hit's land or is unloaded */
 export class Bubble extends BaseEntity implements Entity {
   sprite: Sprite & GameSprite;
 
@@ -34,7 +34,7 @@ export class Bubble extends BaseEntity implements Entity {
   }
 
   onSlowTick(dt: number) {
-    const worldMap = getWorldMap(this.game!)!;
+    const worldMap = getWorldMap(this.game)!;
     const tilePos = worldMap.worldToTile([this.sprite.x, this.sprite.y]);
     if (
       worldMap.groundMap.tileIsSolid(tilePos) ||

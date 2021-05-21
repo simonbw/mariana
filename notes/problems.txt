@@ -4,16 +4,24 @@
 ⌞———————————————⌟
 
 
-It's not obvious when I'm in dangerous
- - Bring back screen fading
+It's not obvious when I'm in danger
+ [√] Bring back screen fading
  - Add suffocating sounds
  - Add suffocating music
+ - Have some sort of health bar
+ - Heartbeat sounds when injured
+ 
+
+It's not obious when I'm healing or getting air
+ - Play a sound
+ - Flash green
 
 
 Music is too loud
  - Add volume Slider
  - Add multiple volume sliders
- - Do a comprehensive pass over all sounds to get volumes correct
+ - Do a comprehensive pass over all sounds to get volume balance correct
+ - Possibly use a compressor?
 
 
 Diver gets stuck on walls
@@ -21,8 +29,8 @@ Diver gets stuck on walls
 
 
 It's too easy
- - Bring back the health system
  - Add in enemies again
+ - 
 
 
 Rapid resurfacing and unsurfacing when at surface
@@ -36,8 +44,4 @@ Can't navigate menus with a gamepad
 |     Bugs      |
 ⌞———————————————⌟
 
-Ground no longer stops diver
-
 Harpoon/tether doesn't despawn when you die
-
-Something is off with the submersion audio filter

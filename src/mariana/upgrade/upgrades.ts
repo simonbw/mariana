@@ -22,7 +22,8 @@ export type UpgradeId =
   | "turboRetractor"
   | "doubleEndedPoon"
   | "soulMagnet"
-  | "diveBell";
+  | "diveBell"
+  | "flashlight";
 
 export type PrerequisiteId = UpgradeId | MilestoneId;
 
@@ -105,6 +106,12 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     description: "Provides air under water",
     cost: 100,
     prerequisites: ["100m"],
+  },
+  flashlight: {
+    name: "Flashlight",
+    description: "Allows you to see in the dark",
+    cost: 100,
+    prerequisites: [],
   },
 };
 

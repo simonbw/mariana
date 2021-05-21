@@ -17,7 +17,7 @@ import { Flashlight } from "./Flashlight";
 import GlowStick from "./Glowstick";
 import { Inventory } from "./Inventory";
 import { HARPOON_OXYGEN_COST, OxygenManager } from "./OxygenManager";
-import { HarpoonGun } from "./weapons/HarpoonGun";
+import { HarpoonGun } from "./harpoon/HarpoonGun";
 
 export const DIVER_HEIGHT = 2.0; // in meters
 const WIDTH = 0.65; // in meters
@@ -34,6 +34,7 @@ export class Diver extends BaseEntity implements Entity {
   harpoonGun: HarpoonGun;
   air: OxygenManager;
   inventory: Inventory;
+  health: DiverHealth;
 
   aimDirection: V2d = V(0, 1);
   moveDirection: V2d = V(0, 0);
@@ -59,6 +60,7 @@ export class Diver extends BaseEntity implements Entity {
 
     this.harpoonGun = this.addChild(new HarpoonGun(this));
     this.air = this.addChild(new OxygenManager(this));
+    this.health = this.addChild(new DiverHealth(this));
     this.inventory = this.addChild(new Inventory(this));
     this.addChild(new BreatheEffect(this));
     this.addChild(new DiverSubmersion(this));
@@ -67,7 +69,6 @@ export class Diver extends BaseEntity implements Entity {
     this.addChild(new DiverSprite(this));
     this.addChild(new DiverVoice(this));
     this.addChild(new DiverPhysics(this));
-    this.addChild(new DiverHealth(this));
   }
 
   /** Return the current depth in meters under the surface */

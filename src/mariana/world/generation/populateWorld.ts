@@ -7,6 +7,7 @@ import { TILE_SIZE_METERS } from "../../constants";
 import { Eel } from "../../fish/aggressive/Eel";
 import Jellyfish from "../../fish/aggressive/Jellyfish";
 import { FishSpawner } from "../../fish/FishSpawner";
+import { UndertowLoader } from "../../misc-stuff/undertow/UndertowLoader";
 import { Anemone } from "../../plants/Anemone";
 import { Seaweed } from "../../plants/Seaweed";
 import { Soulweed } from "../../plants/Soulweed";
@@ -75,20 +76,21 @@ export function populateSurface(worldMap: WorldMap) {
 /** Generates the deeper stuff */
 export function makeDeeperStuff(worldMap: WorldMap) {
   const entities: Entity[] = [];
-  const available: TilePos[] = [];
+  const tiles: TilePos[] = [];
 
   for (let x = worldMap.minX; x < worldMap.maxX; x++) {
     for (let y = 5; y < worldMap.maxY; y++) {
       if (!worldMap.groundMap.tileIsSolid([x, y])) {
-        available.push([x, y]);
+        tiles.push([x, y]);
       }
     }
   }
-  shuffle(available);
+  shuffle(tiles);
 
-  const jellyfishNumber = Math.floor(available.length * 0.05);
-  for (let i = 0; i < jellyfishNumber; i++) {
-    const tilePos = available.pop()!;
+  const available = new TileList(tiles);
+
+  const jellyfishNumber = Math.floor(available.size * 0.05);
+  for (const tilePos of available.take(jellyfishNumber)) {
     const worldPos = worldMap.tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) => [
@@ -107,9 +109,8 @@ export function makeDeeperStuff(worldMap: WorldMap) {
     );
   }
 
-  const eelNumber = Math.floor(available.length * 0.002);
-  for (let i = 0; i < eelNumber; i++) {
-    const tilePos = available.pop()!;
+  const eelNumber = Math.floor(available.size * 0.002);
+  for (const tilePos of available.take(eelNumber)) {
     const worldPos = worldMap.tileToWorld(tilePos);
     entities.push(
       new TileLoadListener(tilePos, (game: Game) => [
@@ -130,5 +131,63 @@ export function makeDeeperStuff(worldMap: WorldMap) {
 
   // TODO: Grabbers
 
+  entities.push(...makeUndertows(worldMap, available));
+
   return entities;
+}
+
+function makeUndertows(worldMap: WorldMap, available: TileList): Entity[] {
+  const entities: Entity[] = [];
+  function getUndertowTile() {
+    return available.popFiltered((center) => {
+      for (const neighbor of makeNeighbors(center, 1, 2)) {
+        if (worldMap.groundMap.tileIsSolid(neighbor)) {
+          return false;
+        }
+      }
+      const shouldBeSolid: TilePos[] = [
+        [center[0] - 2, center[1] - 1],
+        [center[0] + 2, center[1] - 1],
+        [center[0] - 2, center[1]],
+        [center[0] + 2, center[1]],
+        [center[0] - 2, center[1] + 1],
+        [center[0] + 2, center[1] + 1],
+      ];
+      for (const t of shouldBeSolid) {
+        if (!worldMap.groundMap.tileIsSolid(t)) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }
+
+  let undertowTile = getUndertowTile();
+  let undertowsRemaining = 10;
+  while (undertowTile) {
+    undertowsRemaining -= 1;
+    available.remove(...makeNeighbors(undertowTile, 2, 4));
+    entities.push(new UndertowLoader(worldMap.tileToWorld(undertowTile)));
+    console.log("undertow at ", undertowTile);
+    undertowTile = getUndertowTile();
+    if (undertowsRemaining <= 0) {
+      break;
+    }
+  }
+
+  return entities;
+}
+
+function makeNeighbors(
+  [cx, cy]: TilePos,
+  width: number = 1,
+  height: number = 1
+): TilePos[] {
+  const result: TilePos[] = [];
+  for (let x = cx - width; x <= cx + width; x++) {
+    for (let y = cy - height; y <= cy + height; y++) {
+      result.push([x, y]);
+    }
+  }
+  return result;
 }

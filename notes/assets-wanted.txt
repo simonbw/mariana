@@ -6,6 +6,15 @@ Sprites
    - More tilesets for more biomes would be cool
    - Tiles can have an emmissive layer if you want
 
+ - Cursors
+   - I think I figured out how to make custom cursors work well
+   - I think they should be 48x48 pngs
+   - Can't be animated
+   - But we could have contextual ones
+     - Standard
+     - One when you're out of air?
+     - One in the menu
+
  - Seaweed
    - Should be straight up-and-down, the engine will do the bending
    - I'm gonna deform it with a mesh to make it wiggle

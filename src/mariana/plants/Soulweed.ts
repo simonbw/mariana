@@ -1,7 +1,7 @@
 import { Point } from "@pixi/math";
 import { RopeGeometry } from "@pixi/mesh-extras";
 import { vec2 } from "p2";
-import { Graphics, Mesh, MeshMaterial, Sprite, Texture } from "pixi.js";
+import { Mesh, MeshMaterial, Sprite, Texture } from "pixi.js";
 import img_seaweed1 from "../../../resources/images/flora/seaweed-1.png";
 import img_pickup1 from "../../../resources/images/particles/pickup-1.png";
 import BaseEntity from "../../core/entity/BaseEntity";
@@ -13,8 +13,8 @@ import { V, V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { getDiver } from "../diver/Diver";
 import { getWaves } from "../environment/Waves";
-import { FishSoul } from "../FishSoul";
 import { PointLight } from "../lighting/PointLight";
+import { FishSoul } from "../misc-stuff/FishSoul";
 import {
   TileLoadListener,
   TileUnloadListener,
