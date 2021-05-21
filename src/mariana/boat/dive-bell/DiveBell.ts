@@ -70,8 +70,8 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
     if (diver) {
       // TODO: Check distance to head
-      const direction = diver.getPosition().sub(this.getPosition());
-      if (direction.magnitude < DIVE_BELL_RADIUS + 2) {
+      const distance = vec2.distance(diver.getPosition(), this.getPosition());
+      if (distance < DIVE_BELL_RADIUS + 2) {
         diver.air.giveOxygen(dt * this.getFillRate());
       }
     }

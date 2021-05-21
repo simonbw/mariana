@@ -116,13 +116,15 @@ export class Camera2d extends BaseEntity implements Entity {
     return new Viewport({ top, bottom, left, right });
   }
 
+  // TODO: Don't allocate
   /** Convert screen coordinates to world coordinates */
-  toWorld([x, y]: V2d, parallax = V(1.0, 1.0)): V2d {
+  toWorld([x, y]: V2d, parallax: [number, number] = [1.0, 1.0]): V2d {
     let p = new Point(x, y);
     p = this.getMatrix(parallax).applyInverse(p, p);
     return V(p.x, p.y);
   }
 
+  // TODO: Don't allocate
   /** Convert world coordinates to screen coordinates */
   toScreen([x, y]: V2d, parallax: [number, number] = [1.0, 1.0]): V2d {
     let p = new Point(x, y);

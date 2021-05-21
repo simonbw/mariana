@@ -42,7 +42,7 @@ export class Tether extends BaseEntity implements Entity {
     for (let i = 0; i < NUM_SEGMENTS; i++) {
       const body = new Body({
         mass: 0.002,
-        position: diver.getPosition(),
+        position: diver.getPosition().clone(),
         velocity: [...diver.body.velocity],
         collisionResponse: true,
         fixedRotation: true,

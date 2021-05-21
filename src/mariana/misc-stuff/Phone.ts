@@ -1,3 +1,4 @@
+import { vec2 } from "p2";
 import { Sprite } from "pixi.js";
 import img_phone from "../../../resources/images/environment/phone.png";
 import BaseEntity from "../../core/entity/BaseEntity";
@@ -27,7 +28,7 @@ export class Phone extends BaseEntity implements Entity {
     if (
       diver &&
       !diver.isDead &&
-      diver.getPosition().isub(this.position).magnitude < PICKUP_DISTANCE
+      vec2.dist(diver.getPosition(), this.position) < PICKUP_DISTANCE
     ) {
       this.game?.dispatch({ type: "victory" });
       this.destroy();

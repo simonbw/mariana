@@ -32,7 +32,9 @@ export class Inventory extends BaseEntity implements Entity {
   }
 
   transferSouls(value: number) {
-    this.game!.addEntity(new FishSoulTransfer(this.diver.getPosition(), value));
+    this.game!.addEntity(
+      new FishSoulTransfer(this.diver.getPosition().clone(), value)
+    );
     this.fishSouls -= value;
   }
 

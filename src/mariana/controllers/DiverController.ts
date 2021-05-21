@@ -38,7 +38,7 @@ export class DiverController extends BaseEntity implements Entity {
     } else {
       this.diver.aimDirection = camera
         .toWorld(io.mousePosition)
-        .sub(this.diver.getPosition());
+        .isub(this.diver.getPosition());
     }
   }
 

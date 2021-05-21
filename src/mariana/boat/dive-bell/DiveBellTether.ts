@@ -27,7 +27,7 @@ export class DiveBellTether extends BaseEntity implements Entity {
     for (let i = 0; i < NUM_SEGMENTS; i++) {
       const body = new Body({
         mass: 0.002,
-        position: diveBell.getPosition(),
+        position: diveBell.getPosition().clone(),
         velocity: [...diveBell.body.velocity],
         collisionResponse: true,
         fixedRotation: true,

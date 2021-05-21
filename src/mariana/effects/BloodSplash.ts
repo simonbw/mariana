@@ -11,18 +11,20 @@ import { Layer } from "../config/layers";
 const FRICTION = 1.5;
 
 export class BloodSplash extends BaseEntity implements Entity {
+  private velocity: V2d;
   constructor(
     position: V2d,
-    private velocity: V2d = V(0, 0),
+    velocity: V2d = V(0, 0),
     private angularVelocity: number = rUniform(-2, 2),
     private size: number = rUniform(0.8, 2.0)
   ) {
     super();
+    this.velocity = velocity.clone();
 
     const sprite = (this.sprite = Sprite.from(
       choose(img_blood1, img_blood2, img_blood3)
     ));
-    sprite.position.set(position[0], position[1]);
+    sprite.position.set(...position);
     sprite.scale.set(size / sprite.texture.width);
     sprite.rotation = rDirection();
     sprite.alpha = 0.7;

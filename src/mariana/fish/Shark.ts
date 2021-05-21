@@ -1,4 +1,4 @@
-import { Body, Capsule } from "p2";
+import { Body, Capsule, vec2 } from "p2";
 import { AnimatedSprite, Texture } from "pixi.js";
 import snd_sharkMiss from "../../../resources/audio/fish/shark-miss.flac";
 import snd_sharkbite from "../../../resources/audio/fish/sharkbite.flac";
@@ -126,8 +126,10 @@ export class Shark extends BaseFish {
           return;
         }
 
-        const direction = diver.getPosition().isub(this.getMouthPosition());
-        const distance = direction.magnitude;
+        const distance = vec2.distance(
+          diver.getPosition(),
+          this.getMouthPosition()
+        );
 
         if (distance > UNAGGRO_RANGE) {
           this.patrol();
@@ -177,9 +179,11 @@ export class Shark extends BaseFish {
     }
   }
 
+  private _mouthPosition = V(0, 0);
   getMouthPosition(): V2d {
     const headX = this.facingRight ? WIDTH * 0.45 : WIDTH * -0.45;
-    return this.localToWorld(V(headX, 0));
+    this._mouthPosition.set(headX, 0);
+    return this.localToWorld(this._mouthPosition, this._mouthPosition);
   }
 
   getDiverDistanceToMouth(): number {
@@ -187,7 +191,7 @@ export class Shark extends BaseFish {
     if (!diver) {
       return Infinity;
     } else {
-      return diver.getPosition().isub(this.getMouthPosition()).magnitude;
+      return vec2.distance(diver.getPosition(), this.getMouthPosition());
     }
   }
 

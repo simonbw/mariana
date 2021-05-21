@@ -45,9 +45,8 @@ export class Grabber extends BaseEntity implements Entity {
     if (diver) {
       const tip = last(this.bodies!);
 
-      const direction = diver.getPosition().sub(this.getTip());
-      direction.inormalize(10);
-      tip.applyForce(direction);
+      const tipForce = diver.getPosition().isub(this.getTip()).inormalize(10);
+      tip.applyForce(tipForce);
     }
   }
 

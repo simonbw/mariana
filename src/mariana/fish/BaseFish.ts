@@ -46,11 +46,6 @@ export abstract class BaseFish
     this.hp = hp;
   }
 
-  protected _position = V(0, 0);
-  getPosition(): V2d {
-    return this._position.set(this.body.position);
-  }
-
   protected _velocity = V(0, 0);
   getVelocity(): V2d {
     return this._velocity.set(this.body.velocity);

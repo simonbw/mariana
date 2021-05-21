@@ -9,6 +9,7 @@ import img_glowStick3 from "../../../resources/images/particles/glow-stick-3.png
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
+import { PositionalSound } from "../../core/sound/PositionalSound";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { hslToHex } from "../../core/util/ColorUtils";
 import { clamp } from "../../core/util/MathUtil";
@@ -41,7 +42,7 @@ export default class GlowStick extends BaseEntity implements Entity {
 
     this.body = new Body({
       mass: 0.1,
-      position,
+      position: position.clone(),
       velocity,
     });
 
@@ -92,7 +93,6 @@ export default class GlowStick extends BaseEntity implements Entity {
   onImpact() {
     const gain = clamp(vec2.length(this.body.velocity) / 5);
     const sound = DROP_SOUNDS.getNext();
-    const position = this.getPosition();
     this.game?.addEntity(
       new SoundInstance(sound, { gain, speed: rUniform(0.9, 1.1) })
     );

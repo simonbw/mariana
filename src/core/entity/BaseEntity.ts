@@ -24,20 +24,20 @@ export default abstract class BaseEntity implements Entity {
   sprites?: GameSprite[];
 
   /** Convert local coordinates to world coordinates. Requires a body */
-  localToWorld(localPoint: [number, number]): V2d {
+  localToWorld(localPoint: [number, number], out: V2d = V(0, 0)): V2d {
     if (this.body) {
-      const result: V2d = V(0, 0);
-      this.body.toWorldFrame(result, localPoint);
-      return result;
+      this.body.toWorldFrame(out, localPoint);
+      return out;
     }
-    return V(0, 0);
+    return out;
   }
 
+  protected _position = V(0, 0);
   getPosition(): V2d {
     if (this.body) {
-      return V(this.body.position);
+      return this._position.set(this.body.position);
     }
-    throw new Error("Position is not implemented for this entity");
+    return this._position;
   }
 
   get isDestroyed() {

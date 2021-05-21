@@ -1,3 +1,4 @@
+import { vec2 } from "p2";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -34,7 +35,6 @@ export class Boat extends BaseEntity implements Entity {
     }
   }
 
-  private _position = V(0, 0);
   getPosition() {
     const y = getWaves(this.game!).getSurfaceHeight(this.x);
     return this._position.set(this.x, y);
@@ -57,8 +57,7 @@ export class Boat extends BaseEntity implements Entity {
       return false;
     }
 
-    const distance = diver.getPosition().isub(this.getDropoffPosition())
-      .magnitude;
+    const distance = vec2.dist(diver.getPosition(), this.getDropoffPosition());
     return distance < DROPOFF_RANGE;
   }
 

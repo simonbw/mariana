@@ -45,7 +45,7 @@ export class Harpoon extends BaseEntity implements Entity {
 
     this.body = new Body({
       mass: 0.03,
-      position,
+      position: position.clone(),
     });
     this.body.addShape(
       new Box({

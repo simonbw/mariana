@@ -1,4 +1,4 @@
-import { Body, Particle } from "p2";
+import { Body, Particle, vec2 } from "p2";
 import { Sprite, Texture } from "pixi.js";
 import snd_smallweapon1 from "../../../../resources/audio/weapons/smallweapon1.flac";
 import snd_smallweapon2 from "../../../../resources/audio/weapons/smallweapon2.flac";
@@ -15,7 +15,7 @@ import Entity, { GameSprite } from "../../../core/entity/Entity";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
 import { polarToVec } from "../../../core/util/MathUtil";
 import { rBool, rUniform, shuffle } from "../../../core/util/Random";
-import { V, V2d } from "../../../core/Vector";
+import { V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { Diver, getDiver } from "../../diver/Diver";
 import { GroundTile } from "../../plants/GroundTile";
@@ -122,7 +122,7 @@ export class PufferFish extends BaseFish {
 
   onTick(dt: number) {
     const diver = getDiver(this.game)!;
-    const distance = this.getPosition().isub(diver.getPosition()).magnitude;
+    const distance = vec2.distance(this.getPosition(), diver.getPosition());
     if (!this.isPuffing && distance < PUFF_TRIGGER_RANGE) {
       this.puff();
     }
