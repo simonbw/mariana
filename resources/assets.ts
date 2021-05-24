@@ -147,5 +147,6 @@
   require("./images/tiles/tileset_reference.png"),
   require("./images/ui/dive-watch-back.png"),
   require("./images/ui/dive-watch-needle.png"),
+  require("./images/ui/sonar-tile.png"),
     ];
     

@@ -5,6 +5,7 @@ import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import { KeyCode } from "../../core/io/Keys";
 import { Layer } from "../config/layers";
+import { makeBox } from "../utils/gridUtils";
 import { getDefaultTileset } from "../utils/Tileset";
 import { WorldMap } from "../world/WorldMap";
 
@@ -20,11 +21,9 @@ export class Minimap extends BaseEntity implements Entity {
     const tileset = getDefaultTileset();
 
     const { minX, maxX, maxY } = worldMap;
-    for (let x = minX - 5; x < maxX + 5; x++) {
-      for (let y = 0; y < maxY; y++) {
-        if (worldMap.groundMap.tileIsSolid([x, y])) {
-          tilemap.tile(tileset.getTexture(7), x * 64, y * 64);
-        }
+    for (const [x, y] of makeBox(minX - 5, maxX + 5, 0, maxY)) {
+      if (worldMap.groundMap.tileIsSolid([x, y])) {
+        tilemap.tile(tileset.getTexture(7), x * 64, y * 64);
       }
     }
 
@@ -49,7 +48,7 @@ export class Minimap extends BaseEntity implements Entity {
 
   onKeyDown(key: KeyCode) {
     if (key === "KeyL") {
-      this.sprite.visible = !this.sprite.visible;
+      // this.sprite.visible = !this.sprite.visible;
     }
   }
 }

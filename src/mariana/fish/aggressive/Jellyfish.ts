@@ -14,6 +14,7 @@ import { CollisionGroups } from "../../config/CollisionGroups";
 import { Layer } from "../../config/layers";
 import { Diver, getDiver } from "../../diver/Diver";
 import { Bubble } from "../../effects/Bubble";
+import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { PointLight } from "../../lighting/PointLight";
 import { BaseFish } from "../BaseFish";
 import { FishAim } from "../fish-systems/FishAim";
@@ -95,6 +96,8 @@ export default class Jellyfish extends BaseFish implements Entity {
         color: 0xff55bb,
       })
     );
+
+    this.addChild(new SonarTarget(() => this.getPosition()));
   }
 
   private _friction = V(0, 0);
@@ -149,9 +152,10 @@ export default class Jellyfish extends BaseFish implements Entity {
   }
 
   onRender() {
-    this.sprite.position.set(...this.getPosition());
+    const position = this.getPosition();
+    this.sprite.position.set(position[0], position[1]);
     this.sprite.rotation = this.body.angle + degToRad(90);
-    this.light.setPosition(this.getPosition());
+    this.light.setPosition(position);
   }
 
   // TODO: oncontacting is broken

@@ -11,6 +11,7 @@ import { UndertowLoader } from "../../misc-stuff/undertow/UndertowLoader";
 import { Anemone } from "../../plants/Anemone";
 import { Seaweed } from "../../plants/Seaweed";
 import { Soulweed } from "../../plants/Soulweed";
+import { makeNeighbors } from "../../utils/gridUtils";
 import { TileLoadListener } from "../loading/OnLoader";
 import { TilePos } from "../TilePos";
 import { WorldMap } from "../WorldMap";
@@ -131,11 +132,12 @@ export function makeDeeperStuff(worldMap: WorldMap) {
 
   // TODO: Grabbers
 
-  entities.push(...makeUndertows(worldMap, available));
+  // entities.push(...makeUndertows(worldMap, available));
 
   return entities;
 }
 
+// TODO: This is too slow
 function makeUndertows(worldMap: WorldMap, available: TileList): Entity[] {
   const entities: Entity[] = [];
   function getUndertowTile() {
@@ -176,18 +178,4 @@ function makeUndertows(worldMap: WorldMap, available: TileList): Entity[] {
   }
 
   return entities;
-}
-
-function makeNeighbors(
-  [cx, cy]: TilePos,
-  width: number = 1,
-  height: number = 1
-): TilePos[] {
-  const result: TilePos[] = [];
-  for (let x = cx - width; x <= cx + width; x++) {
-    for (let y = cy - height; y <= cy + height; y++) {
-      result.push([x, y]);
-    }
-  }
-  return result;
 }

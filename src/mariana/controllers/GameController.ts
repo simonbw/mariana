@@ -2,7 +2,6 @@ import snd_musicalNope from "../../../resources/audio/ui/musical_nope.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
-import { V } from "../../core/Vector";
 import { OceanAmbience } from "../audio/OceanAmbience";
 import { Boat } from "../boat/Boat";
 import { Diver, getDiver } from "../diver/Diver";
@@ -13,9 +12,9 @@ import { isFish } from "../fish/BaseFish";
 import { DamagedOverlay } from "../hud/DamagedOverlay";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
+import { Sonar } from "../hud/sonar/Sonar";
 import LightingManager from "../lighting/LightingManager";
 import PauseMenu from "../menu/PauseMenu";
-import { UndertowLoader } from "../misc-stuff/undertow/UndertowLoader";
 import { VictoryScreen } from "../misc-stuff/VictoryScreen";
 import { MilestoneManager } from "../upgrade/MilestoneManager";
 import { UpgradeManager } from "../upgrade/UpgradeManager";
@@ -52,6 +51,7 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiverController(diver));
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
+      game.addEntity(new Sonar());
 
       // HACKY STUFF GOES HERE
 

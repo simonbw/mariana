@@ -13,6 +13,7 @@ import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
 import { getDiver } from "../../diver/Diver";
 import { getWaves } from "../../environment/Waves";
+import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { BaseFish } from "../BaseFish";
 import { EelSprite } from "./EelSprite";
 
@@ -87,6 +88,7 @@ export class Eel extends BaseFish {
     }
 
     this.addChild(new EelSprite(this));
+    this.addChild(new SonarTarget(() => this.getPosition(), 1.2));
   }
 
   getPosition(): V2d {

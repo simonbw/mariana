@@ -12,6 +12,7 @@ import { Harpoon } from "../../diver/harpoon/Harpoon";
 import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
 import { getWaves } from "../../environment/Waves";
+import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { GroundTile } from "../../plants/GroundTile";
 import { getUpgradeManager } from "../../upgrade/UpgradeManager";
 import { Boat } from "../Boat";
@@ -63,8 +64,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
   onTick(dt: number) {
     const diver = getDiver(this.game!);
-
-    if (diver) {
+    if (diver && this.isActive()) {
       // TODO: Check distance to head
       const distance = vec2.distance(diver.getPosition(), this.getPosition());
       if (distance < DIVE_BELL_RADIUS + 2) {
@@ -105,7 +105,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
   }
 
   onSlowTick(dt: number) {
-    if (rBool(dt * 10)) {
+    if (this.isActive() && rBool(dt * 10)) {
       this.game!.addEntity(
         new Bubble(
           this.getPosition().iadd([rNormal(), rNormal()]),
@@ -122,7 +122,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     }
   }
 
-  onBeginContact(other: Entity) {
+  onImpact(other: Entity) {
     if (other instanceof GroundTile) {
       const gain = clamp(vec2.length(this.body.velocity) / 8) / 8;
       this.game!.addEntity(
