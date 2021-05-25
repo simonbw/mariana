@@ -88,7 +88,7 @@ export class Eel extends BaseFish {
     }
 
     this.addChild(new EelSprite(this));
-    this.addChild(new SonarTarget(() => this.getPosition(), 1.2));
+    this.addChild(new SonarTarget(() => this.getPosition(), { blipSize: 1.2 }));
   }
 
   getPosition(): V2d {

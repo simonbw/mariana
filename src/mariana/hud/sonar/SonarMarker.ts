@@ -8,15 +8,15 @@ interface Options {
   color: number;
 }
 
-/** A thing a ping can hit */
-export class SonarTarget extends BaseEntity implements Entity {
-  tags = ["sonarTarget"];
+export class SonarMarker extends BaseEntity implements Entity {
+  tags = ["sonarMarker"];
+
   blipSize: number;
   color: number;
 
   constructor(
     private position: () => V2d,
-    { blipSize = 1, color = 0xff0000 }: Partial<Options> = {}
+    { blipSize = 1, color = 0x00ff00 }: Partial<Options> = {}
   ) {
     super();
     this.blipSize = blipSize;
@@ -28,6 +28,6 @@ export class SonarTarget extends BaseEntity implements Entity {
   }
 }
 
-export function getSonarTargets(game: Game) {
-  return game.entities.getTagged("sonarTarget") as SonarTarget[];
+export function getSonarMarkers(game: Game) {
+  return game.entities.getTagged("sonarMarker") as SonarMarker[];
 }

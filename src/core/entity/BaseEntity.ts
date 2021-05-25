@@ -40,6 +40,14 @@ export default abstract class BaseEntity implements Entity {
     return this._position;
   }
 
+  protected _velocity = V(0, 0);
+  getVelocity(): V2d {
+    if (this.body) {
+      return this._velocity.set(this.body.velocity);
+    }
+    return this._velocity;
+  }
+
   get isDestroyed() {
     return this.game == null;
   }

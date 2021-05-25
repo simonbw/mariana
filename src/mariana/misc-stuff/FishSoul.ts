@@ -77,6 +77,7 @@ export class FishSoul extends BaseEntity implements Entity {
     }
   }
 
+  // TODO: Don't allocate
   onTick(dt: number) {
     this.t = (this.t + dt / GLOW_PERIOD) % 1;
 

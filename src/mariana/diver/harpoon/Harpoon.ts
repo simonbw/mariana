@@ -65,10 +65,6 @@ export class Harpoon extends BaseEntity implements Entity {
     this.wasSurfaced = getWaves(game).getSurfaceHeight(x) > y;
   }
 
-  getVelocity(): V2d {
-    return V(this.body.velocity);
-  }
-
   onTick() {
     const [x, y] = this.body.position;
     const isSurfaced = getWaves(this.game!).getSurfaceHeight(x) > y;

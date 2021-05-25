@@ -21,11 +21,13 @@ export class Bubble extends BaseEntity implements Entity {
 
   constructor(
     position: V2d,
-    private velocity: V2d = V(0, 0),
+    velocity: V2d = V(0, 0),
     private size: number = rNormal(0.22, 0.1),
     layerName: Layer = Layer.WORLD_FRONT
   ) {
     super();
+
+    this._velocity.set(velocity);
 
     const sprite = (this.sprite = Sprite.from(img_bubble));
     sprite.position.set(...position);
@@ -55,20 +57,20 @@ export class Bubble extends BaseEntity implements Entity {
     }
 
     const sprite = this.sprite! as Sprite;
-    this.velocity[1] += dt * -BUOYANCY * this.size ** 2;
+    this._velocity[1] += dt * -BUOYANCY * this.size ** 2;
 
-    this.velocity.imul(Math.exp(-dt * FRICTION * this.size));
+    this._velocity.imul(Math.exp(-dt * FRICTION * this.size));
 
     this.size *= Math.exp(dt * 0.01);
 
-    sprite.x += dt * this.velocity[0];
-    sprite.y += dt * this.velocity[1];
+    sprite.x += dt * this._velocity[0];
+    sprite.y += dt * this._velocity[1];
 
     sprite.scale.set(this.size / sprite.texture.width);
 
     const waves = getWaves(this.game!);
     if (waves.isAbovewater([sprite.x, sprite.y])) {
-      const speed = vec2.len(this.velocity);
+      const speed = vec2.len(this._velocity);
       this.game!.addEntity(new SurfaceSplash(sprite.x, speed / 2, this.size));
       this.destroy();
     }

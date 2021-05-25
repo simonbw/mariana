@@ -13,7 +13,7 @@ import { DamagedOverlay } from "../hud/DamagedOverlay";
 import { DiveWatch } from "../hud/DiveWatch";
 import { FishCounter } from "../hud/FishCounter";
 import { Sonar } from "../hud/sonar/Sonar";
-import LightingManager from "../lighting/LightingManager";
+import LightingSystem from "../lighting/LightingSystem";
 import PauseMenu from "../menu/PauseMenu";
 import { VictoryScreen } from "../misc-stuff/VictoryScreen";
 import { MilestoneManager } from "../upgrade/MilestoneManager";
@@ -36,7 +36,7 @@ export class GameController extends BaseEntity implements Entity {
       const game = this.game!;
       game.addEntity(new PauseMenu());
       game.addEntity(new TimeOfDay());
-      game.addEntity(new LightingManager());
+      game.addEntity(new LightingSystem());
       game.addEntity(new Sky());
       game.addEntity(new Water());
       game.addEntity(new OceanAmbience());

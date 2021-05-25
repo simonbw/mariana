@@ -11,7 +11,6 @@ import { Layer } from "../config/layers";
 const FRICTION = 1.5;
 
 export class BloodSplash extends BaseEntity implements Entity {
-  private velocity: V2d;
   constructor(
     position: V2d,
     velocity: V2d = V(0, 0),
@@ -19,7 +18,7 @@ export class BloodSplash extends BaseEntity implements Entity {
     private size: number = rUniform(0.8, 2.0)
   ) {
     super();
-    this.velocity = velocity.clone();
+    this._velocity.set(velocity);
 
     const sprite = (this.sprite = Sprite.from(
       choose(img_blood1, img_blood2, img_blood3)
@@ -43,12 +42,12 @@ export class BloodSplash extends BaseEntity implements Entity {
   onTick(dt: number) {
     const sprite = this.sprite! as Sprite;
 
-    this.velocity.imul(Math.exp(-dt * FRICTION));
+    this._velocity.imul(Math.exp(-dt * FRICTION));
     this.angularVelocity *= Math.exp(-dt * FRICTION);
     this.size *= Math.exp(dt / this.size);
 
-    sprite.x += dt * this.velocity[0];
-    sprite.y += dt * this.velocity[1];
+    sprite.x += dt * this._velocity[0];
+    sprite.y += dt * this._velocity[1];
     sprite.rotation += this.angularVelocity * dt;
 
     sprite.scale.set(this.size / sprite.texture.width);

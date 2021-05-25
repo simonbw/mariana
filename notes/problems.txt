@@ -47,7 +47,9 @@ Can't navigate menus with a gamepad
 Dive bell is OP
  - Maybe require it to be deployed/stationary for it to work
  - Make it able to be damaged and require fixing/waiting
- - 
+
+It's hard to heal
+ - Autoregen (some) health when out of combat for a while
 
 
 

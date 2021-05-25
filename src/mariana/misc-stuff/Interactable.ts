@@ -3,8 +3,9 @@ import Entity from "../../core/entity/Entity";
 import { V2d } from "../../core/Vector";
 import { getDiver } from "../diver/Diver";
 
+// TODO: Interactable thing
 /** A thing that can be interacted with */
-export class Interactible extends BaseEntity implements Entity {
+export class Interactable extends BaseEntity implements Entity {
   constructor(position: V2d, public range: number = 3) {
     super();
   }

@@ -11,8 +11,8 @@ import Game from "../../core/Game";
 import { Layer } from "../config/layers";
 import { Persistence } from "../config/Persistence";
 
-export default class LightingManager extends BaseEntity implements Entity {
-  id = "lighting_manager";
+export default class LightingSystem extends BaseEntity implements Entity {
+  id = "lightingSystem";
   persistenceLevel = Persistence.Game;
 
   sprite!: Sprite & GameSprite;
@@ -80,6 +80,6 @@ export default class LightingManager extends BaseEntity implements Entity {
   }
 }
 
-export function getLightingManager(game?: Game): LightingManager | undefined {
-  return game?.entities.getById("lighting_manager") as LightingManager;
+export function getLightingManager(game?: Game): LightingSystem | undefined {
+  return game?.entities.getById("lightingSystem") as LightingSystem;
 }

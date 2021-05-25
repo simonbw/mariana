@@ -285,6 +285,7 @@ export default class Game {
     const tickDt = (renderDt / this.tickIterations) * this.slowMo;
     this.iterationsRemaining += this.tickIterations;
     for (; this.iterationsRemaining > 1.0; this.iterationsRemaining--) {
+      this.io.pollGamepads();
       this.tick(tickDt);
       if (!this.paused) {
         const stepDt = tickDt;

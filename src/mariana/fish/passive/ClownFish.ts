@@ -7,7 +7,6 @@ import { degToRad, normalizeAngle } from "../../../core/util/MathUtil";
 import { rBool, rDirection, rUniform } from "../../../core/util/Random";
 import { V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
-import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { BaseFish } from "../BaseFish";
 import { FishAim } from "../fish-systems/FishAim";
 import { FishSubmersion } from "../fish-systems/FishSubmersion";

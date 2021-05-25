@@ -17,6 +17,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@pixi/filter-crt": "^4.1.0",
     "@pixi/tilemap": "^3.2.0",
     "@types/bezier-js": "^0.0.8",
     "@types/css-font-loading-module": "0.0.4",

@@ -1,4 +1,4 @@
-import { Filter, Graphics, Sprite } from "pixi.js";
+import { Filter, Graphics, Matrix, Sprite } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -130,10 +130,11 @@ export class Waves extends BaseEntity implements Entity {
     };
   }
 
+  private _matrix = new Matrix();
   getUniforms() {
     const resolution = this.filter.resolution;
-    const cameraMatrix = this.game?.camera
-      .getMatrix()
+    const cameraMatrix = this._matrix
+      .copyFrom(this.game!.camera.getMatrix())
       .scale(resolution, resolution)
       .invert();
 

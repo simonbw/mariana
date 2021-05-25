@@ -6,12 +6,10 @@ import IOHandlerList from "./IOHandlerList";
 import { KeyCode } from "./Keys";
 import * as MouseButtons from "./MouseButtons";
 
-const GAMEPAD_POLLING_FREQUENCY = 250; // Hz
-
 const GAMEPAD_MINIMUM = 0.2;
 const GAMEPAD_MAXIMUM = 0.95;
 
-// Manages IO
+/** Manages IO */
 export class IOManager {
   handlers = new IOHandlerList();
   private keys: Map<KeyCode, boolean> = new Map();
@@ -48,30 +46,24 @@ export class IOManager {
         }
       }
     };
-
-    // Because this is a polling not pushing interface
-    window.setInterval(
-      () => this.handleGamepads(),
-      1000 / GAMEPAD_POLLING_FREQUENCY
-    );
   }
 
-  // True if the left mouse button is down.
+  /** True if the left mouse button is down. */
   get lmb(): boolean {
     return this.mouseButtons[MouseButtons.LEFT];
   }
 
-  // True if the middle mouse button is down.
+  /** True if the middle mouse button is down. */
   get mmb(): boolean {
     return this.mouseButtons[MouseButtons.MIDDLE];
   }
 
-  // True if the right mouse button is down.
+  /** True if the right mouse button is down. */
   get rmb(): boolean {
     return this.mouseButtons[MouseButtons.RIGHT];
   }
 
-  // True if the given key is currently pressed down
+  /** True if the given key is currently pressed down */
   keyIsDown(key: KeyCode): boolean {
     return Boolean(this.keys.get(key));
   }
@@ -80,8 +72,8 @@ export class IOManager {
     return keys.some((key) => this.keyIsDown(key));
   }
 
-  // Fire events for gamepad button presses.
-  handleGamepads(): void {
+  /** Fire events for gamepad button presses. */
+  pollGamepads(): void {
     const gamepad = navigator.getGamepads()[0];
     if (gamepad) {
       const buttons = gamepad.buttons.map((button) => button.pressed);
@@ -124,13 +116,13 @@ export class IOManager {
     this.handlers.remove(handler);
   }
 
-  // Update the position of the mouse.
+  /** Update the position of the mouse. */
   onMouseMove(event: MouseEvent) {
     this.setUsingGamepad(false);
     this.mousePosition = V(event.clientX, event.clientY);
   }
 
-  // Fire all click handlers.
+  /** Fire all click handlers. */
   onClick(event: MouseEvent) {
     this.setUsingGamepad(false);
     this.mousePosition = V(event.clientX, event.clientY);
@@ -148,7 +140,7 @@ export class IOManager {
     }
   }
 
-  // Fire all mouse down handlers.
+  /** Fire all mouse down handlers. */
   onMouseDown(event: MouseEvent) {
     this.setUsingGamepad(false);
     this.mousePosition = V(event.clientX, event.clientY);
@@ -167,7 +159,7 @@ export class IOManager {
     }
   }
 
-  // Fire all mouse up handlers
+  /** Fire all mouse up handlers */
   onMouseUp(event: MouseEvent) {
     this.setUsingGamepad(false);
     this.mousePosition = V(event.clientX, event.clientY);
@@ -186,7 +178,7 @@ export class IOManager {
     }
   }
 
-  // Determine whether or not to prevent the default action of a key press.
+  /** Determine whether or not to prevent the default action of a key press. */
   shouldPreventDefault(event: KeyboardEvent): boolean {
     if (event.key === "Tab") {
       return true;
@@ -198,7 +190,7 @@ export class IOManager {
     return false;
   }
 
-  // Fire all key down handlers.
+  /** Fire all key down handlers. */
   onKeyDown(event: KeyboardEvent) {
     const code = event.code as KeyCode;
     const wasPressed = this.keys.get(code); // for filtering out auto-repeat stuff
@@ -214,7 +206,7 @@ export class IOManager {
     }
   }
 
-  // Fire all key up handlers.
+  /** Fire all key up handlers. */
   onKeyUp(event: KeyboardEvent) {
     const code = event.code as KeyCode;
     this.keys.set(code, false);
@@ -227,7 +219,7 @@ export class IOManager {
     }
   }
 
-  // Return the value of a gamepad axis.
+  /** Return the value of a gamepad axis. */
   getAxis(axis: ControllerAxis): number {
     switch (axis) {
       case ControllerAxis.LEFT_X:
@@ -243,6 +235,7 @@ export class IOManager {
     }
   }
 
+  /** Return the value of both gamepad axiis on one stick */
   getStick(stick: "left" | "right") {
     const axes = V(0, 0);
     const gamepad = navigator.getGamepads()[0];
@@ -264,7 +257,7 @@ export class IOManager {
     return axes;
   }
 
-  //  Return the value of a button.
+  /** Return the value of a gamepad button. */
   getButton(button: ControllerButton): number {
     const gamepad = navigator.getGamepads()[0];
     return gamepad?.buttons[button]?.value ?? 0;

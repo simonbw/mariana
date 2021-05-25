@@ -255,3 +255,13 @@ export default class GroundMap {
     }
   }
 }
+
+class BitGrid {
+  data = new Uint16Array();
+
+  constructor(minX: number, minY: number, maxX: number, maxY: number) {
+    const width = maxX - minX;
+    const height = maxY - minY;
+    const size = width * height;
+  }
+}

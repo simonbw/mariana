@@ -1,3 +1,4 @@
+import { CRTFilter } from "@pixi/filter-crt";
 import { vec2 } from "p2";
 import { Graphics } from "pixi.js";
 import BaseEntity from "../../../core/entity/BaseEntity";
@@ -6,12 +7,18 @@ import Game from "../../../core/Game";
 import { polarToVec } from "../../../core/util/MathUtil";
 import { V, V2d } from "../../../core/Vector";
 import { getWorldMap } from "../../world/WorldMap";
-import { PingParticle, ReachedTarget } from "./Sonar";
+import { PingParticle } from "./Sonar";
 import { getSonarTargets, SonarTarget } from "./SonarTarget";
 
-const PING_PARTICLES = 256;
+const PING_PARTICLES = 128;
 const PING_SPEED = 60.0; // m/s
 const PING_LIFESPAN = 2; // seconds
+
+interface ReachedTarget {
+  position: V2d;
+  blipSize: number;
+  color: number;
+}
 
 /** A single ping */
 export class SonarPing extends BaseEntity implements Entity {
@@ -77,6 +84,7 @@ export class SonarPing extends BaseEntity implements Entity {
         this.targetsReached.push({
           position: pos.clone(),
           blipSize: target.blipSize,
+          color: target.color,
         });
       }
     }
@@ -97,7 +105,7 @@ export class SonarPing extends BaseEntity implements Entity {
       const dist = vec2.dist(lastPing.position, ping.position);
 
       let alpha = isSolid ? 1.0 : 0.7;
-      if (dist > 5.0) {
+      if (dist > 10.0) {
         alpha = 0;
       }
       if (isEdge) {
@@ -109,18 +117,34 @@ export class SonarPing extends BaseEntity implements Entity {
 
       this.sonarSprite.lineStyle({
         width: isSolid ? 0.3 : 0.2,
-        color: isSolid ? 0x00ff00 : 0x0066ff,
+        color: isSolid ? 0x00ff00 : 0x00ff00,
         alpha,
       });
       this.sonarSprite.lineTo(x, y);
+
+      // if (ping.stopped) {
+      //   this.sonarSprite.lineStyle();
+      //   this.sonarSprite.beginFill(0x00ff00, 0.3);
+      //   this.sonarSprite.drawCircle(x, y, 0.7);
+      //   this.sonarSprite.endFill();
+      //   this.sonarSprite.beginFill(0x00ff00, 0.3);
+      //   this.sonarSprite.drawCircle(x, y, 0.4);
+      //   this.sonarSprite.endFill();
+      //   this.sonarSprite.beginFill(0x00ff00, 0.3);
+      //   this.sonarSprite.drawCircle(x, y, 0.2);
+      //   this.sonarSprite.endFill();
+      // }
     }
     this.sonarSprite.lineTo(first[0], first[1]);
 
     for (const target of this.targetsReached) {
       const [x, y] = target.position;
       this.sonarSprite.lineStyle();
-      this.sonarSprite.beginFill(0x00ff00);
+      this.sonarSprite.beginFill(target.color, 0.4);
       this.sonarSprite.drawCircle(x, y, target.blipSize);
+      this.sonarSprite.endFill();
+      this.sonarSprite.beginFill(target.color, 0.4);
+      this.sonarSprite.drawCircle(x, y, target.blipSize / 2);
       this.sonarSprite.endFill();
     }
   }

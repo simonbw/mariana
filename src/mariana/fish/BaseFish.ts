@@ -46,11 +46,6 @@ export abstract class BaseFish
     this.hp = hp;
   }
 
-  protected _velocity = V(0, 0);
-  getVelocity(): V2d {
-    return this._velocity.set(this.body.velocity);
-  }
-
   isSurfaced() {
     const waves = getWaves(this.game!);
     const [x, y] = this.getPosition();

@@ -8,13 +8,29 @@
 —————————
 
 Cache V2ds
- - There's a lot of performance to be gained by reducing allocations/collection of V2d's
- - Replace default getPosition() with cached version
+ - Audit all the places where we create new V2ds and see if they can be preallocated
 
 Reduce stuff done in `onTick`
  - Try to move stuff to onSlowTick
  - Try to move stuff to event handlers
 
+Make adding/instantiating entities cheaper
+ - don't add filters?
+
+Use faster grid for GroundMap
+ - just a 2d array?
+ - use structurae
+
+WorldMap
+ - conversions without allocating
+
+Bubble
+ - ?
+
+Sonar
+ - Faster ground map
+
+Fish
 
 —————————
  Physics 

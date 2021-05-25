@@ -12,6 +12,7 @@ import { Harpoon } from "../../diver/harpoon/Harpoon";
 import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
 import { getWaves } from "../../environment/Waves";
+import { SonarMarker } from "../../hud/sonar/SonarMarker";
 import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { GroundTile } from "../../plants/GroundTile";
 import { getUpgradeManager } from "../../upgrade/UpgradeManager";
@@ -56,6 +57,12 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     this.addChild(new DiveBellSprite(this));
     this.addChild(new DiveBellTether(this, boat));
     this.addChild(new DiveBellPhysics(this));
+    this.addChild(
+      new SonarMarker(() => this.getPosition(), {
+        color: 0xffff00,
+        blipSize: 1.4,
+      })
+    );
   }
 
   getFillRate() {

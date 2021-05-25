@@ -116,22 +116,24 @@ export class Camera2d extends BaseEntity implements Entity {
     return new Viewport({ top, bottom, left, right });
   }
 
-  // TODO: Don't allocate
+  private _world = V(0, 0);
+  private _temp = new Point();
   /** Convert screen coordinates to world coordinates */
   toWorld([x, y]: V2d, parallax: [number, number] = [1.0, 1.0]): V2d {
-    let p = new Point(x, y);
-    p = this.getMatrix(parallax).applyInverse(p, p);
-    return V(p.x, p.y);
+    const local = this._temp.set(x, y);
+    const world = this.getMatrix(parallax).applyInverse(local, local);
+    return this._world.set(world.x, world.y);
   }
 
-  // TODO: Don't allocate
+  private _screen = V(0, 0);
   /** Convert world coordinates to screen coordinates */
   toScreen([x, y]: V2d, parallax: [number, number] = [1.0, 1.0]): V2d {
-    let p = new Point(x, y);
-    p = this.getMatrix(parallax).apply(p, p);
-    return V(p.x, p.y);
+    const local = this._temp.set(x, y);
+    const screen = this.getMatrix(parallax).apply(local, local);
+    return this._screen.set(screen.x, screen.y);
   }
 
+  private _matrix = new Matrix();
   /** Creates a transformation matrix to go from screen world space to screen space. */
   getMatrix(
     [px, py]: [number, number] = [1, 1],
@@ -141,7 +143,8 @@ export class Camera2d extends BaseEntity implements Entity {
     const { x: cx, y: cy, z, angle } = this;
 
     return (
-      new Matrix()
+      this._matrix
+        .identity()
         // align the anchor with the camera
         .translate(ax * px, ay * py)
         .translate(-cx * px, -cy * py)

@@ -2,7 +2,7 @@ import { Sprite } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
-import { getLightingManager } from "./LightingManager";
+import { getLightingManager } from "./LightingSystem";
 
 export class Light extends BaseEntity implements Entity {
   constructor(public lightSprite: Sprite) {

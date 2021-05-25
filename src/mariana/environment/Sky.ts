@@ -1,5 +1,5 @@
 import { Sprite } from "@pixi/sprite";
-import { Filter } from "pixi.js";
+import { Filter, Matrix } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -50,10 +50,11 @@ export class Sky extends BaseEntity implements Entity {
     this.addChild(new Wind());
   }
 
+  private _matrix = new Matrix();
   getUniforms() {
     const resolution = this.filter.resolution;
-    const cameraMatrix = this.game?.camera
-      .getMatrix([0.01, 0.5])
+    const cameraMatrix = this._matrix
+      .copyFrom(this.game!.camera.getMatrix([0.01, 0.5]))
       .scale(resolution, resolution)
       .invert();
     const hour = getTimeOfDay(this.game!).hour;

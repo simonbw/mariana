@@ -8,6 +8,7 @@ import { degToRad, polarToVec } from "../../core/util/MathUtil";
 import { V } from "../../core/Vector";
 import { getDiver } from "../diver/Diver";
 import { getWaves } from "../environment/Waves";
+import { SonarMarker } from "../hud/sonar/SonarMarker";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { UpgradeId } from "../upgrade/upgrades";
 import { BoatSprite } from "./BoatSprite";
@@ -27,6 +28,12 @@ export class Boat extends BaseEntity implements Entity {
   constructor() {
     super();
     this.boatSprite = this.addChild(new BoatSprite(this));
+    this.addChild(
+      new SonarMarker(() => this.getPosition(), {
+        color: 0xffaaaa,
+        blipSize: 3,
+      })
+    );
   }
 
   onAdd(game: Game) {

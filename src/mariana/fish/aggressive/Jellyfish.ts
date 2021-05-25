@@ -136,7 +136,7 @@ export default class Jellyfish extends BaseFish implements Entity {
         this.game!.addEntity(
           new Bubble(
             this.localToWorld([-0.3, rNormal()]),
-            this.getVelocity().mul(-rNormal(0.25, 0.1)),
+            this.getVelocity().imul(-rNormal(0.25, 0.1)),
             rUniform(0.05, 0.1),
             Layer.WORLD_BACK
           )
