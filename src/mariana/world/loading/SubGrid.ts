@@ -1,6 +1,6 @@
 import { TilePos } from "../TilePos";
 
-// A rectangular subsection of a grid
+/** A rectangular subsection of a grid */
 export class SubGrid implements Iterable<TilePos> {
   constructor(
     public x: number,

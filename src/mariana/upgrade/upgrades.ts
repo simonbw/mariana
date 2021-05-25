@@ -125,7 +125,7 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     name: "Double-Reinforced Dive Bell",
     description: "Allows dive bell to go down to 800m",
     cost: 2000,
-    prerequisites: ["diveBell"],
+    prerequisites: ["diveBellDepth1"],
   },
 };
 

@@ -21,13 +21,15 @@ export class Bubble extends BaseEntity implements Entity {
 
   constructor(
     position: V2d,
-    velocity: V2d = V(0, 0),
+    velocity?: V2d,
     private size: number = rNormal(0.22, 0.1),
     layerName: Layer = Layer.WORLD_FRONT
   ) {
     super();
 
-    this._velocity.set(velocity);
+    if (velocity) {
+      this._velocity.set(velocity);
+    }
 
     const sprite = (this.sprite = Sprite.from(img_bubble));
     sprite.position.set(...position);

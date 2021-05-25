@@ -102,7 +102,7 @@ Audio
    - Dive bell
      - activate (boot up sound)
      - deactivate (error sound)
-     - 
+     - Hit by harpoon
 
 
 

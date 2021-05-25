@@ -10,7 +10,7 @@ import { SonarPing } from "./SonarPing";
 import { getSonarMarkers } from "./SonarMarker";
 import { getWaves } from "../../environment/Waves";
 
-export const TIME_BETWEEN_PINGS = 1.5; // seconds
+export const TIME_BETWEEN_PINGS = 0.5; // seconds
 const SCREEN_SIZE = 160; // pixels
 const DISPLAY_RADIUS = 40; // meters
 

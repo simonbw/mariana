@@ -124,8 +124,16 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
   }
 
   onHarpooned(harpoon: Harpoon) {
+    // Use damage as a proxy for if it's moving fast enough to stick
     if (harpoon.getDamageAmount() > 0) {
       this.addChild(new DiveBellHarpoonConnection(this, harpoon));
+
+      this.game!.addEntity(
+        new SoundInstance(snd_metalHittingRock, {
+          gain: 0.4,
+          speed: rUniform(0.8, 1.0),
+        })
+      );
     }
   }
 

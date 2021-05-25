@@ -1,5 +1,5 @@
 import Grid from "../../../core/util/Grid";
-import { lerp, polarToVec } from "../../../core/util/MathUtil";
+import { clamp, lerp, polarToVec } from "../../../core/util/MathUtil";
 import { rUniform } from "../../../core/util/Random";
 import { TilePos } from "../../../core/util/TilePos";
 import { V, V2d } from "../../../core/Vector";
@@ -17,7 +17,7 @@ const MIN_SURFACE_Y_TILE_COORDS = 5;
 const MAX_SURFACE_Y_TILE_COORDS = 40;
 
 export default class GroundMap {
-  private solidMap: Grid<boolean> = new Grid();
+  private solidMap: BitGrid;
 
   surface = makeTurbulence1D({
     octaves: 3,
@@ -42,6 +42,8 @@ export default class GroundMap {
     public maxY: number
   ) {
     console.time("ground generation");
+
+    this.solidMap = new BitGrid(minX - 1, -1, maxX + 1, maxY + 1);
     this.generateSurface();
     this.generateCaves();
     this.generateTunnels();
@@ -49,8 +51,7 @@ export default class GroundMap {
     console.timeEnd("ground generation");
   }
 
-  public tileIsSolid(tilePos: TilePos): boolean {
-    const [x, y] = tilePos;
+  public tileIsSolid([x, y]: TilePos): boolean {
     if (x < this.minX) {
       return true;
     } else if (x >= this.maxX) {
@@ -58,7 +59,7 @@ export default class GroundMap {
     } else if (y >= this.maxY) {
       return true;
     }
-    return this.solidMap.get(tilePos) ?? false;
+    return this.solidMap.get(x, y) ?? false;
   }
 
   getHighestTile(x: number): number {
@@ -110,7 +111,7 @@ export default class GroundMap {
         )
       );
       for (let y = minY; y < this.maxY; y++) {
-        this.solidMap.set([x, y], true);
+        this.solidMap.set(x, y, true);
       }
     }
   }
@@ -136,7 +137,7 @@ export default class GroundMap {
         strengthGrid.set([x, y], strength);
 
         if (strength < -0.2) {
-          this.solidMap.set([x, y], false);
+          this.solidMap.set(x, y, false);
         }
       }
     }
@@ -241,15 +242,15 @@ export default class GroundMap {
     const cx = Math.round(p.x / TILE_SIZE_METERS);
     const cy = Math.round(p.y / TILE_SIZE_METERS);
     const rCeil = Math.ceil(r / TILE_SIZE_METERS);
-    for (let i = cx - rCeil; i < cx + rCeil; i++) {
-      for (let j = cy - rCeil; j < cy + rCeil; j++) {
+    for (let x = cx - rCeil; x < cx + rCeil; x++) {
+      for (let y = cy - rCeil; y < cy + rCeil; y++) {
         if (
-          V(cx, cy).isub([i, j]).magnitude < r &&
-          i > this.minX + 5 &&
-          i < this.maxX - 5 &&
-          j < this.maxY - 5
+          V(cx, cy).isub([x, y]).magnitude < r &&
+          x > this.minX + 5 &&
+          x < this.maxX - 5 &&
+          y < this.maxY - 5
         ) {
-          this.solidMap.set([i, j], false);
+          this.solidMap.set(x, y, false);
         }
       }
     }
@@ -257,11 +258,40 @@ export default class GroundMap {
 }
 
 class BitGrid {
-  data = new Uint16Array();
+  data: boolean[];
+  width: number;
+  height: number;
+  size: number;
 
-  constructor(minX: number, minY: number, maxX: number, maxY: number) {
-    const width = maxX - minX;
-    const height = maxY - minY;
-    const size = width * height;
+  constructor(
+    public minX: number,
+    public minY: number,
+    public maxX: number,
+    public maxY: number
+  ) {
+    this.width = maxX - minX;
+    this.height = maxY - minY;
+    this.size = this.width * this.height;
+
+    this.data = [];
+    for (let i = 0; i < this.size; i++) {
+      this.data.push(false);
+    }
+  }
+
+  private getIndex(x: number, y: number): number {
+    const gx = clamp(x, this.minX, this.maxX) - this.minX;
+    const gy = clamp(y, this.minY, this.maxY) - this.minY;
+    return gy * this.width + gx;
+  }
+
+  get(x: number, y: number): boolean {
+    const index = this.getIndex(x, y);
+    return this.data[index];
+  }
+
+  set(x: number, y: number, value: boolean) {
+    const index = this.getIndex(x, y);
+    this.data[index] = value;
   }
 }

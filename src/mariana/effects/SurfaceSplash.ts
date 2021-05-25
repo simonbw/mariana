@@ -15,10 +15,14 @@ const GRAVITY = 9.8;
 export class SplashParticle extends BaseEntity implements Entity {
   constructor(
     position: V2d,
-    private velocity: V2d = V(0, 0),
+    velocity?: V2d,
     private size: number = rUniform(0.06, 0.18)
   ) {
     super();
+
+    if (velocity) {
+      this._velocity.set(velocity);
+    }
 
     const sprite = (this.sprite = Sprite.from(img_waterSplash));
     sprite.position.set(position[0], position[1]);
@@ -42,11 +46,11 @@ export class SplashParticle extends BaseEntity implements Entity {
     const waves = getWaves(this.game!);
     const sprite = this.sprite! as Sprite;
 
-    this.velocity.imul(Math.exp(-dt * FRICTION));
-    this.velocity.iadd([0, GRAVITY * dt]);
+    this._velocity.imul(Math.exp(-dt * FRICTION));
+    this._velocity.iadd([0, GRAVITY * dt]);
 
-    sprite.x += dt * this.velocity[0];
-    sprite.y += dt * this.velocity[1];
+    sprite.x += dt * this._velocity[0];
+    sprite.y += dt * this._velocity[1];
 
     sprite.scale.set(this.size / sprite.texture.width);
     // sprite.tint = colorLerp(sprite.tint, 0xffffff, clamp(dt * 4));
@@ -72,12 +76,13 @@ export class SurfaceSplash extends BaseEntity implements Entity {
     for (let i = 0; i < n; i++) {
       const x = rUniform(-0.3, 0.3) + this.x;
       const y = waves.getSurfaceHeight(x);
-      const theta = waves.getSurfaceAngle(x);
-      const velocity = polarToVec(
-        rUniform(-Math.PI, Math.PI) + theta,
-        rUniform(0.5, 1) * this.speed
+      const surfaceAngle = waves.getSurfaceAngle(x);
+      polarToVec(
+        rUniform(-Math.PI, Math.PI) + surfaceAngle,
+        rUniform(0.5, 1) * this.speed,
+        this._velocity
       );
-      game!.addEntity(new SplashParticle(V(x, y), velocity));
+      game!.addEntity(new SplashParticle(V(x, y), this._velocity));
     }
   }
 

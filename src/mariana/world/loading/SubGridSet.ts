@@ -17,6 +17,7 @@ export default class SubGridSet implements Iterable<TilePos> {
     return this.values();
   }
 
+  // TODO: Try without a generator
   *values(): Iterator<TilePos> {
     for (let i = 0; i < this.data.length; i++) {
       const subGrid = this.data[i];
