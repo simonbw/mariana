@@ -1,16 +1,15 @@
-import { NoiseFilter } from "@pixi/filter-noise";
-import { BlurFilter } from "@pixi/filter-blur";
 import { Graphics, Sprite } from "pixi.js";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../../core/entity/Entity";
-import { V2d } from "../../../core/Vector";
+import { clamp } from "../../../core/util/MathUtil";
+import { V, V2d } from "../../../core/Vector";
 import { Layer } from "../../config/layers";
 import { getDiver } from "../../diver/Diver";
-import { SonarPing } from "./SonarPing";
-import { getSonarMarkers } from "./SonarMarker";
 import { getWaves } from "../../environment/Waves";
+import { getSonarMarkers } from "./SonarMarker";
+import { SonarPing } from "./SonarPing";
 
-export const TIME_BETWEEN_PINGS = 0.5; // seconds
+export const TIME_BETWEEN_PINGS = 1.0; // seconds
 const SCREEN_SIZE = 160; // pixels
 const DISPLAY_RADIUS = 40; // meters
 
@@ -61,9 +60,10 @@ export class Sonar extends BaseEntity implements Entity {
     this.surface.lineTo(1000, 0);
     this.translationContainer.addChild(this.surface);
 
+    const rimWidth = 2.0;
     const rim = new Graphics();
-    rim.lineStyle({ width: 2.0, color: 0x666666 });
-    rim.drawCircle(0, 0, DISPLAY_RADIUS);
+    rim.lineStyle({ width: rimWidth, color: 0x666666 });
+    rim.drawCircle(0, 0, DISPLAY_RADIUS + rimWidth * 0.49);
     this.sprite.addChild(rim);
 
     // TODO: DiveBell marker
@@ -92,15 +92,20 @@ export class Sonar extends BaseEntity implements Entity {
     this.translationContainer.addChild(ping.sonarSprite);
   }
 
+  private _markerDisplacement = V(0, 0);
   onRender(dt: number) {
     const camera = this.game!.camera;
     this.translationContainer.position.set(-camera.x, -camera.y);
 
     this.markers.clear();
     const markers = getSonarMarkers(this.game!)!;
+    const d = this._markerDisplacement;
     for (const marker of markers) {
+      d.set(marker.getPosition()).isub(camera.position);
+      d.magnitude = clamp(d.magnitude, 0, DISPLAY_RADIUS);
+      d.iadd(camera.position);
+      const [x, y] = d;
       this.markers.beginFill(marker.color);
-      const [x, y] = marker.getPosition();
       this.markers.drawCircle(x, y, marker.blipSize);
       this.markers.endFill();
     }

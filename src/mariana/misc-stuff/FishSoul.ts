@@ -1,57 +1,26 @@
 import { Body, Particle } from "p2";
-import { AnimatedSprite, Texture } from "pixi.js";
 import snd_bellPositive1 from "../../../resources/audio/ui/bell_positive_1.flac";
 import snd_bellPositive2 from "../../../resources/audio/ui/bell_positive_2.flac";
-import img_pickup1 from "../../../resources/images/particles/pickup-1.png";
-import img_pickup2 from "../../../resources/images/particles/pickup-2.png";
-import img_pickup3 from "../../../resources/images/particles/pickup-3.png";
-import img_pickup4 from "../../../resources/images/particles/pickup-4.png";
-import img_pickup5 from "../../../resources/images/particles/pickup-5.png";
-import img_pickup6 from "../../../resources/images/particles/pickup-6.png";
-import img_pickup7 from "../../../resources/images/particles/pickup-7.png";
 import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
+import Entity from "../../core/entity/Entity";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { rBool, rInteger, rNormal, rRound } from "../../core/util/Random";
-import { V, V2d } from "../../core/Vector";
+import { V2d } from "../../core/Vector";
 import { CollisionGroups } from "../config/CollisionGroups";
-import { Layer } from "../config/layers";
 import { Diver, getDiver } from "../diver/Diver";
-import { PointLight } from "../lighting/PointLight";
 import { getUpgradeManager } from "../upgrade/UpgradeManager";
+import { FishSoulSprite } from "./FishSoulSprite";
 
 const MAGNET_FORCE = 5;
 const GRAVITY = 3; // meters / sec^2
 const FRICTION = 2; // meters / sec^2
-const GLOW_PERIOD = 1; // seconds
 
 export class FishSoul extends BaseEntity implements Entity {
-  sprite: AnimatedSprite & GameSprite;
   body: Body;
-  light: PointLight;
-
-  t = Math.random();
+  soulSprite: FishSoulSprite;
 
   constructor(position: V2d, public value: number = 1) {
     super();
-
-    this.sprite = AnimatedSprite.fromImages([
-      img_pickup1,
-      img_pickup2,
-      img_pickup3,
-      img_pickup4,
-      img_pickup5,
-      img_pickup6,
-      img_pickup7,
-    ]);
-
-    this.sprite.tint = 0xddff99;
-    this.sprite.alpha = 0.7;
-    this.sprite.layerName = Layer.GLOW;
-
-    this.sprite.anchor.set(0.5);
-    this.sprite.width = this.sprite.height = 0.5 + Math.sqrt(value) * 0.1;
-    this.sprite.animationSpeed = 8;
 
     this.body = new Body({ mass: 0.01, fixedRotation: true, position });
     this.body.addShape(
@@ -60,13 +29,7 @@ export class FishSoul extends BaseEntity implements Entity {
       })
     );
 
-    this.light = this.addChild(
-      new PointLight({
-        position: this.getPosition(),
-        size: 2,
-        color: 0xaaffaa,
-      })
-    );
+    this.soulSprite = this.addChild(new FishSoulSprite(value));
   }
 
   getMagnetRadius() {
@@ -77,13 +40,11 @@ export class FishSoul extends BaseEntity implements Entity {
     }
   }
 
-  // TODO: Don't allocate
-  onTick(dt: number) {
-    this.t = (this.t + dt / GLOW_PERIOD) % 1;
-
-    this.body.applyForce([0, GRAVITY * this.body!.mass]);
+  onTick() {
     this.body.applyForce(
-      V(this.body.velocity).imul(-FRICTION * this.body.mass)
+      this.getVelocity()
+        .imul(-FRICTION * this.body.mass)
+        .iadd([0, GRAVITY * this.body.mass])
     );
 
     const diver = getDiver(this.game);
@@ -111,19 +72,11 @@ export class FishSoul extends BaseEntity implements Entity {
   }
 
   onRender() {
-    this.sprite.position.set(...this.body.position);
-
-    const textures = this.sprite.textures;
-    this.sprite.texture = textures[
-      Math.floor(this.t * textures.length)
-    ] as Texture;
-
-    this.light.setPosition(this.body.position);
-    this.light.intensity = 0.12 + 0.03 * Math.sin(this.t * 2 * Math.PI);
+    this.soulSprite.setPosition(this.getPosition());
   }
 }
 
-// Make a cluster of drops
+/** Make a cluster of drops */
 export function makeSoulDrops(position: V2d, value: number = 1): FishSoul[] {
   const pickups: FishSoul[] = [];
   let valueRemaining = rRound(value);

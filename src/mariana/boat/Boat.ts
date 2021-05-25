@@ -1,4 +1,3 @@
-import { vec2 } from "p2";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
@@ -13,6 +12,7 @@ import { getUpgradeManager } from "../upgrade/UpgradeManager";
 import { UpgradeId } from "../upgrade/upgrades";
 import { BoatSprite } from "./BoatSprite";
 import { DiveBell } from "./dive-bell/DiveBell";
+import { SoulDepot } from "./SoulDepot";
 
 const SHOP_RANGE = 7;
 const DROPOFF_RANGE = 9;
@@ -24,6 +24,7 @@ export class Boat extends BaseEntity implements Entity {
   id = "boat";
   boatSprite: BoatSprite;
   x: number = 0;
+  soulDepot: SoulDepot;
 
   constructor() {
     super();
@@ -34,6 +35,8 @@ export class Boat extends BaseEntity implements Entity {
         blipSize: 3,
       })
     );
+
+    this.soulDepot = this.addChild(new SoulDepot(DROPOFF_RANGE));
   }
 
   onAdd(game: Game) {
@@ -56,12 +59,7 @@ export class Boat extends BaseEntity implements Entity {
     ).iadd(this.getPosition());
   }
 
-  private _dropoffPosition = V(0, 0);
-  getDropoffPosition() {
-    return this._dropoffPosition.set(this.getPosition()).iadd([0, -1]);
-  }
-
-  diverIsPresent() {
+  diverIsNear() {
     const diver = getDiver(this.game);
     if (!diver) {
       return false;
@@ -72,32 +70,29 @@ export class Boat extends BaseEntity implements Entity {
     return yDistance < SHOP_DEPTH && xDistance < SHOP_RANGE;
   }
 
-  diverWithinDropoffRange() {
-    const diver = getDiver(this.game);
-    if (!diver) {
-      return false;
-    }
-
-    const distance = vec2.dist(diver.getPosition(), this.getDropoffPosition());
-    return distance < DROPOFF_RANGE;
-  }
-
-  openShopIfDiverPresent() {
-    if (this.diverIsPresent()) {
+  openShopIfDiverNear() {
+    if (this.diverIsNear()) {
       this.game?.dispatch({ type: "openShop" });
     }
   }
 
   onKeyDown(key: KeyCode) {
     if (key === "KeyE") {
-      this.openShopIfDiverPresent();
+      this.openShopIfDiverNear();
     }
   }
 
   onButtonDown(button: ControllerButton) {
     if (button === ControllerButton.Y) {
-      this.openShopIfDiverPresent();
+      this.openShopIfDiverNear();
     }
+  }
+
+  private _dropoffPosition = V(0, 0);
+  onTick() {
+    this.soulDepot.setPosition(
+      this._dropoffPosition.set(this.getPosition()).iadd([0, -1])
+    );
   }
 
   handlers = {

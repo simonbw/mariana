@@ -1,7 +1,7 @@
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
-import { Boat } from "../boat/Boat";
 import { FishSoulTransfer } from "../boat/FishSoulTransfer";
+import { SoulDepot } from "../boat/SoulDepot";
 import { makeSoulDrops } from "../misc-stuff/FishSoul";
 import { Diver } from "./Diver";
 
@@ -12,30 +12,14 @@ export class Inventory extends BaseEntity implements Entity {
     super();
   }
 
-  onTick(dt: number) {
-    const boat = this.game!.entities.getById("boat") as Boat;
-
-    if (
-      boat.diverWithinDropoffRange() &&
-      this.fishSouls > 0 &&
-      this.game!.ticknumber % 4 === 0
-    ) {
-      this.transferSouls(Math.ceil(this.fishSouls / 100));
+  /** Creates FishSoulTransfers */
+  transferSouls(depositPoint: SoulDepot) {
+    const value = Math.ceil(this.fishSouls / 20);
+    if (value > 0) {
+      const position = this.diver.getPosition();
+      this.game!.addEntity(new FishSoulTransfer(position, depositPoint, value));
+      this.fishSouls -= value;
     }
-
-    if (
-      process.env.NODE_ENV === "development" &&
-      this.game!.io.keyIsDown("KeyF")
-    ) {
-      this.fishSouls += this.game!.io.keyIsDown("ShiftLeft") ? 100 : 1;
-    }
-  }
-
-  transferSouls(value: number) {
-    this.game!.addEntity(
-      new FishSoulTransfer(this.diver.getPosition().clone(), value)
-    );
-    this.fishSouls -= value;
   }
 
   handlers = {

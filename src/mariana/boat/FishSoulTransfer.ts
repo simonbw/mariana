@@ -1,68 +1,56 @@
-import { AnimatedSprite } from "pixi.js";
 import snd_bellPositive2 from "../../../resources/audio/ui/bell_positive_2.flac";
-import img_pickup1 from "../../../resources/images/particles/pickup-1.png";
-import img_pickup2 from "../../../resources/images/particles/pickup-2.png";
-import img_pickup3 from "../../../resources/images/particles/pickup-3.png";
-import img_pickup4 from "../../../resources/images/particles/pickup-4.png";
-import img_pickup5 from "../../../resources/images/particles/pickup-5.png";
-import img_pickup6 from "../../../resources/images/particles/pickup-6.png";
-import img_pickup7 from "../../../resources/images/particles/pickup-7.png";
 import BaseEntity from "../../core/entity/BaseEntity";
-import Entity, { GameSprite } from "../../core/entity/Entity";
+import Entity from "../../core/entity/Entity";
 import Game from "../../core/Game";
 import { SoundInstance } from "../../core/sound/SoundInstance";
 import { smoothStep } from "../../core/util/MathUtil";
 import { V, V2d } from "../../core/Vector";
-import { Layer } from "../config/layers";
-import { Boat } from "./Boat";
+import { FishSoulSprite } from "../misc-stuff/FishSoulSprite";
+import { SoulDepot } from "./SoulDepot";
+
+const TRANSFER_TIME = 1.0;
 
 export class FishSoulTransfer extends BaseEntity implements Entity {
   persistenceLevel = 1; // so they stay even when the menu is opened
-  velocity = V(0, 0);
-  sprite: AnimatedSprite & GameSprite;
+  soulSprite: FishSoulSprite;
+  startPosition: V2d;
 
-  constructor(public startPosition: V2d, public amount: number = 1) {
+  constructor(
+    startPosition: V2d,
+    public depot: SoulDepot,
+    public amount: number = 1,
+    public onComplete?: () => void
+  ) {
     super();
-
-    this.sprite = AnimatedSprite.fromImages([
-      img_pickup1,
-      img_pickup2,
-      img_pickup3,
-      img_pickup4,
-      img_pickup5,
-      img_pickup6,
-      img_pickup7,
-    ]);
-
-    this.sprite.anchor.set(0.5);
-    this.sprite.width = this.sprite.height = 0.5 + Math.sqrt(amount) * 0.1;
-    this.sprite.tint = 0xddff99;
-    this.sprite.alpha = 0.7;
-    this.sprite.layerName = Layer.GLOW;
-
-    this.sprite.animationSpeed = 8;
-    this.sprite.autoUpdate = false;
-    this.sprite.play();
+    this.soulSprite = this.addChild(new FishSoulSprite(amount));
+    this.startPosition = startPosition.clone();
   }
 
   async onAdd(game: Game) {
-    const boat = game.entities.getById("boat") as Boat;
-
     const p = V(0, 0);
-    await this.wait(1.0, (dt, t) => {
+    await this.wait(TRANSFER_TIME, (dt, t) => {
       p.set(this.startPosition).ilerp(
-        boat.getDropoffPosition(),
+        this.depot.getPosition(),
         smoothStep(t ** 2)
       );
-      this.sprite?.position.set(...p);
+      this.soulSprite.setPosition(p);
     });
 
-    game.dispatch({ type: "depositSouls", amount: this.amount });
+    game.dispatch(depositSoulsEvent(this.amount, this.depot));
     game.addEntity(new SoundInstance(snd_bellPositive2, { gain: 0.05 }));
     this.destroy();
   }
+}
 
-  onRender(dt: number) {
-    this.sprite.update(dt);
-  }
+export interface DepositSoulsEvent {
+  type: "depositSouls";
+  amount: number;
+  depot: SoulDepot;
+}
+
+function depositSoulsEvent(
+  amount: number,
+  depot: SoulDepot
+): DepositSoulsEvent {
+  return { type: "depositSouls", amount, depot };
 }

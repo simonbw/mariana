@@ -100,12 +100,6 @@ export class OxygenManager extends BaseEntity implements Entity {
     if (this.diver.isSurfaced()) {
       this.giveOxygen(dt * this.getFillRate());
     }
-    if (
-      this.game?.io.keyIsDown("KeyV") &&
-      process.env.NODE_ENV === "development"
-    ) {
-      this.giveOxygen(dt * this.getFillRate());
-    }
 
     if (this.currentOxygen <= 0) {
       this.suffocationPercent = stepToward(

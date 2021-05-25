@@ -53,8 +53,6 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new FishCounter(diver));
       game.addEntity(new Sonar());
 
-      // HACKY STUFF GOES HERE
-
       game.dispatch({ type: "diveStart" });
     },
 
@@ -80,6 +78,7 @@ export class GameController extends BaseEntity implements Entity {
     victory: async () => {
       const diver = getDiver(this.game);
 
+      // TODO: This is all bad
       // hacky way to make sure we don't die...
       diver?.air.giveOxygen(10000);
       for (const fish of this.game!.entities.getByFilter(isFish)) {

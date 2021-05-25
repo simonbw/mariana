@@ -13,21 +13,23 @@ import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
 import { getWaves } from "../../environment/Waves";
 import { SonarMarker } from "../../hud/sonar/SonarMarker";
-import { SonarTarget } from "../../hud/sonar/SonarTarget";
 import { GroundTile } from "../../plants/GroundTile";
 import { getUpgradeManager } from "../../upgrade/UpgradeManager";
 import { Boat } from "../Boat";
+import { SoulDepot } from "../SoulDepot";
 import DiveBellHarpoonConnection from "./DiveBellHarpoonConnection";
 import { DiveBellPhysics } from "./DiveBellPhysics";
 import { DiveBellSprite } from "./DiveBellSprite";
 import { DiveBellTether } from "./DiveBellTether";
 
 export const DIVE_BELL_RADIUS = 1;
+const DROPOFF_RANGE = 5;
 
 /** Provides the diver with oxygen */
 export class DiveBell extends BaseEntity implements Entity, Harpoonable {
   id = "diveBell";
   body: Body;
+  soulDepot: SoulDepot;
 
   constructor(position: V2d, boat: Boat) {
     super();
@@ -55,7 +57,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     );
 
     this.addChild(new DiveBellSprite(this));
-    this.addChild(new DiveBellTether(this, boat));
+    const tether = this.addChild(new DiveBellTether(this, boat));
     this.addChild(new DiveBellPhysics(this));
     this.addChild(
       new SonarMarker(() => this.getPosition(), {
@@ -63,10 +65,8 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
         blipSize: 1.4,
       })
     );
-  }
 
-  getFillRate() {
-    return 10;
+    this.soulDepot = this.addChild(new SoulDepot(DROPOFF_RANGE));
   }
 
   onTick(dt: number) {
@@ -75,7 +75,7 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
       // TODO: Check distance to head
       const distance = vec2.distance(diver.getPosition(), this.getPosition());
       if (distance < DIVE_BELL_RADIUS + 2) {
-        diver.air.giveOxygen(dt * this.getFillRate());
+        diver.air.giveOxygen(dt * diver.air.getFillRate());
       }
     }
   }
@@ -121,6 +121,9 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
         )
       );
     }
+
+    this.soulDepot.setPosition(this.getPosition());
+    this.soulDepot.enabled = this.isActive();
   }
 
   onHarpooned(harpoon: Harpoon) {

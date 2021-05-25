@@ -67,7 +67,7 @@ export class BoatSprite extends BaseEntity implements Entity {
 
     this.tooltip.alpha = lerp(
       this.tooltip.alpha,
-      this.boat.diverIsPresent() ? 1 : 0,
+      this.boat.diverIsNear() ? 1 : 0,
       dt * TOOLTIP_SPEED
     );
 

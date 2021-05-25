@@ -10,6 +10,7 @@ import { AudioMixer } from "./audio/AudioMixer";
 import { getFontsToPreload } from "./config/fonts";
 import { initLayers, Layer } from "./config/layers";
 import { initContactMaterials } from "./config/PhysicsMaterials";
+import { CheatController } from "./controllers/CheatController";
 import { GameController } from "./controllers/GameController";
 import { GraphicsQualityController } from "./controllers/GraphicsQualityController";
 import VolumeController from "./controllers/VolumeController";
@@ -81,6 +82,7 @@ export async function main() {
   // Add dev tools
   if (process.env.NODE_ENV === "development") {
     game.addEntity(new FPSMeter(Layer.DEBUG_INFO));
+    game.addEntity(new CheatController());
   }
 
   game.dispatch({ type: "newGame" });

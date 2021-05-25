@@ -1,4 +1,3 @@
-import { CRTFilter } from "@pixi/filter-crt";
 import { vec2 } from "p2";
 import { Graphics } from "pixi.js";
 import BaseEntity from "../../../core/entity/BaseEntity";
@@ -10,7 +9,7 @@ import { getWorldMap } from "../../world/WorldMap";
 import { PingParticle } from "./Sonar";
 import { getSonarTargets, SonarTarget } from "./SonarTarget";
 
-const PING_PARTICLES = 128;
+const PING_PARTICLES = 180;
 const PING_SPEED = 60.0; // m/s
 const PING_LIFESPAN = 2; // seconds
 
