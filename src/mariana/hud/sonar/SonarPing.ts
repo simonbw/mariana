@@ -115,20 +115,13 @@ export class SonarPing extends BaseEntity implements Entity {
       }
 
       this.sonarSprite.lineStyle({
-        width: isSolid ? 0.3 : 0.2,
+        width: isSolid ? 0.5 : 0.2,
         color: isSolid ? 0x00ff00 : 0x00ff00,
         alpha,
       });
       this.sonarSprite.lineTo(x, y);
 
       // if (ping.stopped) {
-      //   this.sonarSprite.lineStyle();
-      //   this.sonarSprite.beginFill(0x00ff00, 0.3);
-      //   this.sonarSprite.drawCircle(x, y, 0.7);
-      //   this.sonarSprite.endFill();
-      //   this.sonarSprite.beginFill(0x00ff00, 0.3);
-      //   this.sonarSprite.drawCircle(x, y, 0.4);
-      //   this.sonarSprite.endFill();
       //   this.sonarSprite.beginFill(0x00ff00, 0.3);
       //   this.sonarSprite.drawCircle(x, y, 0.2);
       //   this.sonarSprite.endFill();

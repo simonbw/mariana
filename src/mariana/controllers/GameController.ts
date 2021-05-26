@@ -1,3 +1,4 @@
+import snd_dialogHelmetUgh from "../../../resources/audio/dialog/dialog_helmet_ugh.flac";
 import snd_musicalNope from "../../../resources/audio/ui/musical_nope.flac";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
@@ -70,9 +71,9 @@ export class GameController extends BaseEntity implements Entity {
     },
 
     diverDied: async () => {
-      this.game?.addEntity(new SoundInstance(snd_musicalNope));
+      this.game!.addEntity(new SoundInstance(snd_dialogHelmetUgh));
       await this.wait(3.0);
-      this.game?.dispatch({ type: "diveStart" });
+      this.game!.dispatch({ type: "diveStart" });
     },
 
     victory: async () => {

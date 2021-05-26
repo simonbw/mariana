@@ -17,7 +17,7 @@ export default class ContactList {
 
   beginContact(contactInfo: ContactInfoWithEquations) {
     if (shouldTrack(contactInfo)) {
-      this.contacts.push(contactInfo);
+      this.contacts.push({ ...contactInfo });
     }
   }
 

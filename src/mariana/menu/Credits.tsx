@@ -28,6 +28,7 @@ export function Credits() {
         <h2>Sound</h2>
         <span>Jiaaro</span>
         <span>Simon</span>
+        <span>Zapsplat.com</span>
 
         <h2>Music</h2>
         <span>Jiaaro</span>

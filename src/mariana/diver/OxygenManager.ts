@@ -41,6 +41,10 @@ export class OxygenManager extends BaseEntity implements Entity {
     diverHurt: ({ amount }: { amount: number }) => {
       this.useOxygen(amount / 2);
     },
+
+    diveStart: () => {
+      this.currentOxygen = this.getMaxOxygen();
+    },
   };
 
   getMaxOxygen(): number {
@@ -82,6 +86,7 @@ export class OxygenManager extends BaseEntity implements Entity {
 
   onTick(dt: number) {
     // Bleed oxygen for no apparent reason
+    // TODO: This isn't the best place to check for keydown
     if (this.game?.io.keyIsDown("KeyB")) {
       this.useOxygen(dt * 40);
       if (rBool(0.5) && this.currentOxygen > 0) {

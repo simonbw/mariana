@@ -1,4 +1,4 @@
-import { SCALE_MODES, Sprite, Text } from "pixi.js";
+import { Graphics, SCALE_MODES, Sprite, Text } from "pixi.js";
 import img_diveWatchBack from "../../../resources/images/ui/dive-watch-back.png";
 import img_diveWatchNeedle from "../../../resources/images/ui/dive-watch-needle.png";
 import BaseEntity from "../../core/entity/BaseEntity";
@@ -27,6 +27,8 @@ export class DiveWatch extends BaseEntity implements Entity {
   depthNeedleSprite: Sprite;
   faceSprite: Sprite;
   depthText: Text;
+  healthBar: Graphics;
+  healthBarBack: Graphics;
 
   constructor(private diver: Diver) {
     super();
@@ -58,7 +60,17 @@ export class DiveWatch extends BaseEntity implements Entity {
     this.depthText.anchor.set(0.5, 0.5);
     this.depthText.position.set(256, 310);
 
+    this.healthBarBack = new Graphics();
+    this.healthBarBack.lineStyle({ width: 12, color: 0x666666 });
+    this.healthBarBack.arc(0, 0, 40, -degToRad(180), 0);
+    this.healthBarBack.position.set(256, 166);
+
+    this.healthBar = new Graphics();
+    this.healthBar.position.set(256, 166);
+
     sprite.addChild(this.faceSprite);
+    sprite.addChild(this.healthBarBack);
+    sprite.addChild(this.healthBar);
     sprite.addChild(this.depthText);
     sprite.addChild(this.depthNeedleSprite);
     sprite.addChild(this.airNeedleSprite);
@@ -97,5 +109,12 @@ export class DiveWatch extends BaseEntity implements Entity {
       depthTargetAngle,
       clamp(dt * NEEDLE_SPEED)
     );
+
+    this.healthBar.clear();
+    const start = -degToRad(180);
+    const healthPercent = this.diver.health.hp / this.diver.health.maxHp;
+    const end = lerp(-degToRad(180), 0, healthPercent);
+    this.healthBar.lineStyle({ width: 12, color: 0x00cc00 });
+    this.healthBar.arc(0, 0, 40, start, end);
   }
 }

@@ -21,7 +21,6 @@ export function saveMoney(money: number) {
 
 export function loadPrerequisites(): Set<PrerequisiteId> {
   const rawValue = window.localStorage.getItem(UPGRADES_KEY) ?? "";
-  console.log("rawValue:", rawValue);
 
   const prerequisites = new Set<PrerequisiteId>();
 
@@ -37,7 +36,6 @@ export function loadPrerequisites(): Set<PrerequisiteId> {
 
 export function savePrerequisites(prerequisites: Iterable<PrerequisiteId>) {
   const value = [...prerequisites].join(",");
-  console.log("saving:", value);
   window.localStorage.setItem(UPGRADES_KEY, value);
 }
 

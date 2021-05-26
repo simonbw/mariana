@@ -11,10 +11,6 @@ export class MilestoneManager extends BaseEntity implements Entity {
     super();
   }
 
-  onAdd() {
-    console.log("milestonemanager added");
-  }
-
   onSlowTick() {
     const diver = getDiver(this.game!);
     const depth = diver?.getDepth() ?? 0;
@@ -32,7 +28,6 @@ export class MilestoneManager extends BaseEntity implements Entity {
 
   meetMilestone(milestoneId: MilestoneId) {
     if (!this.milestonesMet.has(milestoneId)) {
-      console.log(`milestone get: ${milestoneId}`);
       this.milestonesMet.add(milestoneId);
       this.game!.dispatch(milestoneEvent(milestoneId));
     }

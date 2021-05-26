@@ -37,7 +37,7 @@ export class Sonar extends BaseEntity implements Entity {
     this.screen.mask = mask;
 
     const background = new Graphics();
-    background.beginFill(0x0a0a0a);
+    background.beginFill(0x0d0d0d);
     background.drawCircle(0, 0, DISPLAY_RADIUS);
     background.endFill();
     this.screen.addChild(background);

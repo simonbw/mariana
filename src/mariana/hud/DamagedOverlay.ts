@@ -16,7 +16,7 @@ import frag_damageFilter from "./damage-filter.frag";
 export class DamagedOverlay extends BaseEntity implements Entity {
   persistenceLevel = 0;
   sprite: Container & GameSprite;
-  colorFilter: Pixi.Filter;
+  filter: Pixi.Filter;
 
   constructor() {
     super();
@@ -24,29 +24,30 @@ export class DamagedOverlay extends BaseEntity implements Entity {
     this.sprite = new Container();
     this.sprite.layerName = Layer.HUD;
 
-    this.colorFilter = new Pixi.Filter(undefined, frag_damageFilter, {
+    this.filter = new Pixi.Filter(undefined, frag_damageFilter, {
       healthPercent: 1.0,
+      airPercent: 1.0,
     });
   }
 
   onAdd(game: Game) {
-    this.colorFilter.resolution = getResolutionForGraphicsQuality(
+    this.filter.resolution = getResolutionForGraphicsQuality(
       getCurrentGraphicsQuality(game)
     );
-    game.renderer.addStageFilter(this.colorFilter);
+    game.renderer.addStageFilter(this.filter);
   }
 
   onDestroy(game: Game) {
-    game.renderer.removeStageFilter(this.colorFilter);
+    game.renderer.removeStageFilter(this.filter);
   }
 
   handlers = {
     diverHurt: ({ amount }: { amount: number }) => {
-      // this.flash(0x550011, 0, 0.4, 0.2);
+      this.flash(0x550011, 0, 0.4, 0.2);
     },
 
     graphicsQualityChanged: ({ quality }: { quality: GraphicsQuality }) => {
-      this.colorFilter.resolution = getResolutionForGraphicsQuality(quality);
+      this.filter.resolution = getResolutionForGraphicsQuality(quality);
     },
   };
 
@@ -57,18 +58,14 @@ export class DamagedOverlay extends BaseEntity implements Entity {
   onRender(dt: number) {
     const diver = this.getPlayer();
     if (diver && !diver.isDead) {
-      const old: number = this.colorFilter.uniforms.healthPercent;
-      const s = 1.0 - diver.air.suffocationPercent;
+      const old: number = this.filter.uniforms.healthPercent;
       const h = clamp(invLerp(0.0, 25.0, diver.health.hp));
-      const target = Math.min(s, h);
-      this.updateBaseline(lerp(old, target, clamp(dt * 5)));
+      this.filter.uniforms.healthPercent = lerp(old, h, clamp(dt * 5));
+      this.filter.uniforms.airPercent = 1.0 - diver.air.suffocationPercent;
     } else {
-      this.updateBaseline(0.0);
+      this.filter.uniforms.healthPercent = 0;
+      this.filter.uniforms.airPercent = 0;
     }
-  }
-
-  updateBaseline(healthPercent: number) {
-    this.colorFilter.uniforms.healthPercent = healthPercent;
   }
 
   makeOverlay(color: number = 0xff0000): Graphics {
