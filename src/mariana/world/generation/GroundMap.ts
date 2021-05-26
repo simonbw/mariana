@@ -1,5 +1,5 @@
 import Grid from "../../../core/util/Grid";
-import { clamp, lerp, polarToVec } from "../../../core/util/MathUtil";
+import { lerp, polarToVec } from "../../../core/util/MathUtil";
 import { rUniform } from "../../../core/util/Random";
 import { TilePos } from "../../../core/util/TilePos";
 import { V, V2d } from "../../../core/Vector";
@@ -9,6 +9,7 @@ import {
   WORLD_RIGHT_EDGE,
   WORLD_SIZE_METERS,
 } from "../../constants";
+import { DenseGrid } from "../../utils/DenseGrid";
 import { getTileType } from "../../utils/Tileset";
 import { makeTurbulence1D, makeTurbulence2D } from "./noise";
 
@@ -16,8 +17,9 @@ import { makeTurbulence1D, makeTurbulence2D } from "./noise";
 const MIN_SURFACE_Y_TILE_COORDS = 5;
 const MAX_SURFACE_Y_TILE_COORDS = 40;
 
+/** Keeps track of which tiles are solid and which aren't */
 export default class GroundMap {
-  private solidMap: BitGrid;
+  private solidMap: DenseGrid<boolean>;
 
   surface = makeTurbulence1D({
     octaves: 3,
@@ -43,7 +45,7 @@ export default class GroundMap {
   ) {
     console.time("ground generation");
 
-    this.solidMap = new BitGrid(minX - 1, -1, maxX + 1, maxY + 1);
+    this.solidMap = new DenseGrid(minX - 1, -1, maxX + 1, maxY + 1, false);
     this.generateSurface();
     this.generateCaves();
     this.generateTunnels();
@@ -59,7 +61,7 @@ export default class GroundMap {
     } else if (y >= this.maxY) {
       return true;
     }
-    return this.solidMap.get(x, y) ?? false;
+    return this.solidMap.get(x, y);
   }
 
   getHighestTile(x: number): number {
@@ -254,44 +256,5 @@ export default class GroundMap {
         }
       }
     }
-  }
-}
-
-class BitGrid {
-  data: boolean[];
-  width: number;
-  height: number;
-  size: number;
-
-  constructor(
-    public minX: number,
-    public minY: number,
-    public maxX: number,
-    public maxY: number
-  ) {
-    this.width = maxX - minX;
-    this.height = maxY - minY;
-    this.size = this.width * this.height;
-
-    this.data = [];
-    for (let i = 0; i < this.size; i++) {
-      this.data.push(false);
-    }
-  }
-
-  private getIndex(x: number, y: number): number {
-    const gx = clamp(x, this.minX, this.maxX) - this.minX;
-    const gy = clamp(y, this.minY, this.maxY) - this.minY;
-    return gy * this.width + gx;
-  }
-
-  get(x: number, y: number): boolean {
-    const index = this.getIndex(x, y);
-    return this.data[index];
-  }
-
-  set(x: number, y: number, value: boolean) {
-    const index = this.getIndex(x, y);
-    this.data[index] = value;
   }
 }

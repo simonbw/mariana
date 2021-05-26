@@ -38,8 +38,6 @@ export class WorldMap extends BaseEntity implements Entity {
 
     // Loaders
     this.groundLoader = this.addChild(new GroundLoader(this));
-
-    this.addChild(new Minimap(this));
   }
 
   onAdd(game: Game) {
@@ -93,24 +91,20 @@ export class WorldMap extends BaseEntity implements Entity {
     const lastFramesTiles: SubGridSet = this.tilesLoaded;
     const currentFramesTiles: SubGridSet = this.getAnchoredTiles();
 
-    for (const tile of currentFramesTiles) {
-      if (!lastFramesTiles.has(tile)) {
-        this.loadTile(tile as TilePos);
-      }
+    for (const tile of currentFramesTiles.difference(lastFramesTiles)) {
+      this.loadTile(tile as TilePos);
     }
 
-    for (const tile of lastFramesTiles) {
-      if (!currentFramesTiles.has(tile)) {
-        this.unloadTile(tile as TilePos);
-      }
+    for (const tile of lastFramesTiles.difference(currentFramesTiles)) {
+      this.unloadTile(tile as TilePos);
     }
 
     this.tilesLoaded = currentFramesTiles;
   }
 }
 
-export function getWorldMap(game?: Game): WorldMap | undefined {
-  return game?.entities.getById("worldMap") as WorldMap;
+export function getWorldMap(game: Game): WorldMap | undefined {
+  return game.entities.getById("worldMap") as WorldMap;
 }
 
 export function loadTileEventType(tilePos: TilePos) {

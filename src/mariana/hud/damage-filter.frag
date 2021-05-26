@@ -32,8 +32,9 @@ void main(void){
   // darken
   color = mix(color, vec3(0), vignetteAmount);
 
+  float grayPoint = 0.2;
   // Apply contrast
-  color = ((color.rgb - 0.5) * (1.0 + desaturateAmount * 0.35)) + 0.5;
+  color = ((color.rgb - grayPoint) * (1.0 + desaturateAmount * 0.50)) + grayPoint;
 
   gl_FragColor.rgb = color;
   gl_FragColor.a = originalColor.a;

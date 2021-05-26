@@ -2,12 +2,13 @@ import { Body, Circle, vec2 } from "p2";
 import snd_metalHittingRock from "../../../../resources/audio/impacts/metal_hitting_rock.flac";
 import BaseEntity from "../../../core/entity/BaseEntity";
 import Entity from "../../../core/entity/Entity";
+import { OnContactingParams } from "../../../core/entity/EntityPhysics";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
 import { clamp, invLerp } from "../../../core/util/MathUtil";
 import { rBool, rNormal, rUniform } from "../../../core/util/Random";
 import { V, V2d } from "../../../core/Vector";
 import { CollisionGroups } from "../../config/CollisionGroups";
-import { getDiver } from "../../diver/Diver";
+import { Diver } from "../../diver/Diver";
 import { Harpoon } from "../../diver/harpoon/Harpoon";
 import { Harpoonable } from "../../diver/harpoon/Harpoonable";
 import { Bubble } from "../../effects/Bubble";
@@ -55,6 +56,15 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
         collisionResponse: false,
       })
     );
+    // bigger one for giving air
+    this.body.addShape(
+      new Circle({
+        radius: DIVE_BELL_RADIUS * 1.5,
+        collisionGroup: CollisionGroups.World,
+        collisionMask: CollisionGroups.Diver,
+        collisionResponse: false,
+      })
+    );
 
     this.addChild(new DiveBellSprite(this));
     const tether = this.addChild(new DiveBellTether(this, boat));
@@ -67,17 +77,6 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
     );
 
     this.soulDepot = this.addChild(new SoulDepot(DROPOFF_RANGE));
-  }
-
-  onTick(dt: number) {
-    const diver = getDiver(this.game!);
-    if (diver && this.isActive()) {
-      // TODO: Check distance to head
-      const distance = vec2.distance(diver.getPosition(), this.getPosition());
-      if (distance < DIVE_BELL_RADIUS + 2) {
-        diver.air.giveOxygen(dt * diver.air.getFillRate());
-      }
-    }
   }
 
   /** Return the current depth in meters under the surface */
@@ -124,6 +123,16 @@ export class DiveBell extends BaseEntity implements Entity, Harpoonable {
 
     this.soulDepot.setPosition(this.getPosition());
     this.soulDepot.enabled = this.isActive();
+  }
+
+  onContacting({ other, dt }: OnContactingParams) {
+    if (other instanceof Diver && this.isActive()) {
+      const diver = other;
+      const distance = vec2.distance(diver.getPosition(), this.getPosition());
+      if (distance < DIVE_BELL_RADIUS + 2) {
+        diver.air.giveOxygen(dt * diver.air.getFillRate());
+      }
+    }
   }
 
   onHarpooned(harpoon: Harpoon) {

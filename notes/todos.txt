@@ -14,3 +14,4 @@ Easy Code Refactor-y Things
  [ ] Refactor getPosition() globally
  [ ] Global audio mixer
  [ ] Positional sounds
+ [ ] Refactor splash generator

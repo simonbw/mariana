@@ -2,7 +2,7 @@ import { Filter, Matrix, Sprite } from "pixi.js";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity from "../../core/entity/Entity";
 import { Layer } from "../config/layers";
-import { WORLD_BOTTOM, WORLD_SIZE_METERS } from "../constants";
+import { WORLD_SIZE_METERS } from "../constants";
 import { getWaves, Waves } from "../environment/Waves";
 import frag_background from "./background.frag";
 import { getTimeOfDay, TIME_UNIFORMS } from "./TimeOfDay";

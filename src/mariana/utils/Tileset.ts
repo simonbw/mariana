@@ -1,4 +1,3 @@
-import { settings as PixiTilemapSettings } from "@pixi/tilemap";
 import { BaseTexture, Rectangle, SCALE_MODES, Texture } from "pixi.js";
 import img_referenceTileset from "../../../resources/images/tiles/reference-tileset.png";
 import { makeBitfield } from "../../core/util/bitfield";
@@ -28,7 +27,7 @@ export class Tileset {
 
   constructor(
     imageUrl: string,
-    { tileSize = 64, columns = 3, rows = 6, gap = 1 }: Options = {}
+    { tileSize = 64, columns = 6, rows = 6, gap = 1 }: Options = {}
   ) {
     this.baseTexture = (getOrMakeTexture(imageUrl) as any) as BaseTexture;
 
@@ -48,21 +47,6 @@ export class Tileset {
   getTexture(i: number) {
     return this.tiles[i];
   }
-}
-
-let defaultTileset: Tileset | undefined = undefined;
-export function getDefaultTileset(): Tileset {
-  if (!defaultTileset) {
-    defaultTileset = new Tileset(img_referenceTileset, {
-      columns: 6,
-      rows: 6,
-      gap: 1,
-    });
-
-    PixiTilemapSettings.TEXTURES_PER_TILEMAP = 32;
-    PixiTilemapSettings.use32bitIndex = true;
-  }
-  return defaultTileset;
 }
 
 interface Neighbors {

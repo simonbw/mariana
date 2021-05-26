@@ -9,13 +9,13 @@ import FPSMeter from "../core/util/FPSMeter";
 import { AudioMixer } from "./audio/AudioMixer";
 import { getFontsToPreload } from "./config/fonts";
 import { initLayers, Layer } from "./config/layers";
+import { miscConfig } from "./config/miscConfig";
 import { initContactMaterials } from "./config/PhysicsMaterials";
 import { CheatController } from "./controllers/CheatController";
 import { GameController } from "./controllers/GameController";
 import { GraphicsQualityController } from "./controllers/GraphicsQualityController";
 import VolumeController from "./controllers/VolumeController";
 import { isFish } from "./fish/BaseFish";
-import { resetUpgradesAndMoney } from "./upgrade/persistence";
 
 // So we can attach stuff to the window
 declare global {
@@ -52,6 +52,9 @@ export async function main() {
   initLayers(game);
   // Configure physics materials
   initContactMaterials(game);
+
+  // who knows
+  miscConfig();
 
   // Start the event loop
   game.start();

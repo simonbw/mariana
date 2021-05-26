@@ -6,10 +6,10 @@ import Entity from "../../core/entity/Entity";
 import { ControllerButton } from "../../core/io/Gamepad";
 import { KeyCode } from "../../core/io/Keys";
 import { SoundInstance } from "../../core/sound/SoundInstance";
-import { ReactEntity } from "../menu/ReactEntity";
-import { resetUpgradesAndMoney } from "./persistence";
-import { getUpgradeManager, UpgradeManager } from "./UpgradeManager";
-import { getUpgrade, UpgradeId } from "./upgrades";
+import { ReactEntity } from "./ReactEntity";
+import { resetUpgradesAndMoney } from "../upgrade/persistence";
+import { getUpgradeManager, UpgradeManager } from "../upgrade/UpgradeManager";
+import { getUpgradeById, UpgradeId } from "../upgrade/upgrades";
 import "./UpgradeShop.css";
 
 // TODO: Gamepad support
@@ -97,7 +97,7 @@ function UpgradeShopView({
       <h1>Upgrades</h1>
       <div className="UpgradeButtons">
         {availableUpgrades.map((upgradeId) => {
-          const upgrade = getUpgrade(upgradeId);
+          const upgrade = getUpgradeById(upgradeId);
           const affordable = upgradeManager.canAffordUpgrade(upgradeId);
           return (
             <div
@@ -122,8 +122,8 @@ function UpgradeShopView({
         <div className="PurchasedUpgrades">
           Purchased:{" "}
           {purchasedUpgrades.map((upgradeId) => (
-            <span title={getUpgrade(upgradeId).description} key={upgradeId}>
-              {getUpgrade(upgradeId).name}
+            <span title={getUpgradeById(upgradeId).description} key={upgradeId}>
+              {getUpgradeById(upgradeId).name}
             </span>
           ))}
         </div>

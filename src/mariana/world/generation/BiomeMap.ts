@@ -1,27 +1,55 @@
-export enum Biome {
-  Surface,
-  Layer1,
-  Layer2,
-  Layer3,
-  Bottom,
+import Grid from "../../../core/util/Grid";
+import { Tileset } from "../../utils/Tileset";
+import { TilePos } from "../TilePos";
+import {
+  getSandTileset1,
+  getStoneTileset1,
+  getStoneTileset2,
+  getStoneTileset3,
+} from "../tilesets";
+
+interface Biome {
+  tileset: Tileset;
 }
 
-const BIOMES = Object.keys(Biome);
-
 export default class BiomeMap {
-  constructor(public minX: number, public maxX: number, public maxY: number) {}
+  biomes: Grid<Biome> = new Grid();
 
-  getBiome([x, y]: [number, number]): Biome {
+  surface: Biome;
+  layer1: Biome;
+  layer2: Biome;
+  layer3: Biome;
+  bottom: Biome;
+
+  constructor(public minX: number, public maxX: number, public maxY: number) {
+    this.surface = {
+      tileset: getSandTileset1(),
+    };
+    this.layer1 = {
+      tileset: getStoneTileset1(),
+    };
+    this.layer2 = {
+      tileset: getStoneTileset2(),
+    };
+    this.layer3 = {
+      tileset: getStoneTileset3(),
+    };
+    this.bottom = {
+      tileset: getStoneTileset3(),
+    };
+  }
+
+  getBiome([x, y]: TilePos): Biome {
     if (y < 40) {
-      return Biome.Surface;
-    } else if (y < 80) {
-      return Biome.Layer1;
-    } else if (y < 120) {
-      return Biome.Layer2;
-    } else if (y < 160) {
-      return Biome.Layer3;
+      return this.surface;
+    } else if (y < 140) {
+      return this.layer1;
+    } else if (y < 240) {
+      return this.layer2;
+    } else if (y < 340) {
+      return this.layer3;
     } else {
-      return Biome.Bottom;
+      return this.bottom;
     }
   }
 }

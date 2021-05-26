@@ -90,7 +90,7 @@ export class Anemone extends BaseEntity implements Entity {
   }
 
   spawnFish() {
-    const fish = new ClownFish(this.position.sub([0, 0.5]));
+    const fish = new ClownFish(this.spawnPosition);
     this.game!.addEntity(fish);
     this.school.addFish(fish);
   }

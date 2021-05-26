@@ -1,3 +1,4 @@
+import { timeStamp } from "console";
 import { vec2 } from "p2";
 import { Sprite } from "pixi.js";
 import img_bubble from "../../../resources/images/particles/bubble.png";
@@ -41,14 +42,14 @@ export class Bubble extends BaseEntity implements Entity {
   }
 
   async onAdd() {
-    await this.wait(LIFESPAN, (dt, t) => {
+    await this.wait(LIFESPAN * (this.size + 0.1), (dt, t) => {
       this.sprite.alpha = lerp(0.7, 0, t ** 2);
     });
     this.destroy();
   }
 
   onSlowTick(dt: number) {
-    const worldMap = getWorldMap(this.game)!;
+    const worldMap = getWorldMap(this.game!)!;
     const tilePos = worldMap.worldToTile([this.sprite.x, this.sprite.y]);
     if (
       worldMap.groundMap.tileIsSolid(tilePos) ||

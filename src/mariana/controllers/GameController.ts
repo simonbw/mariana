@@ -19,10 +19,11 @@ import PauseMenu from "../menu/PauseMenu";
 import { VictoryScreen } from "../misc-stuff/VictoryScreen";
 import { MilestoneManager } from "../upgrade/MilestoneManager";
 import { UpgradeManager } from "../upgrade/UpgradeManager";
-import { UpgradeShop } from "../upgrade/UpgradeShop";
+import { UpgradeShop } from "../menu/UpgradeShop";
 import { WorldMap } from "../world/WorldMap";
 import CameraController from "./CameraController";
 import { DiverController } from "./DiverController";
+import { Minimap } from "../hud/Minimap";
 
 /**
  * The top level control flow for the game, basically manages transitioning between menus and stuff
@@ -53,6 +54,7 @@ export class GameController extends BaseEntity implements Entity {
       game.addEntity(new DiveWatch(diver));
       game.addEntity(new FishCounter(diver));
       game.addEntity(new Sonar());
+      game.addEntity(new Minimap());
 
       game.dispatch({ type: "diveStart" });
     },

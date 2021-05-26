@@ -1,8 +1,10 @@
+import { type } from "os";
 import { Container, DisplayObject, Text } from "pixi.js";
 import BaseEntity from "../entity/BaseEntity";
 import Entity, { GameSprite } from "../entity/Entity";
 import Game from "../Game";
 import SpatialHashingBroadphase from "../physics/SpatialHashingBroadphase";
+import FilterList from "./FilterList";
 
 const SMOOTHING = 0.95;
 export default class FPSMeter extends BaseEntity implements Entity {
@@ -52,6 +54,9 @@ export default class FPSMeter extends BaseEntity implements Entity {
       kinematicBodyCount: broadphase.kinematicBodies.size,
       particleBodyCount: broadphase.particleBodies.size,
       entityCount: this.game?.entities.all.size ?? 0,
+      onTickCount: this.game?.entities.withOnTick.length ?? 0,
+      onSlowTickCount: this.game?.entities.withOnSlowTick.length ?? 0,
+      onRenderCount: this.game?.entities.withOnRender.length ?? 0,
       spriteCount: getSpriteCount(this.game!.renderer.stage),
       collisions: (this.game?.world.broadphase as SpatialHashingBroadphase)
         .debugData.numCollisions,
@@ -69,9 +74,12 @@ export default class FPSMeter extends BaseEntity implements Entity {
       dynamicBodyCount,
       collisions,
       entityCount,
+      onTickCount,
+      onSlowTickCount,
+      onRenderCount,
       spriteCount,
     } = this.getStats();
-    return `fps: ${fps} (${fps2}) | bodies: ${bodyCount} (${kinematicBodyCount}, ${particleBodyCount}, ${dynamicBodyCount}, ${hugeBodyCount}) | collisions: ${collisions} | entities: ${entityCount} | sprites ${spriteCount}`;
+    return `fps: ${fps} (${fps2}) | bodies: ${bodyCount} (${kinematicBodyCount}–${particleBodyCount}–${dynamicBodyCount}–${hugeBodyCount}) | collisions: ${collisions} | entities: ${entityCount} (${onRenderCount}–${onSlowTickCount}–${onTickCount}) | sprites ${spriteCount}`;
   }
 }
 

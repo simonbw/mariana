@@ -9,7 +9,7 @@ import { getWaves } from "../../environment/Waves";
 import { getSonarMarkers } from "./SonarMarker";
 import { SonarPing } from "./SonarPing";
 
-export const TIME_BETWEEN_PINGS = 1.0; // seconds
+export const TIME_BETWEEN_PINGS = 1.25; // seconds
 const SCREEN_SIZE = 160; // pixels
 const DISPLAY_RADIUS = 40; // meters
 
@@ -33,7 +33,6 @@ export class Sonar extends BaseEntity implements Entity {
 
     this.screen = new Sprite();
     this.sprite.addChild(this.screen);
-    // this.screen.filters = [];
     this.screen.mask = mask;
 
     const background = new Graphics();
@@ -65,8 +64,6 @@ export class Sonar extends BaseEntity implements Entity {
     rim.lineStyle({ width: rimWidth, color: 0x666666 });
     rim.drawCircle(0, 0, DISPLAY_RADIUS + rimWidth * 0.49);
     this.sprite.addChild(rim);
-
-    // TODO: DiveBell marker
 
     this.sprite.alpha = 1.0;
     this.sprite.layerName = Layer.HUD;

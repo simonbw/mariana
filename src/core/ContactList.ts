@@ -1,5 +1,5 @@
 import p2 from "p2";
-import { WithOwner } from "./entity/Entity";
+import Entity, { WithOwner } from "./entity/Entity";
 
 export interface ContactInfo {
   bodyA: p2.Body & WithOwner;
@@ -40,9 +40,12 @@ export default class ContactList {
 
 /** Whether or not this is a collision we need to keep track of */
 function shouldTrack({ shapeA, shapeB, bodyA, bodyB }: ContactInfo): boolean {
-  // TODO: We should only keep track of ones where at least one of the
-  // bodies/shapes has an owner with an onContacting method
-  return true;
+  return Boolean(
+    shapeA.owner?.onContacting ||
+      shapeB.owner?.onContacting ||
+      bodyA.owner?.onContacting ||
+      bodyB.owner?.onContacting
+  );
 }
 
 /** Whether or not two ContactInfos represent the same contact */

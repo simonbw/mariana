@@ -9,9 +9,9 @@ import { getWorldMap } from "../../world/WorldMap";
 import { PingParticle } from "./Sonar";
 import { getSonarTargets, SonarTarget } from "./SonarTarget";
 
-const PING_PARTICLES = 180;
+const PING_PARTICLES = 128;
 const PING_SPEED = 60.0; // m/s
-const PING_LIFESPAN = 2; // seconds
+const PING_LIFESPAN = 1.75; // seconds
 
 interface ReachedTarget {
   position: V2d;

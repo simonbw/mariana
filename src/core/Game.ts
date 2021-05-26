@@ -291,7 +291,7 @@ export default class Game {
         const stepDt = tickDt;
         this.world.step(stepDt);
         this.cleanupEntities();
-        this.contacts();
+        this.contacts(tickDt);
       }
     }
     this.afterPhysics();
@@ -441,16 +441,28 @@ export default class Game {
     }
   };
 
-  private contacts() {
+  private contacts(dt: number) {
     for (const contactInfo of this.contactList.getContacts()) {
       const { shapeA, shapeB, bodyA, bodyB, contactEquations } = contactInfo;
       const ownerA = shapeA.owner || bodyA.owner;
       const ownerB = shapeB.owner || bodyB.owner;
       if (ownerA?.onContacting) {
-        ownerA.onContacting(ownerB, shapeA, shapeB, contactEquations);
+        ownerA.onContacting({
+          other: ownerB,
+          thisShape: shapeA,
+          otherShape: shapeB,
+          contactEquations,
+          dt,
+        });
       }
       if (ownerB?.onContacting) {
-        ownerB.onContacting(ownerA, shapeB, shapeA, contactEquations);
+        ownerB.onContacting({
+          other: ownerA,
+          thisShape: shapeB,
+          otherShape: shapeA,
+          contactEquations,
+          dt,
+        });
       }
     }
   }

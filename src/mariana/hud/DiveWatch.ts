@@ -3,7 +3,13 @@ import img_diveWatchBack from "../../../resources/images/ui/dive-watch-back.png"
 import img_diveWatchNeedle from "../../../resources/images/ui/dive-watch-needle.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
-import { clamp, clampUp, degToRad, lerp } from "../../core/util/MathUtil";
+import {
+  clamp,
+  clampUp,
+  degToRad,
+  lerp,
+  lerpOrSnap,
+} from "../../core/util/MathUtil";
 import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
 import { WORLD_BOTTOM } from "../constants";
@@ -14,6 +20,9 @@ const MIN_AIR_ANGLE = degToRad(-135);
 const MAX_AIR_ANGLE = degToRad(135);
 const MIN_DEPTH_ANGLE = degToRad(-150);
 const MAX_DEPTH_ANGLE = degToRad(150);
+
+const HEALTH_ANGLE_1 = degToRad(-90 - 130);
+const HEALTH_ANGLE_2 = degToRad(-90 + 130);
 
 const NEEDLE_SPEED = 2;
 
@@ -29,6 +38,7 @@ export class DiveWatch extends BaseEntity implements Entity {
   depthText: Text;
   healthBar: Graphics;
   healthBarBack: Graphics;
+  healthPercent: number = 1.0;
 
   constructor(private diver: Diver) {
     super();
@@ -62,7 +72,7 @@ export class DiveWatch extends BaseEntity implements Entity {
 
     this.healthBarBack = new Graphics();
     this.healthBarBack.lineStyle({ width: 12, color: 0x666666 });
-    this.healthBarBack.arc(0, 0, 40, -degToRad(180), 0);
+    this.healthBarBack.arc(0, 0, 40, HEALTH_ANGLE_1, HEALTH_ANGLE_2);
     this.healthBarBack.position.set(256, 166);
 
     this.healthBar = new Graphics();
@@ -111,10 +121,15 @@ export class DiveWatch extends BaseEntity implements Entity {
     );
 
     this.healthBar.clear();
-    const start = -degToRad(180);
-    const healthPercent = this.diver.health.hp / this.diver.health.maxHp;
-    const end = lerp(-degToRad(180), 0, healthPercent);
+    const smoothHealthPercent = this.diver.health.hp / this.diver.health.maxHp;
+    this.healthPercent = lerpOrSnap(
+      this.healthPercent,
+      smoothHealthPercent,
+      clamp(dt * 10),
+      0.005
+    );
+    const end = lerp(HEALTH_ANGLE_1, HEALTH_ANGLE_2, this.healthPercent);
     this.healthBar.lineStyle({ width: 12, color: 0x00cc00 });
-    this.healthBar.arc(0, 0, 40, start, end);
+    this.healthBar.arc(0, 0, 40, HEALTH_ANGLE_1, end);
   }
 }

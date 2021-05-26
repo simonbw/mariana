@@ -15,7 +15,7 @@ Reduce stuff done in `onTick`
  - Try to move stuff to event handlers
 
 Make adding/instantiating entities cheaper
- - don't add filters?
+ - don't add entity filters?
 
 Use faster grid for GroundMap
  - just a 2d array?

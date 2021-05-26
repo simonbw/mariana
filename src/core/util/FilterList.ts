@@ -18,6 +18,10 @@ export default class FilterList<T, T2 extends T> implements Iterable<T2> {
     }
   }
 
+  get length() {
+    return this._items.size;
+  }
+
   get size() {
     return this._items.size;
   }

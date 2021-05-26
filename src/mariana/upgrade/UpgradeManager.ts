@@ -10,7 +10,7 @@ import {
   savePrerequisites,
 } from "./persistence";
 import {
-  getUpgrade,
+  getUpgradeById,
   isUpgradeId,
   PrerequisiteId,
   UpgradeId,
@@ -49,11 +49,11 @@ export class UpgradeManager extends BaseEntity implements Entity {
   }
 
   canAffordUpgrade(upgradeId: UpgradeId): boolean {
-    return this.money >= getUpgrade(upgradeId).cost;
+    return this.money >= getUpgradeById(upgradeId).cost;
   }
 
   hasPrerequisites(upgradeId: UpgradeId): boolean {
-    for (const prerequisite of getUpgrade(upgradeId).prerequisites) {
+    for (const prerequisite of getUpgradeById(upgradeId).prerequisites) {
       if (!this.hasPrerequisite(prerequisite)) {
         return false;
       }
@@ -67,7 +67,7 @@ export class UpgradeManager extends BaseEntity implements Entity {
       throw new Error(`Cannot buy upgrade: ${upgradeId}`);
     }
 
-    const upgrade = getUpgrade(upgradeId);
+    const upgrade = getUpgradeById(upgradeId);
 
     this.money -= upgrade.cost;
     this.addPrerequisite(upgradeId);

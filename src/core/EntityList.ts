@@ -174,7 +174,9 @@ export default class EntityList implements Iterable<Entity> {
    * Return all the entities that pass a type guard
    * Then we could replace the hardCoded filters with something nicer
    */
-  getByFilter<T extends Entity>(filter: EntityFilter<T>): Iterable<T> {
+  getByFilter<T extends Entity>(
+    filter: EntityFilter<T>
+  ): Iterable<T> & { length: number } {
     const result = this.filters.getFilterList(filter);
     return result ?? [...this.all].filter(filter);
   }

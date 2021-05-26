@@ -27,12 +27,15 @@ export default interface EntityPhysics {
   /** Called when a physics contact ends */
   onEndContact?(other?: Entity, thisShape?: Shape, otherShape?: Shape): void;
   /** Called every after the physics step */
-  onContacting?(
-    other?: Entity,
-    thisShape?: Shape,
-    otherShape?: Shape,
-    contactEquations?: ContactEquation[]
-  ): void;
+  onContacting?(options: OnContactingParams): void;
   /** Called when a physics impact happens */
   onImpact?(other?: Entity): void;
+}
+
+export interface OnContactingParams {
+  other?: Entity;
+  thisShape?: Shape;
+  otherShape?: Shape;
+  contactEquations: ContactEquation[];
+  dt: number;
 }

@@ -1,7 +1,9 @@
+import { DiveBellUpgradeId, DIVE_BELL_UPGRADES } from "./diveBellUpgrades";
+import { HarpoonUpgradeId, HARPOON_UPGRADES } from "./harpoonUpgrades";
 import { MilestoneId } from "./milestones";
 
 /** */
-interface Upgrade {
+export interface Upgrade {
   name: string;
   description: string;
   cost: number;
@@ -10,22 +12,15 @@ interface Upgrade {
 }
 
 export type UpgradeId =
-  | "flippers1"
-  | "flippers2"
-  | "weightBelt"
-  | "BCD"
-  | "air1"
-  | "air2"
-  | "nitrox"
-  | "rebreather"
-  | "autoRetractor"
-  | "turboRetractor"
-  | "doubleEndedPoon"
-  | "soulMagnet"
-  | "diveBell"
-  | "diveBellDepth1"
-  | "diveBellDepth2"
-  | "flashlight";
+  | SystemUpgradeId
+  | MovementUpgradeId
+  | AirUpgradeId
+  | DiveBellUpgradeId
+  | HarpoonUpgradeId;
+
+type SystemUpgradeId = "soulMagnet" | "flashlight";
+type AirUpgradeId = "air1" | "air2" | "nitrox" | "rebreather";
+type MovementUpgradeId = "flippers1" | "flippers2" | "weightBelt" | "BCD";
 
 export type PrerequisiteId = UpgradeId | MilestoneId;
 
@@ -79,35 +74,11 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     cost: 800,
     prerequisites: ["air2"],
   },
-  autoRetractor: {
-    name: "Auto Retractor",
-    description: "Retract your harpoon faster",
-    cost: 100,
-    prerequisites: [],
-  },
-  turboRetractor: {
-    name: "Turbo Retractor",
-    description: "Retract your harpoon super faster",
-    cost: 1000,
-    prerequisites: ["autoRetractor"],
-  },
   soulMagnet: {
     name: "Soul Magnet",
     description: "Collect fish souls from farther away",
     cost: 200,
     prerequisites: [],
-  },
-  doubleEndedPoon: {
-    name: "Double Ended 'Poon",
-    description: "Sharpen your harpoon at both ends",
-    cost: 300,
-    prerequisites: ["autoRetractor"],
-  },
-  diveBell: {
-    name: "Dive Bell",
-    description: "Provides air under water",
-    cost: 100,
-    prerequisites: ["100m"],
   },
   flashlight: {
     name: "Flashlight",
@@ -115,24 +86,15 @@ const UPGRADES: Record<UpgradeId, Upgrade> = {
     cost: 100,
     prerequisites: [],
   },
-  diveBellDepth1: {
-    name: "Reinforced Dive Bell",
-    description: "Allows dive bell to go down to 200m",
-    cost: 500,
-    prerequisites: ["diveBell"],
-  },
-  diveBellDepth2: {
-    name: "Double-Reinforced Dive Bell",
-    description: "Allows dive bell to go down to 800m",
-    cost: 2000,
-    prerequisites: ["diveBellDepth1"],
-  },
+
+  ...HARPOON_UPGRADES,
+  ...DIVE_BELL_UPGRADES,
 };
 
 export const UPGRADE_IDS: UpgradeId[] = Object.keys(UPGRADES) as UpgradeId[];
 
 /** Returns the upgrade with the given ID */
-export function getUpgrade(id: UpgradeId): Upgrade {
+export function getUpgradeById(id: UpgradeId): Upgrade {
   return UPGRADES[id];
 }
 

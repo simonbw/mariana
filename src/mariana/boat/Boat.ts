@@ -32,7 +32,7 @@ export class Boat extends BaseEntity implements Entity {
     this.addChild(
       new SonarMarker(() => this.getPosition(), {
         color: 0xffaaaa,
-        blipSize: 3,
+        blipSize: 2.2,
       })
     );
 

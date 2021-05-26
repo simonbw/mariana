@@ -3,32 +3,35 @@ import { Sprite } from "@pixi/sprite";
 import { CompositeTilemap } from "@pixi/tilemap";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
+import Game from "../../core/Game";
 import { KeyCode } from "../../core/io/Keys";
 import { Layer } from "../config/layers";
 import { makeBox } from "../utils/gridUtils";
-import { getDefaultTileset } from "../utils/Tileset";
-import { WorldMap } from "../world/WorldMap";
+import { getStoneTileset1 } from "../world/tilesets";
+import { getWorldMap } from "../world/WorldMap";
 
 /** Really bad, just for testing world generation */
 export class Minimap extends BaseEntity implements Entity {
-  sprite: Sprite & GameSprite;
+  sprite!: Sprite & GameSprite;
 
-  constructor(worldMap: WorldMap) {
+  constructor() {
     super();
+  }
 
+  onAdd(game: Game) {
     const tilemap = new CompositeTilemap();
-
-    const tileset = getDefaultTileset();
-
+    const worldMap = getWorldMap(game)!;
     const { minX, maxX, maxY } = worldMap;
-    for (const [x, y] of makeBox(minX - 5, maxX + 5, 0, maxY)) {
+    for (const [x, y] of makeBox(minX - 5, 0, maxX + 5, maxY)) {
       if (worldMap.groundMap.tileIsSolid([x, y])) {
+        const biome = worldMap.biomeMap.getBiome([x, y]);
+        const tileset = biome.tileset;
         tilemap.tile(tileset.getTexture(7), x * 64, y * 64);
       }
     }
 
     const background = new Graphics();
-    background.beginFill(0x0077ff, 0.3);
+    background.beginFill(0x66aaff, 0.5);
     background.drawRect(minX * 64, 0, (maxX - minX) * 64, maxY * 64);
     background.endFill();
 
@@ -47,8 +50,8 @@ export class Minimap extends BaseEntity implements Entity {
   }
 
   onKeyDown(key: KeyCode) {
-    if (key === "KeyL") {
-      // this.sprite.visible = !this.sprite.visible;
+    if (key === "Semicolon") {
+      this.sprite.visible = !this.sprite.visible;
     }
   }
 }

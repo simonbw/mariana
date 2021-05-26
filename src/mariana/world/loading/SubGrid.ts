@@ -1,3 +1,4 @@
+import { makeBox } from "../../utils/gridUtils";
 import { TilePos } from "../TilePos";
 
 /** A rectangular subsection of a grid */
@@ -23,11 +24,20 @@ export class SubGrid implements Iterable<TilePos> {
     return this.values();
   }
 
-  *values(): Iterator<TilePos> {
+  *values(): IterableIterator<TilePos> {
     for (let x = this.x; x < this.x + this.width; x++) {
       for (let y = this.y; y < this.y + this.height; y++) {
         yield [x, y];
       }
     }
+  }
+
+  getValues(): TilePos[] {
+    return makeBox(
+      this.x,
+      this.y,
+      this.x + this.width - 1,
+      this.y + this.height - 1
+    );
   }
 }

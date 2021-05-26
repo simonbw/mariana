@@ -139,14 +139,18 @@
   require("./images/particles/pickup-7.png"),
   require("./images/particles/water-splash.png"),
   require("./images/tiles/reference-tileset-2.png"),
+  require("./images/tiles/reference-tileset-3.png"),
+  require("./images/tiles/reference-tileset-4.png"),
   require("./images/tiles/reference-tileset-numbered.png"),
   require("./images/tiles/reference-tileset.png"),
   require("./images/tiles/stone_tiles.png"),
   require("./images/tiles/stone_tiles2.png"),
+  require("./images/tiles/stone-tilesset-1.png"),
   require("./images/tiles/tile.png"),
   require("./images/tiles/tileset_reference.png"),
   require("./images/ui/dive-watch-back.png"),
   require("./images/ui/dive-watch-needle.png"),
   require("./images/ui/sonar-tile.png"),
+  require("./images/ui/stone_tiles3.png"),
     ];
     

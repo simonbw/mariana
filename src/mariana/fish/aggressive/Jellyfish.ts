@@ -6,6 +6,7 @@ import img_squid1 from "../../../../resources/images/fish/squid-1.png";
 import img_squid2 from "../../../../resources/images/fish/squid-2.png";
 import img_squid3 from "../../../../resources/images/fish/squid-3.png";
 import Entity from "../../../core/entity/Entity";
+import { OnContactingParams } from "../../../core/entity/EntityPhysics";
 import { SoundInstance } from "../../../core/sound/SoundInstance";
 import { degToRad, lerp } from "../../../core/util/MathUtil";
 import { rBool, rNormal, rUniform } from "../../../core/util/Random";
@@ -158,10 +159,9 @@ export default class Jellyfish extends BaseFish implements Entity {
     this.light.setPosition(position);
   }
 
-  // TODO: oncontacting is broken
-  onContacting(other: Entity) {
+  onContacting({ other }: OnContactingParams) {
     if (other instanceof Diver) {
-      if (!this.stinging) {
+      if (!this.stinging && !other.isDead) {
         this.sting();
       }
     }
