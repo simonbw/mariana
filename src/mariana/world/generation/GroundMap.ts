@@ -1,5 +1,5 @@
 import Grid from "../../../core/util/Grid";
-import { lerp, polarToVec } from "../../../core/util/MathUtil";
+import { clamp, lerp, polarToVec } from "../../../core/util/MathUtil";
 import { rUniform } from "../../../core/util/Random";
 import { TilePos } from "../../../core/util/TilePos";
 import { V, V2d } from "../../../core/Vector";
@@ -17,8 +17,14 @@ import { makeTurbulence1D, makeTurbulence2D } from "./noise";
 const MIN_SURFACE_Y_TILE_COORDS = 5;
 const MAX_SURFACE_Y_TILE_COORDS = 40;
 
+interface ReadonlyGroundMap {
+  tileIsSolid([x, y]: TilePos): boolean;
+  getHighestTile(x: number): number;
+  getTileType(tilePos: TilePos): number;
+}
+
 /** Keeps track of which tiles are solid and which aren't */
-export default class GroundMap {
+export default class GroundMap implements ReadonlyGroundMap {
   private solidMap: DenseGrid<boolean>;
 
   surface = makeTurbulence1D({
@@ -53,7 +59,7 @@ export default class GroundMap {
     console.timeEnd("ground generation");
   }
 
-  public tileIsSolid([x, y]: TilePos): boolean {
+  tileIsSolid([x, y]: TilePos): boolean {
     if (x < this.minX) {
       return true;
     } else if (x >= this.maxX) {
@@ -124,25 +130,30 @@ export default class GroundMap {
     for (let x = this.minX; x < this.maxX; x++) {
       for (let y = MIN_SURFACE_Y_TILE_COORDS; y < this.maxY; y++) {
         const turbulence = this.caveTurbulence(x, y);
-        const layeredTurbulence = turbulence * Math.sin(y / 30);
-        const tilesFromEdge = Math.min(
-          x - this.minX,
-          this.maxX - x,
-          y / 10, // We want caves to appear 10x further from the top than the sides/bottom
-          this.maxY - y
-        );
-        const transitionWidthTiles = 10;
-        const strength =
-          tilesFromEdge < transitionWidthTiles
-            ? lerp(1, layeredTurbulence, tilesFromEdge / transitionWidthTiles)
-            : layeredTurbulence;
+        const strength = turbulence;
         strengthGrid.set([x, y], strength);
 
-        if (strength < -0.2) {
+        if (strength > this.getDensity([x, y])) {
           this.solidMap.set(x, y, false);
         }
       }
     }
+  }
+
+  private getDensity([x, y]: TilePos): number {
+    const tilesFromEdge = Math.min(
+      x - this.minX,
+      this.maxX - x,
+      y / 10, // We want caves to appear 10x further from the top than the sides/bottom
+      this.maxY - y
+    );
+
+    const edgePercent = clamp(tilesFromEdge / 10);
+
+    const t = y / 100 + 40;
+    const nonEdgeValue = 0.8 * Math.sin(Math.PI * 2 * t) - 0.0;
+
+    return lerp(1, nonEdgeValue, edgePercent);
   }
 
   private generateTunnels() {

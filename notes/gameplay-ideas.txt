@@ -113,3 +113,5 @@ Some sort of plankton overlay
 Electric eel effect
 
 Smooth harpoon tether rendering
+
+Have clownfish only come out at night

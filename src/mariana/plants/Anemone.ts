@@ -5,9 +5,12 @@ import img_anemone3 from "../../../resources/images/flora/anemone-3.png";
 import BaseEntity from "../../core/entity/BaseEntity";
 import Entity, { GameSprite } from "../../core/entity/Entity";
 import Game from "../../core/Game";
+import { range } from "../../core/util/FunctionalUtils";
+import { lerp } from "../../core/util/MathUtil";
 import { rBool } from "../../core/util/Random";
 import { V2d } from "../../core/Vector";
 import { Layer } from "../config/layers";
+import { getTimeOfDay } from "../environment/TimeOfDay";
 import { School } from "../fish/fish-systems/School";
 import { ClownFish } from "../fish/passive/ClownFish";
 import {
@@ -55,11 +58,10 @@ export class Anemone extends BaseEntity implements Entity {
   }
 
   onAdd(game: Game) {
-    // TODO: Spawn number of fish based on how many since last time
-    this.spawnFish();
-    this.spawnFish();
-    this.spawnFish();
-    this.spawnFish();
+    const n = Math.floor(4 * getTimeOfDay(this.game!).getDayPercent());
+    for (let i = 0; i < n; i++) {
+      this.spawnFish();
+    }
 
     const tilePos = getWorldMap(game)!.worldToTile(this.position);
     this.addChild(
@@ -80,8 +82,9 @@ export class Anemone extends BaseEntity implements Entity {
   }
 
   onSlowTick(dt: number) {
+    const spawnRate = SPAWN_RATE * getTimeOfDay(this.game!).getDayPercent();
     if (
-      rBool(dt * SPAWN_RATE) &&
+      rBool(dt * spawnRate) &&
       this.school.getNumFish() < MAX_SCHOOL_SIZE &&
       this.game!.entities.getTagged("clownfish").length < MAX_FISH
     ) {

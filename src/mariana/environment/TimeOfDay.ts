@@ -48,6 +48,10 @@ export class TimeOfDay extends BaseEntity implements Entity {
     }
   }
 
+  getDayPercent() {
+    return 1.0 - this.getNightPercent();
+  }
+
   onTick(dt: number) {
     if (this.game!.io.keyIsDown("Quote")) {
       if (this.game!.io.keyIsDown("ShiftRight")) {
